@@ -1,0 +1,294 @@
+.app {
+	margin-left: 0;
+	-webkit-transition: margin-left 50ms ease-out;
+	-moz-transition: margin-left 50ms ease-out;
+	-o-transition: margin-left 50ms ease-out;
+	transition: margin-left 50ms ease-out;
+}
+.sidebar {
+	background: #F3F3F3;
+	bottom: 0;
+	height: 100%;
+	left: -400px;
+	min-width: 400px;
+	position: absolute;
+	top: 0;
+	width: 400px;
+	-webkit-transition: left 50ms ease-out;
+	-moz-transition: left 50ms ease-out;
+	-o-transition: left 50ms ease-out;
+	transition: left 50ms ease-out;
+	z-index: 10;
+	a {
+		color: #2D95C7;
+	}
+	.colors {
+		.control {
+			margin-bottom: 6px;
+			&:last-child {
+				margin-top: 40px;
+			}
+		}
+		span {
+			margin-left: 10px;
+		}
+	}
+	form {
+		color: #47516B;
+		margin: 0 0 23px;
+		.color-picker {
+			width: 100px;
+		}
+		.control {
+			margin-bottom: 33px;
+			position: relative;
+		}
+		input {
+			margin-top: 6px;
+			&[type="radio"] {
+				margin-right: 4px;
+				width: auto;
+			}
+			&[type="text"] {
+				border: 1px solid #ddd;
+				border-radius: 2px;
+				padding: 6px 8px;
+			}
+		}
+		.iris-picker {
+			border-color: #eee;
+			box-shadow: 0px 2px 11px 2px rgba(79,75,92,0.34);
+			position: absolute;
+			right: 40px;
+			top: -70px;
+			z-index: 5;
+		}
+		label {
+			display: block;
+			white-space: nowrap;
+			span {
+				position: relative;
+				top: 1px;
+			}
+		}
+		.c-button:not(.c-button--link) {
+			border-color: #2D95C7;
+			color: #2D95C7;
+			&:focus,
+			&:hover {
+				background: #2D95C7;
+				border-color: #2D95C7;
+				color: #FFF;
+				text-decoration: none;
+			}
+		}
+		.reset-colors {
+			padding-left: 0;
+			&:focus,
+			&:hover {
+				color: #2D95C7
+			}
+		}
+		select option {
+			padding: 6px 8px;
+		}
+		strong {
+			display: block;
+			font-weight: 600;
+			margin-bottom: 8px;
+		}
+		.swatch {
+			border: #ddd;
+			border-radius: 50%;
+			display: inline-block;
+			height: 16px;
+			position: relative;
+			top: 2px;
+			width: 16px;
+		}
+	}
+	header {
+		background: #F3F3F3;
+		border-bottom: 1px solid #DDD;
+		color: #47516B;
+		margin: 0;
+		padding: 16px 24px;
+		width: 100%;
+		// o-flexy
+		align-items: center;
+		box-sizing: border-box; 
+		display: flex; 
+		justify-content: space-between;
+		a {
+			// o-flexy__item
+			box-sizing: border-box;
+			max-width: 100%; 
+			min-width: 0;
+		}
+		.c-button {
+			border-color: #BBB;
+			color: #BBB;
+			height: auto;
+			line-height: 21px;
+			margin-top: -1px;
+    		padding: 0 6px 1px;
+			&:active,
+  			&:focus,
+  			&:hover {
+				background: #BBB;
+  				border-color: #BBB;
+  				color: #FFF;
+  			}
+		}
+		h3 {
+			color: #47516B;
+			font-size: 18px;
+			font-weight: 300;
+			position: relative;
+			text-align: left;
+			top: 4px;
+		}
+	}
+	.players-add {
+		overflow: hidden;
+    	padding-bottom: 24px;
+	}
+	section {
+		border-bottom: 1px solid #DDD;
+		padding: 24px 24px 12px;
+		text-align: left;
+		&:last-child {
+			border-bottom: none;
+		}
+		a {
+			text-decoration: none;
+			&:hover {
+				text-decoration: underline;
+			}
+		}
+		form {
+			margin-bottom: 0;
+		}
+		input {
+			padding: 3px;
+			width: 100%;
+		}
+		p {
+			color: #67727B;
+			margin-bottom: 13px;
+		}
+		.player-actions {
+			width: 20%;
+		}
+		.players-add-form textarea {
+			height: 100px;
+			margin-bottom: 20px;
+			padding: 6px 8px;
+			width: 100%;
+		}
+		.players-add-link {
+			display: inline-block;
+			font-weight: 300;
+			margin-bottom: 10px;
+			text-transform: none;
+		}
+		.players-list {
+			width: 100%;
+			th {
+				color: #67727B;
+				padding-bottom: 12px;
+			}
+			tr th:last-child {
+				text-align: right;
+			}
+			tr td:last-child {
+				text-align: right;
+			}
+		}
+		.player-status {
+			display: none;
+			margin-right: 8px;
+		}
+		textarea {
+			padding: 3px;
+		}
+	}
+	.sidebar-ad {
+		background: #FFF;
+		border: 1px solid #ddd;
+		color: #BBB;
+		height: 250px;
+		line-height: 15;
+		margin: 0 auto;
+		width: 100%;
+		text-align: center;
+	}
+	.sidebar-menu {
+		overflow: hidden;
+		text-align: center;
+		width: 100%;
+		a {
+			border: 1px solid #DDD;
+			color: #BBB;
+			float: left;
+			margin: 13px 0 13px -1px;
+			padding: 2px 1em 0;
+			position: relative;
+			width: 25%;
+			&:first-child {
+				border-radius: 3px 0 0 3px;
+			}
+			&:last-child {
+				border-radius: 0 3px 3px 0;
+			}
+			&:focus,
+			&:hover,
+			&.active {
+				background: #FFF;
+				border-color: #C8C8C8;
+				color: #283350;
+				z-index: 4;
+			}
+		}
+		.button-group {
+			padding: 16px 24px 0;
+			.c-button {
+				margin-bottom: 8px;
+			}
+		}
+	}
+}
+.show-sidebar {
+	.app {
+		margin-left: 400px;
+	}
+	.message {
+		left: 210px;
+		top: 18px;
+	}
+	.sidebar {
+		left: 0;
+	}
+}
+// Language specific
+body.de .sidebar .sidebar-menu a,
+body.es .sidebar .sidebar-menu a,
+body.fr .sidebar .sidebar-menu a,
+body.id .sidebar .sidebar-menu a,
+body.it .sidebar .sidebar-menu a,
+body.ja .sidebar .sidebar-menu a,
+body.pt .sidebar .sidebar-menu a,
+body.sv .sidebar .sidebar-menu a {
+	font-size: 11px;
+}
+body.da .sidebar .sidebar-menu a,
+body.hi .sidebar .sidebar-menu a {
+	font-size: 14px;
+}
+body.ru .sidebar .sidebar-menu a {
+	font-size: 11px;
+	width: 20%;
+	&:last-child {
+		width: 40%;
+	}
+}

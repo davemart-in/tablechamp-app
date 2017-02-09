@@ -1,0 +1,388 @@
+<html>
+<head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+	<title>TableChamp</title>
+	<link rel="stylesheet" type="text/css" charset="utf-8"  media="screen, projection" href="css/tablechamp.css" />
+	<link href="https://fonts.googleapis.com/css?family=Libre+Franklin:400,600" rel="stylesheet">
+</head>
+<body>
+	<div class="message"></div>
+	<div class="loader"></div>
+	<div class="css-block"></div>
+	<div class="sidebar">
+		<div class="sidebar-container">
+			<header></header>
+			<div class="sidebar-menu"></div>
+			<div class="sidebar-body"></div>
+			<div class="sidebar-ad">
+				Ads will rotate through this spot
+			</div>
+		</div>
+	</div>
+	<div class="app">
+		<header></header>
+		<div class="doubles" style="display: none;">
+			<div class="top-rankings"></div>
+			<div class="rankings"></div>
+		</div>
+		<div class="singles">
+			<div class="top-rankings"></div>
+			<div class="rankings"></div>
+		</div>
+	</div>
+	<div class="modal-backdrop show">
+		<div class="modal"></div>
+	</div>
+	<script src="js/jquery.min.js"></script>
+	<script src="js/i18n.js"></script>
+	<script src="js/templating.js"></script>
+	<script type="text/javascript" src="js/jquery-ui.min.js"></script>
+	<script src="js/firebase.3.6.5.js"></script>
+	<script type="text/javascript" src="js/iris.min.js"></script>
+	<script type="text/javascript" src="js/app.min.js"></script>
+	<!-- JS Templates -->
+	<script type="text/html" id="appHeader">
+		<a href="#" class="c-button c-button--md c-button--primary right add-score"><%=addScore%></a>
+		<div class="name">
+			<span class="org"></span>
+			<span class="game-type"></span>
+		</div>
+		<div class="header-block">
+			<a href="#" class="singles-toggle ranking-toggle c-button c-button--md is-selected" tabindex="-1" data-view="singles"><%=singles%></a>
+			<a href="#" class="doubles-toggle ranking-toggle c-button c-button--md" data-view="doubles"><%=doubles%></a>
+			<a href="#" class="c-button c-button--link settings"><%=settings%></a>
+			<a href="#" class="c-button c-button--link logout"><%=logOut%></a>
+		</div>
+	</script>
+	<script type="text/html" id="loader">
+		<%=loading%>...
+	</script>
+	<script type="text/html" id="playersRow">
+		<tr class="player" data-id="<%=key%>">
+			<td><input type="text" value="<%=playerName%>" /></td>
+			<td>
+				<a href="#" class="player-status"><%=playerStatus%></a>
+				<a href="#" class="player-delete"><%=deleteLink%></a>
+			</td>
+		</tr>
+	</script>
+	<script type="text/html" id="rankingsRow">
+		<div class="ranking" data-id="<%=key%>" tabindex="0">
+				<span class="rank"><%=rank%></span>
+				<span class="name"><%=name%></span>
+			<div class="right">
+				<span class="movement"><%=lastMovement%></span>
+				<span class="points"><%=points%></span>
+			</div>
+		</div>
+	</script>
+	<script type="text/html" id="scoreAdd">
+		<div class="modal-header">
+			<a href="#" class="modal-close c-button">x</a>
+			<%=addScoreTitle%>
+		</div>
+		<form class="score-add">
+			<div class="modal-body">
+				<div class="t1">
+					<section>
+						<strong><%=teamOnePlayers%>:</strong>
+						<div class="players-select t1-players"></div>
+						<strong><%=teamOneScore%>:</strong>
+						<input type="hidden" class="t1-score" value="0">
+						<div class="score">
+							<div class="decrement">
+								<a href="#" data-team="1" data-amount="1" data-type="-">-1</a>
+								<a href="#" data-team="1" data-amount="5" data-type="-">-5</a>
+								<a href="#" data-team="1" data-amount="10" data-type="-">-10</a>
+							</div>
+							<div class="increment">
+								<a href="#" data-team="1" data-amount="1" data-type="+">+1</a>
+								<a href="#" data-team="1" data-amount="5" data-type="+">+5</a>
+								<a href="#" data-team="1" data-amount="10" data-type="+">+10</a>
+							</div>
+							<strong>0</strong>
+						</div>
+					</section>
+				</div>
+				<div class="t2">
+					<section>
+						<strong><%=teamTwoPlayers%>:</strong>
+						<div class="players-select t2-players"></div>
+						<strong><%=teamTwoScore%>:</strong>
+						<input type="hidden" class="t2-score" value="0">
+						<div class="score">
+							<div class="decrement">
+								<a href="#" data-team="2" data-amount="1" data-type="-">-1</a>
+								<a href="#" data-team="2" data-amount="5" data-type="-">-5</a>
+								<a href="#" data-team="2" data-amount="10" data-type="-">-10</a>
+							</div>
+							<div class="increment">
+								<a href="#" data-team="2" data-amount="1" data-type="+">+1</a>
+								<a href="#" data-team="2" data-amount="5" data-type="+">+5</a>
+								<a href="#" data-team="2" data-amount="10" data-type="+">+10</a>
+							</div>
+							<strong>0</strong>
+						</div>
+					</section>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button class="c-button c-button--md c-button--primary" type="submit"><%=addScoreButton%></button>
+			</div>
+		</form>
+	</script>
+	<script type="text/html" id="scorePlayers">
+		<a href="#" data-id="<%=key%>"><%=playerName%></a>
+	</script>
+	<script type="text/html" id="settingsBasics">
+		<section class="basics">
+			<form>
+				<div class="control">
+					<strong><%=orgName%>?</strong>
+					<input type="text" id="orgName" placeholder="<%=companyOrClub%>">
+				</div>
+				<div class="control">
+					<strong><%=whatGame%>?</strong>
+					<label for="game1"><input type="radio" name="gameType" id="game1" value="air-hockey"> <span><%=gameAirHockey%></span></label>
+					<label for="game2"><input type="radio" name="gameType" id="game2" value="billiards"> <span><%=gameBilliards%></span></label>
+					<label for="game3"><input type="radio" name="gameType" id="game3" value="foosball"> <span><%=gameFoosball%></span></label>
+					<label for="game4"><input type="radio" name="gameType" id="game4" value="shuffleboard"> <span><%=gameShuffleboard%></span></label>
+					<label for="game5"><input type="radio" name="gameType" id="game5" value="table-tennis"> <span><%=gameTableTennis%></span></label>
+				</div>
+				<div class="control">
+					<strong>Language</strong>
+					<select class="lang">
+						<option value="da">dansk</option>
+						<option value="de">Deutsche</option>
+						<option value="en">English</option>
+						<option value="es">Español</option>
+						<option value="fr">français</option>
+						<option value="hi">हिंदी</option>
+						<option value="id">bahasa Indonesia</option>
+						<option value="it">italiano</option>
+						<option value="ja">日本語</option>
+						<option value="ko">한국어</option>
+						<option value="pt">Português</option>
+						<option value="ru">русский</option>
+						<option value="sv">svenska</option>
+						<option value="zh">中文</option>
+					</select>
+				</div>
+				<div class="control">
+					<a href="#" class="next c-button c-button--md c-button--primary"><%=nextButton%></a>
+				</div>
+			</form>
+		</section>
+	</script>
+	<script type="text/html" id="settingsColors">
+		<section class="colors">
+			<form>
+				<div class="control c0">
+					<input type="text" class="color-picker" id="c0" value="<%=c0%>">
+					<span class="swatch" style="background: <%=c0%>;"></span>
+					<span><%=primaryText%></span>
+				</div>
+				<div class="control c1">
+					<input type="text" class="color-picker" id="c1" value="<%=c1%>">
+					<span class="swatch" style="background: <%=c1%>;"></span>
+					<span><%=highlightColor%></span>
+				</div>
+				<div class="control c2">
+					<input type="text" class="color-picker" id="c2" value="<%=c2%>">
+					<span class="swatch" style="background: <%=c2%>;"></span>
+					<span><%=secondaryText%></span>
+				</div>
+				<div class="control c3">
+					<input type="text" class="color-picker" id="c3" value="<%=c3%>">
+					<span class="swatch" style="background: <%=c3%>;"></span>
+					<span><%=secondaryBackground%></span>
+				</div>
+				<div class="control c4">
+					<input type="text" class="color-picker" id="c4" value="<%=c4%>">
+					<span class="swatch" style="background: <%=c4%>;"></span>
+					<span><%=primaryBackground%></span>
+				</div>
+				<div class="control c5">
+					<input type="text" class="color-picker" id="c5" value="<%=c5%>">
+					<span class="swatch" style="background: <%=c5%>;"></span>
+					<span><%=primaryButton%></span>
+				</div>
+				<div class="control">
+					<a href="#" class="next c-button c-button--md c-button--primary"><%=nextButton%></a>
+					<a href="#" class="reset-colors c-button c-button--link right"><%=resetColors%></a>
+				</div>
+			</form>
+		</section>
+	</script>
+	<script type="text/html" id="settingsPlayers">
+		<section class="players-add" style="display: none;">
+			<form class="players-add-form">
+				<p><%=onePerLine%>:</p>
+				<div class="control">
+					<textarea placeholder="<%=addPlayers%>"></textarea>
+					<button type="submit" class="c-button right"><%=addPlayers%></button>
+				</div>
+			</form>
+		</section>
+		<section class="players-view">
+			<form>
+				<div class="control">
+					<a href="#" class="players-add-link"><%=addPlayers%></a>
+					<table class="players-list"></table>
+				</div>
+				<div class="control">
+					<a href="#" class="next c-button c-button--md c-button--primary"><%=nextButton%></a>
+				</div>
+			</form>
+		</section>
+	</script>
+	<script type="text/html" id="settingsUsers">
+		<section class="users">
+			<form>
+				<div class="control">
+					<p><%=manageLogins%> <a href="" class="account-manage">FireBase</a></p>
+				</div>
+			</form>
+		</section>
+	</script>
+	<script type="text/html" id="sidebarHeader">
+		<h3><%=settings%></h3>
+		<a href="#" class="c-button sidebar-close">x</a>
+	</script>
+	<script type="text/html" id="sidebarMenu">
+		<div class="button-group">
+			<a href="#" class="sidebar-basics c-button active"><%=basics%></a>
+			<a href="#" class="sidebar-colors c-button"><%=colors%></a>
+			<a href="#" class="sidebar-players c-button"><%=players%></a>
+			<a href="#" class="sidebar-users c-button"><%=users%></a>
+		</div>
+	</script>
+	<script type="text/html" id="stats">
+		<div class="modal-header">
+			<a href="#" class="modal-close c-button">x</a>
+			<%=playerStats%><span><%=forText%> <%=name%></span>
+		</div>
+		<div class="modal-body">
+			<div class="stats-player-container"><table class="stats-player"></table></div>
+			<div class="stats-player-games">
+				<ul></ul>
+			</div>
+		</div>
+	</script>
+	<script type="text/html" id="statsPlayer">
+		<tr class="table-header">
+			<th></th>
+			<th><%=singles%></th>
+			<th><%=doubles%></th>
+		</tr>
+		<tr>
+			<th><%=gamesPlayed%></th>
+			<td><%=singles_played%></td>
+			<td><%=doubles_played%></td>
+		</tr>
+		<tr>
+			<th><%=gamesWon%></th>
+			<td><%=singles_won%></td>
+			<td><%=doubles_won%></td>
+		</tr>
+		<tr>
+			<th><%=gamesLost%></th>
+			<td><%=singles_lost%></td>
+			<td><%=doubles_lost%></td>
+		</tr>
+		<tr>
+			<th><%=ranking%></th>
+			<td><%=singles_rank%></td>
+			<td><%=doubles_rank%></td>
+		</tr>
+	</script>
+	<script type="text/html" id="statsPlayerGames">
+		<li><strong class="<%=status%>"><%=status%></strong> <%=t1%> (<%=t1Score%>) vs. <%=t2%> (<%=t2Score%>)</li>
+	</script>
+	<script type="text/html" id="cssBlock">
+		<style>
+			/* Color 0 */
+			.color-bg-0,
+			.modal { background: <%=c0%>; }
+			.color-tx-0,
+			.c-button:active,
+  			.c-button:focus,
+  			.c-button:hover,
+  			.c-button.is-selected,
+  			.ranking,
+  			.top-rankings .movement,
+  			.top-rankings .rank,
+  			.top-rankings .ranking,
+  			header .name,
+  			.movement-positive { color: <%=c0%> }
+
+  			/* Color 1 */
+			.c-button,
+			.color-tx-1 { color: <%=c1%>; }
+  			.ranking:focus,
+			.ranking:hover { border-color: <%=c1%>; }
+
+			/* Color 2 */
+			.ranking:focus,
+			.ranking:hover { border-color: <%=c2%>; }
+			.ranking .movement,
+			.ranking .rank,
+			header .game-type,
+			.top-rankings .movement span { color: <%=c2%>; }
+			.title-bar { background: <%=c2%>; }
+
+			/* Color 3 */
+			.c-button,
+			.c-button:active,
+			.c-button:focus,
+			.c-button:hover,
+			.c-button.is-selected,
+			.c-button.is-selected:active,
+			.c-button.is-selected:focus,
+			.c-button.is-selected:hover,
+			.ranking { border-color: <%=c3%>; }
+			.c-button:active,
+			.c-button:focus,
+			.c-button:hover,
+			.c-button.is-selected,
+			.c-button.is-selected:active,
+			.c-button.is-selected:focus,
+			.c-button.is-selected:hover,
+			.top-rankings .ranking { background: <%=c3%>; }
+
+			/* Color 4 */
+			body { background: <%=c4%>; }
+
+			/* Links */
+			.c-button--link { 
+  				background: transparent;
+  				border: transparent;
+  				color: <%=c1%>;
+  			}
+  			.c-button--link:active,
+  			.c-button--link:focus,
+  			.c-button--link:hover { 
+  				background: transparent;
+  				border: transparent;
+  				color: <%=c0%>;
+  			}
+  			
+			/* Primary */
+  			.c-button--primary { 
+  				background: transparent;
+  				border-color: <%=c5%>;
+  				color: <%=c5%>;
+  			}
+  			.c-button--primary:active,
+  			.c-button--primary:focus,
+  			.c-button--primary:hover {
+  				background: <%=c5%>;
+  				border-color: <%=c5%>;
+  				color: <%=c0%>;
+  				text-decoration: none;
+  			}
+		</style>
+	</script>
+</body>
+</html>

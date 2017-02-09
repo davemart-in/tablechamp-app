@@ -1,0 +1,118 @@
+@media only screen and (max-width: 1224px) {
+	.show-sidebar {
+		.app header {
+			.add-score {
+				margin-bottom: 10px;
+			}
+			.c-button {
+				font-size: 14px;
+				padding: 0 10px;
+			}
+			.header-block {
+				display: block;
+				float: left;
+				margin-bottom: 7px;
+				width: 100%;
+			}
+			.name {
+				margin-bottom: 13px;
+			}
+		}
+		.modal {
+			width: 95%;
+			.stats-player-container {
+				float: none;
+				margin-bottom: 13px;
+				width: 100%;
+			}
+			.stats-player-games {
+				float: none;
+				width: 100%;
+			}
+		}
+		.players-select a {
+			width: 48%;
+		}
+		.rankings {
+			.ranking {
+				margin: 1% 1% 0 1%;
+				width: 98%;
+			}
+		}
+	}
+	.t1, .t2 {
+		float: none;
+  		width: 100%;
+		.decrement, 
+		.increment {
+			margin: 0;
+		}
+		section {
+			margin: 0;
+		}
+	}
+	.t1 section {
+		margin-bottom: 13px;
+	}
+}
+@media only screen and (max-width: 900px) {
+	.app header {
+		.add-score {
+			margin-bottom: 10px;
+		}
+		.c-button {
+			font-size: 14px;
+			padding: 0 10px;
+		}
+		.header-block {
+			display: block;
+			float: left;
+			margin-bottom: 7px;
+			width: 100%;
+		}
+		.name {
+			margin-bottom: 13px;
+		}
+	}
+	.modal {
+		width: 95%;
+		.stats-player-container {
+			float: none;
+			margin-bottom: 13px;
+			width: 100%;
+		}
+		.stats-player-games {
+			float: none;
+			width: 100%;
+		}
+	}
+	.rankings {
+		.ranking {
+			margin: 1% 1% 0 1%;
+			width: 98%;
+		}
+	}
+	.show-sidebar {
+		.sidebar {
+			right: 0;
+			width: auto;
+		}
+	}
+}
+@media only screen and (max-width: 640px) {
+	.players-select a {
+		width: 48%;
+	}
+	.t1, .t2 {
+		.decrement, 
+		.increment {
+			margin: 0;
+		}
+		section {
+			margin: 0;
+		}
+	}
+	.t1 section {
+		margin-bottom: 13px;
+	}
+}

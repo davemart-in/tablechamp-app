@@ -1,0 +1,27 @@
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <title>TableChamp</title>
+  <link rel="stylesheet" type="text/css" href="css/login.css">
+</head>
+<body>
+  <section class="login" style="display: none;"></section>
+  <section class="connection-settings" style="display: none;"></section>
+  <!-- JS -->
+  <script src="js/login.min.js"></script>
+  <script type="text/html" id="connectionForm">
+    <form>
+      <textarea></textarea>
+      <button type="submit"><%=button%></button>
+    </form>
+  </script>
+  <script type="text/html" id="loginForm">
+    <form>
+      <input type="text" name="email" placeholder="<%=email%>">
+      <input type="password" name="password" placeholder="<%=password%>">
+      <button type="submit" class="c-button c-button--md c-button--primary"><%=button%></button>
+    </form>
+  </script>
+</body>
+</html>

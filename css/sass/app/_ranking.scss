@@ -1,0 +1,73 @@
+// Ranking
+.ranking {
+	border: 2px solid;
+	border-radius: 1px;
+	cursor: pointer;
+	float: left;
+	margin: 1% 0 0 1%;
+	padding: 16px;
+	text-align: left;
+	width: 32%;
+	&:focus,
+	&:hover {
+		outline: none;
+	}
+	.movement {
+		border-radius: 1px;
+		font-style: italic;
+	}
+	.name {
+		font-weight: 500;
+	}
+	.points {
+		font-weight: 500;
+		min-width: 95px;
+		padding: 0;
+	}
+	.rank {
+		font-weight: 700;
+		padding: 0;
+		text-align: center;
+	}
+	span {
+		padding: 0 8px;
+		&.movement-positive {
+			padding: 0;
+		}
+	}
+}
+// Top Ranking Block
+.top-rankings {
+	width: 98%;
+	margin: 0 1%;
+	.ranking {
+		float: none;
+		font-size: 24px;
+		line-height: 24px;
+		margin: 1% 0 0;
+		white-space: nowrap;
+		width: 100%;
+		.movement {
+			font-size: 18px;
+			padding-right: 0;
+			position: relative;
+			top: -2px;
+		}
+		.name {
+			padding-left: 0;
+		}
+		.points {
+			padding-right: 0;
+		}
+		.rank {
+			padding-left: 0;
+		}
+		span {
+			padding: 8px 16px;
+			display: inline-block;
+			&.movement-positive {
+				padding: 0;
+			}
+		}
+	}
+}

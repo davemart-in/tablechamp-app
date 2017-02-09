@@ -1,0 +1,129 @@
+.players-select {
+  margin-bottom: 20px;
+  margin-top: -4px;
+  overflow: hidden;
+  a {
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: #FFF;
+    border: 1px solid #CCC;
+    border-radius: 1px;
+    box-shadow: none;
+    box-sizing: border-box;
+    color: #29313B;
+    cursor: pointer;
+    display: inline-block;
+    float: left;
+    font-size: 16px;
+    font-weight: normal;
+    height: 40px;
+    line-height: 39px;
+    margin: 1% 0.5% 0 0.5%;
+    padding: 0 1em;
+    outline: none;
+    transition: all 0.1s ease;
+    text-align: center;
+    text-decoration: none;
+    vertical-align: middle;
+    width: 32.3%;
+    -webkit-user-select: none;
+    user-select: none;
+    &:active,
+    &:focus,
+    &:hover {
+      border-color: #67727B;
+      text-decoration: none;
+    }
+    &.is-disabled {
+      cursor: not-allowed;
+      opacity: 0.65;
+      &:hover,
+      &:active, 
+      &:focus {
+        cursor: not-allowed;
+        opacity: 0.65;
+      }
+    }
+    &.selected {
+      background-color: #515983;
+      border: 1px solid #515983;
+      color: #fff;
+    }
+  }
+}
+
+.t1, .t2 {
+  float: left;
+  text-align: center;
+  vertical-align: top;
+  width: 50%;
+  .decrement {
+    float: right;
+    margin: 0 70px 0 0;
+    position: relative;
+    z-index: 2;
+  }
+  .increment {
+    float: left;
+    margin: 0 0 0 70px;
+    position: relative;
+    z-index: 2;
+  }
+  .score {
+    text-align: center;
+    a {
+      -webkit-appearance: none;
+      appearance: none;
+      background-color: #F9F9F9;
+      border: 1px solid #CCC;
+      border-radius: 1px;
+      box-shadow: none;
+      color: #29313B;
+      cursor: pointer;
+      display: block;
+      font-size: 16px;
+      font-weight: normal;
+      height: 32px;
+      line-height: 30px;
+      margin: 1% 1% 8px 0;
+      outline: none;
+      overflow: hidden;
+      transition: all 0.1s ease;
+      text-align: center;
+      text-decoration: none;
+      vertical-align: middle;
+      width: 60px;
+      -webkit-user-select: none;
+      user-select: none;
+      &:active,
+      &:focus,
+      &:hover {
+        border-color: #67727B;
+        text-decoration: none;
+      }
+    }
+    strong {
+      color: #1C2242;
+      font-size: 120px;
+      font-weight: 300;
+      line-height: 90px;
+      position: relative;
+      top: 10px;
+      -webkit-font-smoothing: antialiased;
+    }
+  }
+  section {
+    background: #FFF;
+    border: 1px solid #E5E5E5;
+    border-radius: 1px;
+    padding: 20px 20px 30px;
+  }
+  strong {
+    color: #6E7286;
+    display: block;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+}
+.t1 section { margin-right: 9px; }
+.t2 section { margin-left: 9px; }

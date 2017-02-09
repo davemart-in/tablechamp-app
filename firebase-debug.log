@@ -1,0 +1,105 @@
+[debug] ----------------------------------------------------------------------
+[debug] Command:      node /usr/local/bin/firebase serve
+[debug] CLI Version:  3.0.7
+[debug] Platform:     darwin
+[debug] Node Version: v0.10.32
+[debug] Time:         Tue Jan 17 2017 06:04:41 GMT-0500 (EST)
+[debug] ----------------------------------------------------------------------
+[debug] 
+[warn] ⚠  Deprecation Warning: Firebase Hosting configuration should be moved under "hosting" key.
+[info] Starting Firebase development server...
+[info] 
+[info] Project Directory: /Users/davem/Sites/electron/electron-quick-start
+[warn] ⚠  Port 5000 is not available. Trying another port...
+[info] 
+[info] Server listening at: http://localhost:5001
+[debug] ----------------------------------------------------------------------
+[debug] Command:      node /usr/local/bin/firebase serve
+[debug] CLI Version:  3.2.1
+[debug] Platform:     darwin
+[debug] Node Version: v0.10.32
+[debug] Time:         Tue Jan 17 2017 06:05:39 GMT-0500 (EST)
+[debug] ----------------------------------------------------------------------
+[debug] 
+[warn] ⚠  Deprecation Warning: Firebase Hosting configuration should be moved under "hosting" key.
+[info] Starting Firebase development server...
+[info] 
+[info] Project Directory: /Users/davem/Sites/electron/electron-quick-start
+[warn] ⚠  Port 5000 is not available. Trying another port...
+[warn] ⚠  Port 5001 is not available. Trying another port...
+[info] 
+[info] Server listening at: http://localhost:5002
+[debug] ----------------------------------------------------------------------
+[debug] Command:      node /usr/local/bin/firebase serve
+[debug] CLI Version:  3.2.1
+[debug] Platform:     darwin
+[debug] Node Version: v0.10.32
+[debug] Time:         Mon Jan 30 2017 06:01:48 GMT-0500 (EST)
+[debug] ----------------------------------------------------------------------
+[debug] 
+[warn] ⚠  Deprecation Warning: Firebase Hosting configuration should be moved under "hosting" key.
+[info] Starting Firebase development server...
+[info] 
+[info] Project Directory: /Users/davem/Sites/electron/electron-quick-start
+[warn] ⚠  Port 5000 is not available. Trying another port...
+[warn] ⚠  Port 5001 is not available. Trying another port...
+[warn] ⚠  Port 5002 is not available. Trying another port...
+[info] 
+[info] Server listening at: http://localhost:5003
+[debug] ----------------------------------------------------------------------
+[debug] Command:      node /usr/local/bin/firebase serve
+[debug] CLI Version:  3.2.1
+[debug] Platform:     darwin
+[debug] Node Version: v0.10.32
+[debug] Time:         Wed Feb 01 2017 06:36:01 GMT-0500 (EST)
+[debug] ----------------------------------------------------------------------
+[debug] 
+[warn] ⚠  Deprecation Warning: Firebase Hosting configuration should be moved under "hosting" key.
+[info] Starting Firebase development server...
+[info] 
+[info] Project Directory: /Users/davem/Sites/electron/electron-quick-start
+[warn] ⚠  Port 5000 is not available. Trying another port...
+[warn] ⚠  Port 5001 is not available. Trying another port...
+[warn] ⚠  Port 5002 is not available. Trying another port...
+[warn] ⚠  Port 5003 is not available. Trying another port...
+[info] 
+[info] Server listening at: http://localhost:5004
+[debug] ----------------------------------------------------------------------
+[debug] Command:      node /usr/local/bin/firebase serve
+[debug] CLI Version:  3.2.1
+[debug] Platform:     darwin
+[debug] Node Version: v0.10.32
+[debug] Time:         Sat Feb 04 2017 12:18:16 GMT-0500 (EST)
+[debug] ----------------------------------------------------------------------
+[debug] 
+[warn] ⚠  Deprecation Warning: Firebase Hosting configuration should be moved under "hosting" key.
+[info] Starting Firebase development server...
+[info] 
+[info] Project Directory: /Users/davem/Sites/electron/electron-quick-start
+[warn] ⚠  Port 5000 is not available. Trying another port...
+[warn] ⚠  Port 5001 is not available. Trying another port...
+[warn] ⚠  Port 5002 is not available. Trying another port...
+[warn] ⚠  Port 5003 is not available. Trying another port...
+[warn] ⚠  Port 5004 is not available. Trying another port...
+[info] 
+[info] Server listening at: http://localhost:5005
+[debug] ----------------------------------------------------------------------
+[debug] Command:      node /usr/local/bin/firebase serve
+[debug] CLI Version:  3.2.1
+[debug] Platform:     darwin
+[debug] Node Version: v0.10.32
+[debug] Time:         Thu Feb 09 2017 05:53:08 GMT-0500 (EST)
+[debug] ----------------------------------------------------------------------
+[debug] 
+[warn] ⚠  Deprecation Warning: Firebase Hosting configuration should be moved under "hosting" key.
+[info] Starting Firebase development server...
+[info] 
+[info] Project Directory: /Users/davem/Sites/TableChamp.com/app/tablechamp-app
+[warn] ⚠  Port 5000 is not available. Trying another port...
+[warn] ⚠  Port 5001 is not available. Trying another port...
+[warn] ⚠  Port 5002 is not available. Trying another port...
+[warn] ⚠  Port 5003 is not available. Trying another port...
+[warn] ⚠  Port 5004 is not available. Trying another port...
+[warn] ⚠  Port 5005 is not available. Trying another port...
+[info] 
+[info] Server listening at: http://localhost:5006

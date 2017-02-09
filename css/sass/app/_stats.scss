@@ -1,0 +1,55 @@
+.stats-player {
+	width: 100%;
+	td {
+		padding: 5px;
+		text-align: center;
+	}
+	th {
+		color: #666;
+		font-weight: bold;
+		padding: 5px;
+	}
+	.table-header th {
+		text-align: center;
+	}
+}
+.stats-player-container {
+	background: #FFF;
+	border: 1px solid #E5E5E5;
+	border-radius: 1px;
+	float: left;
+	padding: 16px;
+	width: 38%;
+}
+.stats-player-games {
+	background: #FFF;
+	border: 1px solid #E5E5E5;
+	float: right;
+	padding: 16px 20px;
+	width: 60%;
+	li {
+		line-height: 30px;
+		list-style: none;
+		margin-bottom: 8px;
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+	strong {
+		border-radius: 1px;
+		margin-right: 6px;
+		padding: 2px 6px;
+		&.Lost {
+			border: 1px solid #8F9EAB;
+			color: #67727B;
+		}
+		&.Won {
+			background: #67727B;
+			color: #FFF;
+		}
+	}
+	ul {
+		margin: 0;
+		padding: 0;
+	}
+}
