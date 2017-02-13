@@ -51,6 +51,7 @@ var i18n = {
 			"gameFoosball" : "Bordfodbold",
 			"gameShuffleboard" : "Shuffleboard",
 			"gameTableTennis" : "Bordtennis",
+			"language" : "Sprog",
 			"orgName" : "Hvad er navnet på din organisation",
 			"whatGame" : "Hvad spil vil du spille"
 		},

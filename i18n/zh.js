@@ -51,6 +51,7 @@ var i18n = {
 			"gameFoosball" : "桌上足球",
 			"gameShuffleboard" : "沙狐球",
 			"gameTableTennis" : "乒乓球",
+			"language" : "語言",
 			"orgName" : "您的組織的名稱是什麼",
 			"whatGame" : "你會玩什麼遊戲"
 		},

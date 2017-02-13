@@ -51,6 +51,7 @@ var i18n = {
 			"gameFoosball" : "Pebolim",
 			"gameShuffleboard" : "Shuffleboard",
 			"gameTableTennis" : "Tênis de mesa",
+			"language" : "Língua",
 			"orgName" : "Qual é o nome da sua organização",
 			"whatGame" : "Qual jogo você vai estar jogando"
 		},
