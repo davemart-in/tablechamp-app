@@ -113,6 +113,11 @@ body {
       border-color: #57D3C3;
       color: #FFF;
       text-decoration: none; }
+  .login .errors {
+    color: #E52F28;
+    display: none; }
+    .login .errors.show {
+      display: block; }
   .login form {
     overflow: auto;
     resize: vertical; }

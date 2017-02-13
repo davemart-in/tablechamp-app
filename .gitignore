@@ -4,3 +4,6 @@ js/source
 package.json
 npm-debug.log
 main.js
+.sass-cache
+*.map
+*.scss
