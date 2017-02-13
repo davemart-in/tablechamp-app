@@ -92,6 +92,7 @@
 /* ---------------------------------------- */
 body {
   background: #1C2242;
+  font-family: "Libre Franklin", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
   text-align: center; }
 
 .login {
@@ -114,8 +115,9 @@ body {
       color: #FFF;
       text-decoration: none; }
   .login .errors {
-    color: #E52F28;
-    display: none; }
+    color: #FFE8B5;
+    display: none;
+    margin-bottom: 13px; }
     .login .errors.show {
       display: block; }
   .login form {
