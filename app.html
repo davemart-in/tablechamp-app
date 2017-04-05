@@ -15,9 +15,6 @@
 			<header></header>
 			<div class="sidebar-menu"></div>
 			<div class="sidebar-body"></div>
-			<div class="sidebar-ad">
-				Ads will rotate through this spot
-			</div>
 		</div>
 	</div>
 	<div class="app">
@@ -41,6 +38,7 @@
 	<script src="js/firebase.3.6.5.js"></script>
 	<script type="text/javascript" src="js/iris.min.js"></script>
 	<script type="text/javascript" src="js/app.min.js"></script>
+	<!--<script type="text/javascript" src="js/source/tablechamp.js"></script>-->
 	<!-- JS Templates -->
 	<script type="text/html" id="appHeader">
 		<a href="#" class="c-button c-button--md c-button--primary right add-score"><%=addScore%></a>
@@ -89,7 +87,6 @@
 						<strong><%=teamOnePlayers%>:</strong>
 						<div class="players-select t1-players"></div>
 						<strong><%=teamOneScore%>:</strong>
-						<input type="hidden" class="t1-score" value="0">
 						<div class="score">
 							<div class="decrement">
 								<a href="#" data-team="1" data-amount="1" data-type="-">-1</a>
@@ -101,7 +98,7 @@
 								<a href="#" data-team="1" data-amount="5" data-type="+">+5</a>
 								<a href="#" data-team="1" data-amount="10" data-type="+">+10</a>
 							</div>
-							<strong>0</strong>
+							<input type="text" class="t1-score" value="0"/>
 						</div>
 					</section>
 				</div>
@@ -110,7 +107,6 @@
 						<strong><%=teamTwoPlayers%>:</strong>
 						<div class="players-select t2-players"></div>
 						<strong><%=teamTwoScore%>:</strong>
-						<input type="hidden" class="t2-score" value="0">
 						<div class="score">
 							<div class="decrement">
 								<a href="#" data-team="2" data-amount="1" data-type="-">-1</a>
@@ -122,7 +118,7 @@
 								<a href="#" data-team="2" data-amount="5" data-type="+">+5</a>
 								<a href="#" data-team="2" data-amount="10" data-type="+">+10</a>
 							</div>
-							<strong>0</strong>
+							<input type="text" class="t2-score" value="0"/>
 						</div>
 					</section>
 				</div>

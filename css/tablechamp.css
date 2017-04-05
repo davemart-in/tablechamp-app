@@ -507,6 +507,7 @@ body {
   .app header .header-block {
     display: inline-block; }
   .app header .name {
+    cursor: pointer;
     display: inline-block;
     float: left;
     margin-left: 6px;
@@ -799,14 +800,15 @@ body {
       .t1 .score a:active, .t1 .score a:focus, .t1 .score a:hover, .t2 .score a:active, .t2 .score a:focus, .t2 .score a:hover {
         border-color: #67727B;
         text-decoration: none; }
-    .t1 .score strong, .t2 .score strong {
+    .t1 .score input, .t2 .score input {
       color: #1C2242;
-      font-size: 120px;
+      font-size: 90px;
       font-weight: 300;
       line-height: 90px;
       position: relative;
-      top: 10px;
-      -webkit-font-smoothing: antialiased; }
+      text-align: center;
+      -webkit-font-smoothing: antialiased;
+      width: 140px; }
   .t1 section, .t2 section {
     background: #FFF;
     border: 1px solid #E5E5E5;
@@ -989,17 +991,6 @@ body {
       margin-right: 8px; }
     .sidebar section textarea {
       padding: 3px; }
-  .sidebar .sidebar-ad {
-    background: #FFF;
-    border-top: 1px solid #ddd;
-    color: #BBB;
-    display: table-row;
-    height: 250px;
-    line-height: 15;
-    margin: 0 auto;
-    width: 100%;
-    text-align: center;
-    vertical-align: bottom; }
   .sidebar .sidebar-container {
     border-collapse: collapse;
     display: table;
@@ -1136,15 +1127,12 @@ body.ru .sidebar .sidebar-menu a {
     margin: 1% 1% 0 1%;
     width: 98%; }
 
-  .t1, .t2 {
-    float: none;
-    width: 100%; }
-    .t1 .decrement,
-    .t1 .increment, .t2 .decrement,
-    .t2 .increment {
-      margin: 0; }
-    .t1 section, .t2 section {
-      margin: 0; }
+  .t1 .decrement,
+  .t1 .increment, .t2 .decrement,
+  .t2 .increment {
+    display: none; }
+  .t1 section, .t2 section {
+    margin: 0; }
 
   .t1 section {
     margin-bottom: 13px; } }
@@ -1179,16 +1167,22 @@ body.ru .sidebar .sidebar-menu a {
   .show-sidebar .sidebar {
     right: 0;
     width: auto; } }
-@media only screen and (max-width: 640px) {
+@media only screen and (max-width: 768px) {
+  .players-select a {
+    width: 48.6%; } }
+@media only screen and (max-width: 540px) {
   .players-select a {
     width: 48%; }
 
-  .t1 .decrement,
-  .t1 .increment, .t2 .decrement,
-  .t2 .increment {
-    margin: 0; }
-  .t1 section, .t2 section {
-    margin: 0; }
+  .t1, .t2 {
+    float: none;
+    width: 100%; }
+    .t1 .decrement,
+    .t1 .increment, .t2 .decrement,
+    .t2 .increment {
+      margin: 0; }
+    .t1 section, .t2 section {
+      margin: 0; }
 
   .t1 section {
     margin-bottom: 13px; } }

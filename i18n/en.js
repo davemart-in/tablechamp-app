@@ -8,7 +8,7 @@ var i18n = {
 			"singles" : "Singles"
 		},
 		"global" : {
-			"nextButton" : "Next"
+			"nextButton" : "Next tab"
 		},
 		"loader" : {
 			"loading" : "Loading"
@@ -60,7 +60,7 @@ var i18n = {
 			"primaryBackground" : "Primary background",
 			"primaryButton" : "Primary button",
 			"primaryText" : "Primary text",
-			"resetColors" : "Reset colors",
+			"resetColors" : "Reset to default colors",
 			"secondaryBackground" : "Secondary background",
 			"secondaryText" : "Secondary text"
 		},
