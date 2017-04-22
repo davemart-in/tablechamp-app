@@ -1,6 +1,5 @@
 .DS_Store
 node_modules
-js/source
 package.json
 npm-debug.log
 main.js
