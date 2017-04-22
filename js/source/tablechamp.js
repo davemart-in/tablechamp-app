@@ -35,9 +35,9 @@
     $(window).load(function(){
         // Load FireBase Settings
         var config = {
-            apiKey: fbcs.apiKey,
-            authDomain: fbcs.authDomain,
-            databaseURL: fbcs.databaseURL
+            apiKey: cs.apiKey,
+            authDomain: cs.authDomain,
+            databaseURL: cs.databaseURL
         };
         firebase.initializeApp(config);
         auth = firebase.auth();
@@ -531,10 +531,18 @@
                     var t1 = localData.playersByKey[lastTwentyGamesData[i].t1p1].name || '';
                     var t2 = localData.playersByKey[lastTwentyGamesData[i].t2p1].name || '';
                     if (lastTwentyGamesData[i].t1p2) {
-                        t1 += ' & ' + localData.playersByKey[lastTwentyGamesData[i].t1p2].name;
+                        if (!localData.playersByKey[lastTwentyGamesData[i].t1p2]) {
+                            continue;
+                        }
+                        var t1p2 = localData.playersByKey[lastTwentyGamesData[i].t1p2].name || '';
+                        t1 += ' & ' + t1p2;
                     }
                     if (lastTwentyGamesData[i].t2p2) {
-                        t2 += ' & ' + localData.playersByKey[lastTwentyGamesData[i].t2p2].name;
+                        if (!localData.playersByKey[lastTwentyGamesData[i].t2p2]) {
+                            continue;
+                        }
+                        var t2p2 = localData.playersByKey[lastTwentyGamesData[i].t2p2].name || '';
+                        t2 += ' & ' + t2p2;
                     }
                     // Piece it all together
                     lastTwentyGames += tmpl('statsPlayerGames', {
