@@ -1314,7 +1314,7 @@
         });
         // Reset colors
         $('.reset-colors').off('click').on('click', function() {
-            if (confirm('Reset to default colors?')) {
+            if (confirm(i18n.app.settingsColors.resetColors + '?')) {
                 fbdb.ref('/settings/appColors/').remove().then(function() {
                     sidebarInitColor();
                 });
