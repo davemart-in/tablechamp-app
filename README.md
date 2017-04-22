@@ -29,7 +29,7 @@ TableChamp is written entirely in JS/HTML/CSS. There is no back-end code (like p
 
 ### 1) You'll need a hosting account for the JS/HTML/CSS files
 
-*NOTE: you can run a FireBase app locally, but you'll need to follow ![these instructions](https://firebase.google.com/docs/cli/) to get set up with FireBase CLI.*
+*NOTE: you can run a FireBase app locally, but you'll need to follow [these instructions](https://firebase.google.com/docs/cli/) to get set up with FireBase CLI.*
 
 Just clone this entire project to your server. Once you've done that, move on to step 2.
 
@@ -37,7 +37,7 @@ Just clone this entire project to your server. Once you've done that, move on to
 
 ![FireBase Account Signup](https://d2ppvlu71ri8gs.cloudfront.net/items/3E3q1u2U3y1r2t0O1C0b/onboarding-step-1.png)
 
-Even if you have a large team, the ![free FireBase account](https://firebase.google.com/pricing/) should offer plenty of resources. 
+Even if you have a large team, the [free FireBase account](https://firebase.google.com/pricing/) should offer plenty of resources. 
 
 Once you've signed up for a free FireBase account, move on to the next step.
 
