@@ -7,19 +7,19 @@ Track each ping pong, pool, foosball, air hockey, or shuffleboard game that's pl
 
 With TableChamp, you can add players, track every game that is played, and always know who's #1.
 
-![Adding a Score](http://tablechamp.com/img/13.png)
+![Adding a Score](http://tablechamp.com/img/13.gif)
 
 You can view stats on each player, including their 20 most recent games:
 
-![View Stats](http://tablechamp.com/img/12.png)
+![View Stats](http://tablechamp.com/img/12.gif)
 
 You can manage all of the settings of the app in one convenient sidebar:
 
-![Edit Settings](http://tablechamp.com/img/11.png)
+![Edit Settings](http://tablechamp.com/img/11.gif)
 
 You can even select from one of 14 languages:
 
-![Translated into 14 languages](http://tablechamp.com/img/10.png)
+![Translated into 14 languages](http://tablechamp.com/img/10.gif)
 
 ## How does it work?
 
@@ -77,7 +77,7 @@ FireBase handles storing all of your data, as well as authentication. We'll need
 
 *NOTE: Users are separate from players. Users are set up in the FireBase admin, and have an email & password attached to them so that you can log in. Players are managed from the settings section once you've logged into your app.*
 
-![Set up your first user](http://tablechamp.com/img/7.png)
+![Set up your first user](http://tablechamp.com/img/7.gif)
 
 All you need to enter to set up a user is an email, and a password.
 
