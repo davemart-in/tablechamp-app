@@ -83,7 +83,30 @@ All you need to enter to set up a user is an email, and a password.
 
 Once you've added your first user, continue to the next step.
 
-### 6) Login, and add your players
+### 6) Create a database instance
+
+From your FireBase console, click into the Database section:
+
+![DB creation](http://tablechamp.com/img/db1.png)
+
+Create a new "Real-time database" (not a Firestore DB - note: they try and get you to create a Firestore DB by default).
+
+Once you've created your real-time DB, you'll need to change the security rules. Click the "Rules" tab and and replace what's there with the following:
+
+```
+{
+  "rules": {
+    ".read": true,
+    ".write": true
+  }
+}
+```
+
+Here's what it should look like:
+
+![DB creation](http://tablechamp.com/img/db2.png)
+
+### 7) Login, and add your players
 
 Now you can log into your app for the first time. Go to the index.html file (wherever it's being hosted from step 1 above). You should see:
 
