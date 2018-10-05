@@ -57,7 +57,8 @@
         initSettingsListener();
         initPlayersListener();
         initOfflineDetect();
-        sidebarInit();
+        sidebarInit();        
+        setViewToDoubles();
     }
     function initHeader() {
         $('.app header').html(tmpl('appHeader', {
@@ -1425,5 +1426,9 @@
         } else {
             sidebarShow();
         }
+    }
+    function setViewToDoubles()
+    {
+        $('.doubles-toggle').click();
     }
 })(jQuery);
