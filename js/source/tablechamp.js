@@ -520,6 +520,9 @@
                 }
                 // Iterate through array
                 for (var i = 0; i < lastTwentyGamesData.length; i++) {
+                    // Date 
+                    var date = getDateInNiceStringFormat(lastTwentyGamesData[i].dt);
+
                     // Game status
                     var gameStatus = 'Lost';
                     if (lastTwentyGamesData[i].won) {
@@ -547,6 +550,7 @@
                     }
                     // Piece it all together
                     lastTwentyGames += tmpl('statsPlayerGames', {
+                        "date" : date,
                         "status" : gameStatus,
                         "t1" : t1,
                         "t1Score" : lastTwentyGamesData[i].t1_points,
@@ -564,6 +568,14 @@
                 console.log(error)
             });
         });
+    }
+    function getDateInNiceStringFormat(timestamp)
+    {
+        var d = new Date(timestamp);
+        var curr_date = d.getDate();
+        var curr_month = d.getMonth() + 1; //Months are zero based
+        var curr_year = d.getFullYear();
+        return curr_year + "-" + curr_month + "-" + curr_date;
     }
     function rankingMovementStyles(movement) {
         if (movement > 0) {

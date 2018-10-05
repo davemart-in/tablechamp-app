@@ -564,7 +564,7 @@ body {
   cursor: auto;
   left: auto !important;
   margin: 30px auto;
-  max-width: 1024px;
+  max-width: 1500px;
   min-width: 320px;
   opacity: 0;
   outline: 0;
@@ -1095,11 +1095,15 @@ body.ru .sidebar .sidebar-menu a {
   .stats-player-games ul {
     margin: 0;
     padding: 0; }
+    .game_date {
+      font-style: italic;
+      color: #d4d4d4;
+    }
 
 /* ---------------------------------------- */
 /* Mobile
 /* ---------------------------------------- */
-@media only screen and (max-width: 1224px) {
+@media only screen and (max-width: 1400px) {
   .show-sidebar .app header .add-score {
     margin-bottom: 10px; }
   .show-sidebar .app header .c-button {
@@ -1127,6 +1131,16 @@ body.ru .sidebar .sidebar-menu a {
     margin: 1% 1% 0 1%;
     width: 98%; }
 
+  .modal {
+    width: 95%; }
+    .modal .stats-player-container {
+      float: none;
+      margin-bottom: 13px;
+      width: 100%; }
+    .modal .stats-player-games {
+      float: none;
+      width: 100%; }
+
   .t1 .decrement,
   .t1 .increment, .t2 .decrement,
   .t2 .increment {
@@ -1149,16 +1163,6 @@ body.ru .sidebar .sidebar-menu a {
     width: 100%; }
   .app header .name {
     margin-bottom: 13px; }
-
-  .modal {
-    width: 95%; }
-    .modal .stats-player-container {
-      float: none;
-      margin-bottom: 13px;
-      width: 100%; }
-    .modal .stats-player-games {
-      float: none;
-      width: 100%; }
 
   .rankings .ranking {
     margin: 1% 1% 0 1%;
