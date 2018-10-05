@@ -674,6 +674,8 @@ body {
     font-style: italic; }
   .ranking .name {
     font-weight: bold; }
+    .ranking .name .gamesInfo {
+      opacity: 0.5; }
   .ranking .points {
     font-weight: bold;
     min-width: 95px;
@@ -1158,7 +1160,7 @@ body.ru .sidebar .sidebar-menu a {
 
   .t1 section {
     margin-bottom: 13px; } }
-@media only screen and (max-width: 900px) {
+@media only screen and (max-width: 1000px) {
   .app header .add-score {
     margin-bottom: 10px; }
   .app header .c-button {

@@ -450,6 +450,7 @@
                         'key': doublesArray[i].key,
                         'lastMovement': rankingMovementStyles(doublesLastMovement),
                         'name': doublesArray[i].name,
+                        'gamesInfo' : "("+ doublesArray[i].doubles_won + "/" + doublesArray[i].doubles_lost + ")",
                         'points': doublesPoints,
                         'rank': doublesArray[i].doubles_rank,
                         'type': 'doubles',
@@ -460,6 +461,7 @@
                         'key': doublesArray[i].key,
                         'lastMovement': rankingMovementStyles(doublesLastMovement),
                         'name': doublesArray[i].name,
+                        'gamesInfo' : "("+ doublesArray[i].doubles_won + "/" + doublesArray[i].doubles_lost + ")",
                         'points': doublesPoints,
                         'rank': doublesArray[i].doubles_rank,
                         'type': 'doubles',
@@ -622,6 +624,7 @@
                         'lastMovement': rankingMovementStyles(singlesLastMovement),
                         'name': singlesArray[i].name,
                         'points': singlesPoints,
+                        'gamesInfo' : "("+ singlesArray[i].singles_won + "/" + singlesArray[i].singles_lost + ")",
                         'rank': singlesArray[i].singles_rank,
                         'type': 'singles',
                         'pointsClass' : pointsHighlightClass
@@ -632,6 +635,7 @@
                         'lastMovement': rankingMovementStyles(singlesLastMovement),
                         'name': singlesArray[i].name,
                         'points': singlesPoints,
+                        'gamesInfo' : "("+ singlesArray[i].singles_won + "/" + singlesArray[i].singles_lost + ")",
                         'rank': singlesArray[i].singles_rank,
                         'type': 'singles',
                         'pointsClass' : pointsHighlightClass
