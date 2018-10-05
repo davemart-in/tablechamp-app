@@ -664,16 +664,18 @@ body {
   margin: 1% 0 0 1%;
   padding: 16px;
   text-align: left;
-  width: 32%; }
+  width: 32%; 
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+}
   .ranking:focus, .ranking:hover {
     outline: none; }
   .ranking .movement {
     border-radius: 1px;
     font-style: italic; }
   .ranking .name {
-    font-weight: 500; }
+    font-weight: bold; }
   .ranking .points {
-    font-weight: 500;
+    font-weight: bold;
     min-width: 95px;
     padding: 0; }
   .ranking .rank {
@@ -684,6 +686,12 @@ body {
     padding: 0 8px; }
     .ranking span.movement-positive {
       padding: 0; }
+.ranking.badPointsScore {
+  background: #FCC;
+}
+.ranking.greatPointsScore {
+  background: #CFC;
+}
 
 .top-rankings {
   width: 98%;

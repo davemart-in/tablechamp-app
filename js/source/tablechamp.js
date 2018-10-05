@@ -441,6 +441,10 @@
             if (doublesArray[i].status) {
                 var doublesLastMovement = (doublesArray[i].doubles_last_movement) ? doublesArray[i].doubles_last_movement.toFixed(2) : '';
                 var doublesPoints = (doublesArray[i].doubles_points) ? doublesArray[i].doubles_points.toFixed(2) : '';
+                var pointsHighlightClass = "regularPointsScore";
+                if (doublesPoints > 120) pointsHighlightClass = "greatPointsScore";
+                if (doublesPoints < 80) pointsHighlightClass = "badPointsScore";
+
                 if (i < 3) {
                     doublesTopRankings += tmpl('rankingsRow', {
                         'key': doublesArray[i].key,
@@ -448,7 +452,8 @@
                         'name': doublesArray[i].name,
                         'points': doublesPoints,
                         'rank': doublesArray[i].doubles_rank,
-                        'type': 'doubles'
+                        'type': 'doubles',
+                        'pointsClass' : pointsHighlightClass
                     });
                 } else {
                     doublesRankings += tmpl('rankingsRow', {
@@ -457,7 +462,8 @@
                         'name': doublesArray[i].name,
                         'points': doublesPoints,
                         'rank': doublesArray[i].doubles_rank,
-                        'type': 'doubles'
+                        'type': 'doubles',
+                        'pointsClass' : pointsHighlightClass
                     });
                 }
             }
@@ -606,6 +612,10 @@
             if (singlesArray[i].status) {
                 var singlesLastMovement = (singlesArray[i].singles_last_movement) ? singlesArray[i].singles_last_movement.toFixed(2) : '';
                 var singlesPoints = (singlesArray[i].singles_points) ? singlesArray[i].singles_points.toFixed(2) : '';
+                var pointsHighlightClass = "regularPointsScore";
+                if (singlesPoints > 120) pointsHighlightClass = "greatPointsScore";
+                if (singlesPoints < 80) pointsHighlightClass = "badPointsScore";
+                
                 if (i < 3) {
                     singlesTopRankings += tmpl('rankingsRow', {
                         'key': singlesArray[i].key,
@@ -613,7 +623,8 @@
                         'name': singlesArray[i].name,
                         'points': singlesPoints,
                         'rank': singlesArray[i].singles_rank,
-                        'type': 'singles'
+                        'type': 'singles',
+                        'pointsClass' : pointsHighlightClass
                     });
                 } else {
                     singlesRankings += tmpl('rankingsRow', {
@@ -622,7 +633,8 @@
                         'name': singlesArray[i].name,
                         'points': singlesPoints,
                         'rank': singlesArray[i].singles_rank,
-                        'type': 'singles'
+                        'type': 'singles',
+                        'pointsClass' : pointsHighlightClass
                     });
                 }
             }
