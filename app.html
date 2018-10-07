@@ -20,11 +20,9 @@
 	<div class="app">
 		<header></header>
 		<div class="doubles" style="display: none;">
-			<div class="top-rankings"></div>
 			<div class="rankings"></div>
 		</div>
 		<div class="singles">
-			<div class="top-rankings"></div>
 			<div class="rankings"></div>
 		</div>
 	</div>
@@ -66,7 +64,7 @@
 		</tr>
 	</script>
 	<script type="text/html" id="rankingsRow">
-		<div class="ranking <%=pointsClass%>" data-id="<%=key%>" tabindex="0">
+		<div class="<%=top%> ranking <%=pointsClass%>" data-id="<%=key%>" tabindex="0">
 				<span class="rank"><%=rank%></span>
 				<span class="name"><%=name%><span class="gamesInfo"><%=gamesInfo%></span></span>
 			<div class="right">
@@ -307,9 +305,6 @@
   			.c-button:hover,
   			.c-button.is-selected,
   			.ranking,
-  			.top-rankings .movement,
-  			.top-rankings .rank,
-  			.top-rankings .ranking,
   			header .name,
   			.movement-positive { color: <%=c0%> }
 
@@ -324,8 +319,7 @@
 			.ranking:hover { border-color: <%=c2%>; }
 			.ranking .movement,
 			.ranking .rank,
-			header .game-type,
-			.top-rankings .movement span { color: <%=c2%>; }
+			header .game-type { color: <%=c2%>; }
 			.title-bar { background: <%=c2%>; }
 
 			/* Color 3 */

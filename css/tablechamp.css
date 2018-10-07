@@ -695,7 +695,7 @@ body {
   background: #CFC;
 }
 
-.top-rankings {
+/* .top-rankings {
   width: 98%;
   margin: 0 1%; }
   .top-rankings .ranking {
@@ -720,7 +720,7 @@ body {
       padding: 8px 16px;
       display: inline-block; }
       .top-rankings .ranking span.movement-positive {
-        padding: 0; }
+        padding: 0; } */
 
 .players-select {
   margin-bottom: 20px;
