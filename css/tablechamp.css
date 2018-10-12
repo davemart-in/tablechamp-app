@@ -656,7 +656,12 @@ body {
     margin-top: -2px;
     opacity: 0.6; }
 
+.rankings {
+  margin: 0px auto;
+  width: 800px;
+}
 .ranking {
+  position:relative;
   border: 2px solid;
   border-radius: 1px;
   cursor: pointer;
@@ -673,7 +678,8 @@ body {
     border-radius: 1px;
     font-style: italic; }
   .ranking .name {
-    font-weight: bold; }
+    font-weight: bold; 
+    padding-left:23px;}
     .ranking .name .gamesInfo {
       opacity: 0.5; }
   .ranking .points {
@@ -695,32 +701,6 @@ body {
   background: #CFC;
 }
 
-/* .top-rankings {
-  width: 98%;
-  margin: 0 1%; }
-  .top-rankings .ranking {
-    float: none;
-    font-size: 24px;
-    line-height: 24px;
-    margin: 1% 0 0;
-    white-space: nowrap;
-    width: 100%; }
-    .top-rankings .ranking .movement {
-      font-size: 18px;
-      padding-right: 0;
-      position: relative;
-      top: -2px; }
-    .top-rankings .ranking .name {
-      padding-left: 0; }
-    .top-rankings .ranking .points {
-      padding-right: 0; }
-    .top-rankings .ranking .rank {
-      padding-left: 0; }
-    .top-rankings .ranking span {
-      padding: 8px 16px;
-      display: inline-block; }
-      .top-rankings .ranking span.movement-positive {
-        padding: 0; } */
 
 .players-select {
   margin-bottom: 20px;
@@ -1110,10 +1090,32 @@ body.ru .sidebar .sidebar-menu a {
       color: #d4d4d4;
     }
 
+
+.medal
+{ 
+  position:absolute;
+  left:3px;
+  top:4px;
+  padding: 21px;   
+}
+
+.medal.gold, 
+.medal.silver,
+.medal.bronze,
+.medal.crap {  
+  background: url("medal.png?v=2") no-repeat;
+  background-size: 406% 102%;
+  background-position: 0% 0%;
+}
+
+.medal.silver {background-position: 33% 0%;}
+.medal.bronze {background-position: 66% 0%;}
+.medal.crap {background-position: 100% 0%;}
+
 /* ---------------------------------------- */
-/* Mobile
+/* Mobile - extended to be active also on desktop
 /* ---------------------------------------- */
-@media only screen and (max-width: 1400px) {
+@media only screen {
   .show-sidebar .app header .add-score {
     margin-bottom: 10px; }
   .show-sidebar .app header .c-button {
@@ -1159,8 +1161,8 @@ body.ru .sidebar .sidebar-menu a {
     margin: 0; }
 
   .t1 section {
-    margin-bottom: 13px; } }
-@media only screen and (max-width: 1000px) {
+    margin-bottom: 13px; } 
+
   .app header .add-score {
     margin-bottom: 10px; }
   .app header .c-button {
@@ -1181,6 +1183,12 @@ body.ru .sidebar .sidebar-menu a {
   .show-sidebar .sidebar {
     right: 0;
     width: auto; } }
+
+@media only screen and (max-width: 900px) {
+  .rankings {
+    margin: 1% 1% 0 1%;
+    width: 98%; } }
+
 @media only screen and (max-width: 768px) {
   .players-select a {
     width: 48.6%; } }

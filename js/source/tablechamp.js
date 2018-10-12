@@ -435,8 +435,7 @@
     // ---------------------------------------------------
     function doublesRankingsUpdate() {
         var doublesArray = localData.playersByDoubles;
-        var doublesRankings = '';
-        var doublesTopRankings = '';
+        var doublesRankings = '';        
         for (var i = 0; i < doublesArray.length; i++) {
             if (doublesArray[i].status) {
                 var doublesLastMovement = (doublesArray[i].doubles_last_movement) ? doublesArray[i].doubles_last_movement.toFixed(2) : '';
@@ -444,33 +443,27 @@
                 var pointsHighlightClass = "regularPointsScore";
                 if (doublesPoints > 120) pointsHighlightClass = "greatPointsScore";
                 if (doublesPoints < 80) pointsHighlightClass = "badPointsScore";
+                var medal = "";
+                if (i == 0) medal = "gold";
+                if (i == 1) medal = "silver";
+                if (i == 2) medal = "bronze";
+                if (doublesPoints < 50) medal = "crap";
 
-                if (i < 3) {
-                    doublesTopRankings += tmpl('rankingsRow', {
-                        'key': doublesArray[i].key,
-                        'lastMovement': rankingMovementStyles(doublesLastMovement),
-                        'name': doublesArray[i].name,
-                        'gamesInfo' : "("+ doublesArray[i].doubles_won + "/" + doublesArray[i].doubles_lost + ")",
-                        'points': doublesPoints,
-                        'rank': doublesArray[i].doubles_rank,
-                        'type': 'doubles',
-                        'pointsClass' : pointsHighlightClass
-                    });
-                } else {
-                    doublesRankings += tmpl('rankingsRow', {
-                        'key': doublesArray[i].key,
-                        'lastMovement': rankingMovementStyles(doublesLastMovement),
-                        'name': doublesArray[i].name,
-                        'gamesInfo' : "("+ doublesArray[i].doubles_won + "/" + doublesArray[i].doubles_lost + ")",
-                        'points': doublesPoints,
-                        'rank': doublesArray[i].doubles_rank,
-                        'type': 'doubles',
-                        'pointsClass' : pointsHighlightClass
-                    });
-                }
+                doublesRankings += tmpl('rankingsRow', {
+                    'key': doublesArray[i].key,
+                    'lastMovement': rankingMovementStyles(doublesLastMovement),
+                    'name': doublesArray[i].name,
+                    'points': doublesPoints,
+                    'gamesInfo' : "("+ doublesArray[i].doubles_won + "/" + doublesArray[i].doubles_lost + ")",
+                    'rank': doublesArray[i].doubles_rank,
+                    'type': 'doubles',
+                    'pointsClass' : pointsHighlightClass,
+                    'medal' : medal,
+                    'top' :  (i < 3)? 'top':'standard'
+                });
             }
         }
-        $('.doubles .top-rankings').html(doublesTopRankings);
+        
         $('.doubles .rankings').html(doublesRankings);
     }
     function rankingsEvents() {
@@ -609,7 +602,6 @@
     function singlesRankingsUpdate() {
         var singlesArray = localData.playersBySingles;
         var singlesRankings = '';
-        var singlesTopRankings = '';
         for (var i = 0; i < singlesArray.length; i++) {
             if (singlesArray[i].status) {
                 var singlesLastMovement = (singlesArray[i].singles_last_movement) ? singlesArray[i].singles_last_movement.toFixed(2) : '';
@@ -617,33 +609,23 @@
                 var pointsHighlightClass = "regularPointsScore";
                 if (singlesPoints > 120) pointsHighlightClass = "greatPointsScore";
                 if (singlesPoints < 80) pointsHighlightClass = "badPointsScore";
-                
-                if (i < 3) {
-                    singlesTopRankings += tmpl('rankingsRow', {
-                        'key': singlesArray[i].key,
-                        'lastMovement': rankingMovementStyles(singlesLastMovement),
-                        'name': singlesArray[i].name,
-                        'points': singlesPoints,
-                        'gamesInfo' : "("+ singlesArray[i].singles_won + "/" + singlesArray[i].singles_lost + ")",
-                        'rank': singlesArray[i].singles_rank,
-                        'type': 'singles',
-                        'pointsClass' : pointsHighlightClass
-                    });
-                } else {
-                    singlesRankings += tmpl('rankingsRow', {
-                        'key': singlesArray[i].key,
-                        'lastMovement': rankingMovementStyles(singlesLastMovement),
-                        'name': singlesArray[i].name,
-                        'points': singlesPoints,
-                        'gamesInfo' : "("+ singlesArray[i].singles_won + "/" + singlesArray[i].singles_lost + ")",
-                        'rank': singlesArray[i].singles_rank,
-                        'type': 'singles',
-                        'pointsClass' : pointsHighlightClass
-                    });
-                }
+                var medal = "";
+
+                singlesRankings += tmpl('rankingsRow', {
+                    'key': singlesArray[i].key,
+                    'lastMovement': rankingMovementStyles(singlesLastMovement),
+                    'name': singlesArray[i].name,
+                    'points': singlesPoints,
+                    'gamesInfo' : "("+ singlesArray[i].singles_won + "/" + singlesArray[i].singles_lost + ")",
+                    'rank': singlesArray[i].singles_rank,
+                    'type': 'singles',
+                    'medal' : medal,
+                    'pointsClass' : pointsHighlightClass,
+                    'top' :  (i < 3)? 'top':'standard'
+                });               
             }
         }
-        $('.singles .top-rankings').html(singlesTopRankings);
+
         $('.singles .rankings').html(singlesRankings);
     }
     // ---------------------------------------------------
