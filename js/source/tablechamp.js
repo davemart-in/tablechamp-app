@@ -58,15 +58,14 @@
         initPlayersListener();
         initOfflineDetect();
         sidebarInit();        
-        setViewToDoubles();
+        renderHistoricalGames();
     }
     function initHeader() {
         $('.app header').html(tmpl('appHeader', {
             "addScore" : i18n.app.appHeader.addScore,
             "doubles" : i18n.app.appHeader.doubles,
             "logOut" : i18n.app.appHeader.logOut,
-            "settings" : i18n.app.appHeader.settings,
-            "singles" : i18n.app.appHeader.singles
+            "settings" : i18n.app.appHeader.settings
         }));
         $('.app .name').on('click', function() {
             sidebarShow();
@@ -104,6 +103,7 @@
         });
         // Add Score
         $('.add-score').on('click', function() {
+        
             // Hide sidebar if it's showing
             $('body').removeClass('show-sidebar');
             // Show stats modal
@@ -162,7 +162,7 @@
             // Update doubles rankings
             doublesRankingsUpdate();
             // Update singles rankings
-            singlesRankingsUpdate();
+            // singlesRankingsUpdate();
             // Rankings events
             rankingsEvents();
         });
@@ -441,13 +441,12 @@
                 var doublesLastMovement = (doublesArray[i].doubles_last_movement) ? doublesArray[i].doubles_last_movement.toFixed(2) : '';
                 var doublesPoints = (doublesArray[i].doubles_points) ? doublesArray[i].doubles_points.toFixed(2) : '';
                 var pointsHighlightClass = "regularPointsScore";
+  
                 if (doublesPoints > 120) pointsHighlightClass = "greatPointsScore";
-                if (doublesPoints < 80) pointsHighlightClass = "badPointsScore";
-                var medal = "";
-                if (i == 0) medal = "gold";
-                if (i == 1) medal = "silver";
-                if (i == 2) medal = "bronze";
-                if (doublesPoints < 50) medal = "crap";
+                else if (doublesPoints < 80) pointsHighlightClass = "badPointsScore";
+
+                var medal = medalSelector(i,doublesPoints);
+                var rankingStatus = (doublesArray[i].doubles_lost + doublesArray[i].doubles_won < 10)? "unranked" : "";
 
                 doublesRankings += tmpl('rankingsRow', {
                     'key': doublesArray[i].key,
@@ -459,12 +458,29 @@
                     'type': 'doubles',
                     'pointsClass' : pointsHighlightClass,
                     'medal' : medal,
-                    'top' :  (i < 3)? 'top':'standard'
+                    'top' :  (i < 3)? "top":"standard",
+                    'rankingStatus' : rankingStatus
                 });
             }
         }
         
         $('.doubles .rankings').html(doublesRankings);
+    }
+    function medalSelector(index, points)
+    {
+        if (points < 50)
+            return "crap";
+            
+        switch(index){
+            case 0: 
+                return "gold";
+            case 1: 
+                return "silver";
+            case 2: 
+                return "bronze";
+        }
+
+        return "";
     }
     function rankingsEvents() {
         // Show stats
@@ -570,6 +586,55 @@
             });
         });
     }
+    function renderHistoricalGames() {        
+            
+            // Games stats
+            var lastTwentyGames = '';
+            var lastTwentyGamesData = [];
+            var history = {};
+            fbdb.ref('/history/').on('value',function(snapshot) {
+                history = snapshot.val();
+                // To array
+                for (var key in history) {
+                    lastTwentyGamesData.unshift({
+                        "dt" : history[key].dt,
+                        "t1p1" : history[key].t1p1,
+                        "t1p2" : history[key].t1p2,
+                        "t2p1" : history[key].t2p1,
+                        "t2p2" : history[key].t2p2,
+                        "t1_points" : history[key].t1_points,
+                        "t2_points" : history[key].t2_points
+                    });
+                }
+                // Iterate through array
+                for (var i = 0; i < lastTwentyGamesData.length; i++) {
+                    // Date 
+                    var date = getDateInNiceStringFormat(lastTwentyGamesData[i].dt);
+                    
+                    // Players
+                    var t1 = localData.playersByKey[lastTwentyGamesData[i].t1p1].name + '/' + localData.playersByKey[lastTwentyGamesData[i].t1p2].name;
+                    var t2 = localData.playersByKey[lastTwentyGamesData[i].t2p1].name + '/' + localData.playersByKey[lastTwentyGamesData[i].t2p2].name;
+                    
+                    // Piece it all together
+                    lastTwentyGames += tmpl('historicalGame', {
+                        "date" : date,
+                        "t1" : t1,
+                        "t1Score" : lastTwentyGamesData[i].t1_points,
+                        "t2" : t2,
+                        "t2Score" : lastTwentyGamesData[i].t2_points
+                    });
+                }
+                if (!lastTwentyGames) {
+                    lastTwentyGames = '<div>No games have been played yet</div>';
+                }
+                // Add it to the DOM
+                $('.history').html(lastTwentyGames);
+            }).catch(function(error) {
+                console.log('Unable to pull player game history');
+                console.log(error)
+            });
+        
+    }
     function getDateInNiceStringFormat(timestamp)
     {
         var d = new Date(timestamp);
@@ -599,35 +664,7 @@
             doubles.fadeIn();
         }
     }
-    function singlesRankingsUpdate() {
-        var singlesArray = localData.playersBySingles;
-        var singlesRankings = '';
-        for (var i = 0; i < singlesArray.length; i++) {
-            if (singlesArray[i].status) {
-                var singlesLastMovement = (singlesArray[i].singles_last_movement) ? singlesArray[i].singles_last_movement.toFixed(2) : '';
-                var singlesPoints = (singlesArray[i].singles_points) ? singlesArray[i].singles_points.toFixed(2) : '';
-                var pointsHighlightClass = "regularPointsScore";
-                if (singlesPoints > 120) pointsHighlightClass = "greatPointsScore";
-                if (singlesPoints < 80) pointsHighlightClass = "badPointsScore";
-                var medal = "";
-
-                singlesRankings += tmpl('rankingsRow', {
-                    'key': singlesArray[i].key,
-                    'lastMovement': rankingMovementStyles(singlesLastMovement),
-                    'name': singlesArray[i].name,
-                    'points': singlesPoints,
-                    'gamesInfo' : "("+ singlesArray[i].singles_won + "/" + singlesArray[i].singles_lost + ")",
-                    'rank': singlesArray[i].singles_rank,
-                    'type': 'singles',
-                    'medal' : medal,
-                    'pointsClass' : pointsHighlightClass,
-                    'top' :  (i < 3)? 'top':'standard'
-                });               
-            }
-        }
-
-        $('.singles .rankings').html(singlesRankings);
-    }
+    
     // ---------------------------------------------------
     // Scoring
     // ---------------------------------------------------
@@ -872,74 +909,10 @@
             scoringSave('t1p2', 'doubles', t1p2Key, t1p2PointsNew, t1p2LastMovement, t1p2GamesLost, t1p2GamesWon, newGameKey, t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t1Won);
             scoringSave('t2p1', 'doubles', t2p1Key, t2p1PointsNew, t2p1LastMovement, t2p1GamesLost, t2p1GamesWon, newGameKey, t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t2Won);
             scoringSave('t2p2', 'doubles', t2p2Key, t2p2PointsNew, t2p2LastMovement, t2p2GamesLost, t2p2GamesWon, newGameKey, t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t2Won);
+            
+            historyAddGame(t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s);
             // Show doubles rankings
             rankingToggle('doubles');
-        } else { // Singles
-            // New singles player points
-            var t1p1PointsNew = t1rp / decay_factor * [decay_factor - 1] + t1p / decay_factor;
-            var t2p1PointsNew = t2rp / decay_factor * [decay_factor - 1] + t2p / decay_factor;
-            // Update last movements
-            var t1p1LastMovement = t1p1PointsNew - t1rp;
-            var t2p1LastMovement = t2p1PointsNew - t2rp;
-            // Updates games won/lost
-            var t1p1GamesLost = localData.playersByKey[t1p1Key].singles_lost;
-            var t1p1GamesWon = localData.playersByKey[t1p1Key].singles_won;
-            var t2p1GamesLost = localData.playersByKey[t2p1Key].singles_lost;
-            var t2p1GamesWon = localData.playersByKey[t2p1Key].singles_won;
-            var t1Won = false;
-            var t2Won = false;
-            if (parseInt(t1s) > parseInt(t2s)) {
-                t1Won = true;
-                t1p1GamesWon += 1;
-                t2p1GamesLost += 1;
-            } else {
-                t2Won = true;
-                t1p1GamesLost += 1;
-                t2p1GamesWon += 1;
-            }
-            // Cache last game
-            lastGame.players = {
-                'type' : 'singles',
-                'scores' : [
-                    {
-                        'player' : 't1p1',
-                        'key' : t1p1Key,
-                        'pointsNew' : t1p1PointsNew,
-                        'lastMovement' : t1p1LastMovement,
-                        'gamesLost' : t1p1GamesLost,
-                        'gamesWon' : t1p1GamesWon,
-                        'newGameKey' : newGameKey,
-                        't1p1Key' : t1p1Key,
-                        't1p2Key' : '',
-                        't2p1Key' : t2p1Key,
-                        't2p2Key' : '',
-                        't1s' : t1s,
-                        't2s' : t2s,
-                        'won' : t1Won
-                    },
-                    {
-                        'player' : 't2p1',
-                        'key' : t2p1Key,
-                        'pointsNew' : t2p1PointsNew,
-                        'lastMovement' : t2p1LastMovement,
-                        'gamesLost' : t2p1GamesLost,
-                        'gamesWon' : t2p1GamesWon,
-                        'newGameKey' : newGameKey,
-                        't1p1Key' : t1p1Key,
-                        't1p2Key' : '',
-                        't2p1Key' : t2p1Key,
-                        't2p2Key' : '',
-                        't1s' : t1s,
-                        't2s' : t2s,
-                        'won' : t2Won
-                    }
-                ]
-            }
-            // Save "players", and "players_game" data
-            scoringSave('t1p1', 'singles', t1p1Key, t1p1PointsNew, t1p1LastMovement, t1p1GamesLost, t1p1GamesWon, newGameKey, t1p1Key, '', t2p1Key, '', t1s, t2s, t1Won);
-            scoringSave('t2p1', 'singles', t2p1Key, t2p1PointsNew, t2p1LastMovement, t2p1GamesLost, t2p1GamesWon, newGameKey, t1p1Key, '', t2p1Key, '', t1s, t2s, t2Won);
-            // Show singles rankings
-            rankingToggle('singles');
         }
         // Confirmation --------------------
         // Close modal
@@ -966,20 +939,14 @@
             var isChecked = $(this).hasClass('selected');
             $('.t1-players a[data-id="' + thisKey + '"]').toggleClass('is-disabled', isChecked);
         });
-        // Decrements, Increment
-        $('.decrement a, .increment a').off('click').on('click', function() {
+        //Increment
+        $('.increment a').off('click').on('click', function() {
             var $this = $(this);
             var amount = $this.data('amount');
             var team = $this.data('team');
             var teamScore = $('.t' + team + '-score');
-            var teamScoreValue = parseInt(teamScore.val());
-            var teamScoreValueNew = ($this.data('type') === '+') ? teamScoreValue + parseInt(amount) : teamScoreValue - parseInt(amount);
-            if (teamScoreValueNew < 0) {
-                teamScoreValueNew = 0;
-            }
-            if (teamScoreValueNew > 40) {
-                teamScoreValueNew = 40;
-            }
+            var teamScoreValueNew = parseInt(amount);
+            
             teamScore.val(teamScoreValueNew);
             return false;
         });
@@ -1059,6 +1026,28 @@
             console.log('Failed to add new players game');
         });
     }
+
+    function historyAddGame(t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s) {
+        
+        // Save "players_game" data
+        var newGamesHistoryData = { 
+            "dt": Date.now(),
+            "t1p1": t1p1Key,
+            "t1p2": t1p2Key,
+            "t2p1": t2p1Key,
+            "t2p2": t2p2Key,
+            "t1_points": t1s,
+            "t2_points": t2s,
+        };
+
+        var newGamesHistoryKey = fbdb.ref().child('history').push().key;
+        
+        var dbGamesHistory = fbdb.ref('/history/' + newGamesHistoryKey);
+        dbGamesHistory.set(newGamesHistoryData).catch(function(error) {
+            console.log('Failed to add game to the history');
+        });
+    }
+
     function scoringUndo(player, type, key, points, movement, lost, won) {
         // Update player stats
         var playersData = {}
@@ -1437,8 +1426,5 @@
             sidebarShow();
         }
     }
-    function setViewToDoubles()
-    {
-        $('.doubles-toggle').click();
-    }
+    
 })(jQuery);

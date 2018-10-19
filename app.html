@@ -19,11 +19,10 @@
 	</div>
 	<div class="app">
 		<header></header>
-		<div class="doubles" style="display: none;">
+		<div class="doubles">
 			<div class="rankings"></div>
 		</div>
-		<div class="singles">
-			<div class="rankings"></div>
+		<div class="history">
 		</div>
 	</div>
 	<div class="modal-backdrop show">
@@ -45,8 +44,7 @@
 			<span class="game-type"></span>
 		</div>
 		<div class="header-block">
-			<a href="#" class="singles-toggle ranking-toggle c-button c-button--md is-selected" tabindex="-1" data-view="singles"><%=singles%></a>
-			<a href="#" class="doubles-toggle ranking-toggle c-button c-button--md" data-view="doubles"><%=doubles%></a>
+			<a href="#" class="doubles-toggle ranking-toggle c-button c-button--md is-selected" data-view="doubles"><%=doubles%></a>
 			<a href="#" class="c-button c-button--link settings"><%=settings%></a>
 			<a href="#" class="c-button c-button--link logout"><%=logOut%></a>
 		</div>
@@ -64,10 +62,10 @@
 		</tr>
 	</script>
 	<script type="text/html" id="rankingsRow">
-		<div class="<%=top%> ranking <%=pointsClass%>" data-id="<%=key%>" tabindex="0">
+		<div class="ranking <%=pointsClass%> <%=rankingStatus%>" data-id="<%=key%>" tabindex="0">
 				<div class="medal <%=medal%>"></div>
 				<span class="rank"><%=rank%></span>
-				<span class="name"><%=name%><span class="gamesInfo"><%=gamesInfo%></span></span>
+				<span class="name"><%=name%><span class="gamesInfo"><%=gamesInfo%> <%=rankingStatus%></span></span>
 			<div class="right">
 				<span class="movement"><%=lastMovement%></span>
 				<span class="points"><%=points%></span>
@@ -87,15 +85,10 @@
 						<div class="players-select t1-players"></div>
 						<strong><%=teamOneScore%>:</strong>
 						<div class="score">
-							<div class="decrement">
-								<a href="#" data-team="1" data-amount="1" data-type="-">-1</a>
-								<a href="#" data-team="1" data-amount="5" data-type="-">-5</a>
-								<a href="#" data-team="1" data-amount="10" data-type="-">-10</a>
-							</div>
 							<div class="increment">
-								<a href="#" data-team="1" data-amount="1" data-type="+">+1</a>
-								<a href="#" data-team="1" data-amount="5" data-type="+">+5</a>
-								<a href="#" data-team="1" data-amount="10" data-type="+">+10</a>
+								<a href="#" data-team="1" data-amount="0">0</a>
+								<a href="#" data-team="1" data-amount="1">1</a>
+								<a href="#" data-team="1" data-amount="2">2</a>
 							</div>
 							<input type="text" class="t1-score" value="0"/>
 						</div>
@@ -106,16 +99,11 @@
 						<strong><%=teamTwoPlayers%>:</strong>
 						<div class="players-select t2-players"></div>
 						<strong><%=teamTwoScore%>:</strong>
-						<div class="score">
-							<div class="decrement">
-								<a href="#" data-team="2" data-amount="1" data-type="-">-1</a>
-								<a href="#" data-team="2" data-amount="5" data-type="-">-5</a>
-								<a href="#" data-team="2" data-amount="10" data-type="-">-10</a>
-							</div>
+						<div class="score">							
 							<div class="increment">
-								<a href="#" data-team="2" data-amount="1" data-type="+">+1</a>
-								<a href="#" data-team="2" data-amount="5" data-type="+">+5</a>
-								<a href="#" data-team="2" data-amount="10" data-type="+">+10</a>
+								<a href="#" data-team="2" data-amount="0">0</a>
+								<a href="#" data-team="2" data-amount="1">1</a>
+								<a href="#" data-team="2" data-amount="2">2</a>
 							</div>
 							<input type="text" class="t2-score" value="0"/>
 						</div>
@@ -268,33 +256,32 @@
 	<script type="text/html" id="statsPlayer">
 		<tr class="table-header">
 			<th></th>
-			<th><%=singles%></th>
 			<th><%=doubles%></th>
 		</tr>
 		<tr>
 			<th><%=gamesPlayed%></th>
-			<td><%=singles_played%></td>
 			<td><%=doubles_played%></td>
 		</tr>
 		<tr>
 			<th><%=gamesWon%></th>
-			<td><%=singles_won%></td>
 			<td><%=doubles_won%></td>
 		</tr>
 		<tr>
 			<th><%=gamesLost%></th>
-			<td><%=singles_lost%></td>
 			<td><%=doubles_lost%></td>
 		</tr>
 		<tr>
 			<th><%=ranking%></th>
-			<td><%=singles_rank%></td>
 			<td><%=doubles_rank%></td>
 		</tr>
 	</script>
 	<script type="text/html" id="statsPlayerGames">
 		<li><strong class="<%=status%>"><%=status%></strong> <%=t1%> (<%=t1Score%>) vs. <%=t2%> (<%=t2Score%>) <span class="game_date"> - <%=date%></span></li>
 	</script>
+	<script type="text/html" id="historicalGame">
+		<div> <%=t1%> - <%=t2%>  <strong><%=t1Score%>:<%=t2Score%></strong> <span class="game_date"> - <%=date%></span></div>
+	</script>
+
 	<script type="text/html" id="cssBlock">
 		<style>
 			/* Color 0 */

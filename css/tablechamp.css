@@ -656,6 +656,17 @@ body {
     margin-top: -2px;
     opacity: 0.6; }
 
+.doubles {
+  position: relative;
+  width: 100%;
+  overflow: auto;
+}
+.history{
+  position:relative;
+  background: #f0f0f0;
+  margin-top: 10px; 
+}
+
 .rankings {
   margin: 0px auto;
   width: 800px;
@@ -699,6 +710,9 @@ body {
 }
 .ranking.greatPointsScore {
   background: #CFC;
+}
+.ranking.unranked{
+  background: #bbb;
 }
 
 
@@ -751,11 +765,6 @@ body {
   text-align: center;
   vertical-align: top;
   width: 50%; }
-  .t1 .decrement, .t2 .decrement {
-    float: right;
-    margin: 0 70px 0 0;
-    position: relative;
-    z-index: 2; }
   .t1 .increment, .t2 .increment {
     float: left;
     margin: 0 0 0 70px;
@@ -1153,10 +1162,6 @@ body.ru .sidebar .sidebar-menu a {
       float: none;
       width: 100%; }
 
-  .t1 .decrement,
-  .t1 .increment, .t2 .decrement,
-  .t2 .increment {
-    display: none; }
   .t1 section, .t2 section {
     margin: 0; }
 
@@ -1199,8 +1204,7 @@ body.ru .sidebar .sidebar-menu a {
   .t1, .t2 {
     float: none;
     width: 100%; }
-    .t1 .decrement,
-    .t1 .increment, .t2 .decrement,
+    .t1 .increment, 
     .t2 .increment {
       margin: 0; }
     .t1 section, .t2 section {
