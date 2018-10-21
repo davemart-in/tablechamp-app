@@ -586,54 +586,50 @@
             });
         });
     }
-    function renderHistoricalGames() {        
-            
+    function renderHistoricalGames() {                   
+        fbdb.ref('/history/').on('value',function(snapshot) {
             // Games stats
             var lastTwentyGames = '';
             var lastTwentyGamesData = [];
             var history = {};
-            fbdb.ref('/history/').on('value',function(snapshot) {
-                history = snapshot.val();
-                // To array
-                for (var key in history) {
-                    lastTwentyGamesData.unshift({
-                        "dt" : history[key].dt,
-                        "t1p1" : history[key].t1p1,
-                        "t1p2" : history[key].t1p2,
-                        "t2p1" : history[key].t2p1,
-                        "t2p2" : history[key].t2p2,
-                        "t1_points" : history[key].t1_points,
-                        "t2_points" : history[key].t2_points
-                    });
-                }
-                // Iterate through array
-                for (var i = 0; i < lastTwentyGamesData.length; i++) {
-                    // Date 
-                    var date = getDateInNiceStringFormat(lastTwentyGamesData[i].dt);
-                    
-                    // Players
-                    var t1 = localData.playersByKey[lastTwentyGamesData[i].t1p1].name + '/' + localData.playersByKey[lastTwentyGamesData[i].t1p2].name;
-                    var t2 = localData.playersByKey[lastTwentyGamesData[i].t2p1].name + '/' + localData.playersByKey[lastTwentyGamesData[i].t2p2].name;
-                    
-                    // Piece it all together
-                    lastTwentyGames += tmpl('historicalGame', {
-                        "date" : date,
-                        "t1" : t1,
-                        "t1Score" : lastTwentyGamesData[i].t1_points,
-                        "t2" : t2,
-                        "t2Score" : lastTwentyGamesData[i].t2_points
-                    });
-                }
-                if (!lastTwentyGames) {
-                    lastTwentyGames = '<div>No games have been played yet</div>';
-                }
-                // Add it to the DOM
-                $('.history').html(lastTwentyGames);
-            }).catch(function(error) {
-                console.log('Unable to pull player game history');
-                console.log(error)
-            });
-        
+            
+            history = snapshot.val();
+            // To array
+            for (var key in history) {
+                lastTwentyGamesData.unshift({
+                    "dt" : history[key].dt,
+                    "t1p1" : history[key].t1p1,
+                    "t1p2" : history[key].t1p2,
+                    "t2p1" : history[key].t2p1,
+                    "t2p2" : history[key].t2p2,
+                    "t1_points" : history[key].t1_points,
+                    "t2_points" : history[key].t2_points
+                });
+            }
+            // Iterate through array
+            for (var i = 0; i < lastTwentyGamesData.length; i++) {
+                // Date 
+                var date = getDateInNiceStringFormat(lastTwentyGamesData[i].dt);
+                
+                // Players
+                var t1 = localData.playersByKey[lastTwentyGamesData[i].t1p1].name + '/' + localData.playersByKey[lastTwentyGamesData[i].t1p2].name;
+                var t2 = localData.playersByKey[lastTwentyGamesData[i].t2p1].name + '/' + localData.playersByKey[lastTwentyGamesData[i].t2p2].name;
+                
+                // Piece it all together
+                lastTwentyGames += tmpl('historicalGame', {
+                    "date" : date,
+                    "t1" : t1,
+                    "t1Score" : lastTwentyGamesData[i].t1_points,
+                    "t2" : t2,
+                    "t2Score" : lastTwentyGamesData[i].t2_points
+                });
+            }
+            // Add it to the DOM
+            $('.history').html(lastTwentyGames);
+        }).catch(function(error) {
+            console.log('Unable to pull player game history');
+            console.log(error)
+        });        
     }
     function getDateInNiceStringFormat(timestamp)
     {

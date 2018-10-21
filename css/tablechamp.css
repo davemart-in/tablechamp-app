@@ -661,17 +661,13 @@ body {
   width: 100%;
   overflow: auto;
 }
-.history{
-  position:relative;
-  background: #f0f0f0;
-  margin-top: 10px; 
-}
 
 .rankings {
   margin: 0px auto;
   width: 800px;
 }
-.ranking {
+
+.ranking{
   position:relative;
   border: 2px solid;
   border-radius: 1px;
@@ -715,6 +711,37 @@ body {
   background: #bbb;
 }
 
+.history{
+  margin: 20px auto;
+  width: 784px;
+  position:relative;
+  background: #fff;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+}
+
+.history div {
+  width: 100%;
+  position:relative;
+  padding: 3px;
+  text-align: center; 
+  line-height: 28px;
+}
+
+.history div span.team1, .history div span.team2{
+  padding: 5px;
+  border: 1px solid black;
+}
+
+.history div span.team1
+{
+  background: rgba(0,145,160,0.5);
+  border-color: rgba(0,145,160,1);;
+}
+.history div span.team2
+{
+  background: rgba(255,133,0,0.5);
+  border-color: rgba(255,133,0,1);;
+}
 
 .players-select {
   margin-bottom: 20px;
@@ -1192,7 +1219,11 @@ body.ru .sidebar .sidebar-menu a {
 @media only screen and (max-width: 900px) {
   .rankings {
     margin: 1% 1% 0 1%;
-    width: 98%; } }
+    width: 98%; } 
+  .history {
+    width: 98%;
+  }
+  }
 
 @media only screen and (max-width: 768px) {
   .players-select a {
@@ -1211,6 +1242,9 @@ body.ru .sidebar .sidebar-menu a {
       margin: 0; }
 
   .t1 section {
-    margin-bottom: 13px; } }
+    margin-bottom: 13px; }
+  
+  .history .optional {display:none;}  
+  }
 
 /*# sourceMappingURL=tablechamp.css.map */
