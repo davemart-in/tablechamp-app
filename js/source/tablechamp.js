@@ -245,7 +245,8 @@
                     "singles_lost": data[key].singles_lost,
                     "singles_points": data[key].singles_points,
                     "singles_won": data[key].singles_won,
-                    "status": data[key].status
+                    "status": data[key].status,
+                    "ranked": data[key].doubles_lost + data[key].doubles_won > 10
                 });
             }
         }
@@ -258,8 +259,14 @@
         // Sort by doubles array
         localData.playersByDoubles = localData.playersArray.slice(0);
         localData.playersByDoubles.sort(function(a,b) {
-            return a.doubles_points - b.doubles_points;
-        }).reverse();
+            //doublesArray[i].doubles_lost + doublesArray[i].doubles_won 
+            if(a.ranked && !b.ranked){
+                return -1;
+            }else if(!a.ranked && b.ranked){
+                return 1;
+            }
+            return b.doubles_points - a.doubles_points;
+        });
         // Add doubles rank to array
         var doublesCount = 0;
         for (var i = 0; i < localData.playersByDoubles.length; i++) {
@@ -446,7 +453,7 @@
                 else if (doublesPoints < 80) pointsHighlightClass = "badPointsScore";
 
                 var medal = medalSelector(i,doublesPoints);
-                var rankingStatus = (doublesArray[i].doubles_lost + doublesArray[i].doubles_won < 10)? "unranked" : "";
+                var rankingStatus = !doublesArray[i].ranked ? "unranked" : "";
 
                 doublesRankings += tmpl('rankingsRow', {
                     'key': doublesArray[i].key,
