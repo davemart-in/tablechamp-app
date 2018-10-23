@@ -492,7 +492,7 @@
             $('.stats-player').html(tmpl('statsPlayer', {
                 "doubles" : i18n.app.statsPlayer.doubles,
                 "doubles_lost" : localData.playersByKey[thisKey].doubles_lost,
-                "doubles_played" : llocalData.playersByKey[thisKey].doubles_lost + localData.playersByKey[thisKey].doubles_won,
+                "doubles_played" : localData.playersByKey[thisKey].doubles_lost + localData.playersByKey[thisKey].doubles_won,
                 "doubles_rank" : localData.playersByKey[thisKey].doubles_rank,
                 "doubles_won" : localData.playersByKey[thisKey].doubles_won,
                 "gamesLost" : i18n.app.statsPlayer.gamesLost,
