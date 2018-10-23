@@ -710,6 +710,11 @@ body {
 .ranking.unranked{
   background: #bbb;
 }
+.ranking.wanted {
+  background-image: url(wanted_rotated.png);
+  background-position:  165px;
+  background-repeat: no-repeat;
+}
 
 .history{
   margin: 20px auto;
