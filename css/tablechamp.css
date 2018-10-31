@@ -732,20 +732,31 @@ body {
   line-height: 28px;
 }
 
-.history div span.team1, .history div span.team2{
+.history div span.losers, .history div span.winners{
   padding: 5px;
   border: 1px solid black;
 }
 
-.history div span.team1
+.history div span.losers
 {
-  background: rgba(0,145,160,0.5);
-  border-color: rgba(0,145,160,1);;
+  background: rgba(124, 124, 124, 0.25);
+  border-color: rgba(124, 124, 124,0.5);
 }
-.history div span.team2
+.history div span.winners
 {
-  background: rgba(255,133,0,0.5);
-  border-color: rgba(255,133,0,1);;
+  background: rgba(0, 200, 0, 0.5);
+  border-color: rgba(0,200,0,1);
+}
+.history div span.teamLabel, .history div span.teamScore
+{
+  display: inline-block;
+  width: 180px;
+  padding: 0px;
+}
+
+.history div span.teamScore
+{
+  width: 23px;
 }
 
 .players-select {
@@ -1232,7 +1243,17 @@ body.ru .sidebar .sidebar-menu a {
 
 @media only screen and (max-width: 768px) {
   .players-select a {
-    width: 48.6%; } }
+    width: 48.6%; } 
+  .history .optional {display:none;}
+  .history div span.teamScore, .history div span.teamLabel
+    {
+      font-size: 14px;
+    }
+    .history div span.teamLabel
+    {
+      width: 140px;
+    }
+}
 @media only screen and (max-width: 540px) {
   .players-select a {
     width: 48%; }
@@ -1247,9 +1268,7 @@ body.ru .sidebar .sidebar-menu a {
       margin: 0; }
 
   .t1 section {
-    margin-bottom: 13px; }
-  
-  .history .optional {display:none;}  
+    margin-bottom: 13px;
   }
 
 /*# sourceMappingURL=tablechamp.css.map */

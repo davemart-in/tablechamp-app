@@ -605,8 +605,10 @@
                     "date" : date,
                     "t1" : t1,
                     "t1Score" : lastTwentyGamesData[i].t1_points,
+                    "t1Class": teamClassBasedOnScore(lastTwentyGamesData[i].t1_points, lastTwentyGamesData[i].t2_points),
                     "t2" : t2,
-                    "t2Score" : lastTwentyGamesData[i].t2_points
+                    "t2Score" : lastTwentyGamesData[i].t2_points,
+                    "t2Class": teamClassBasedOnScore(lastTwentyGamesData[i].t2_points, lastTwentyGamesData[i].t1_points)
                 });
             }
             // Add it to the DOM
@@ -630,6 +632,14 @@
         }
         return movement;
     }
+    function teamClassBasedOnScore(ownTeamPoints,opponentTeamPoints){
+        var teamClass = 'winners';
+        if(opponentTeamPoints > ownTeamPoints){
+            teamClass = 'losers';
+        }
+        return teamClass;
+    }
+
     
     
     // ---------------------------------------------------

@@ -3,7 +3,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 	<title>TableChamp</title>
-	<link rel="stylesheet" type="text/css" charset="utf-8"  media="screen, projection" href="css/tablechamp.css" />
+	<link rel="stylesheet" type="text/css" charset="utf-8"  media="screen, projection" href="css/tablechamp.css?v=5" />
 	<link href="https://fonts.googleapis.com/css?family=Libre+Franklin:400,600" rel="stylesheet">
 </head>
 <body>
@@ -35,7 +35,7 @@
 	<script type="text/javascript" src="js/jquery-ui.min.js"></script>
 	<script src="js/firebase.3.6.5.js"></script>
 	<script type="text/javascript" src="js/iris.min.js"></script>
-	<script type="text/javascript" src="js/source/tablechamp.js"></script>
+	<script type="text/javascript" src="js/source/tablechamp.js?v=1"></script>
 	<!-- JS Templates -->
 	<script type="text/html" id="appHeader">
 		<a href="#" class="c-button c-button--md c-button--primary right add-score"><%=addScore%></a>
@@ -280,12 +280,14 @@
 	</script>
 	<script type="text/html" id="historicalGame">
 		<div> 
-			<img src="css/tramba.png" class="optional" height="30px">
-			<img src="css/dragonball.png" class="optional" height="30px">
-			 <span class="team1"><%=t1%></span> - <span class="team2"><%=t2%></span>  <span class="team1"><%=t1Score%></span>:<span class="team2"><%=t2Score%></span> 
-			 <img src="css/dragonball.png" class="optional" height="30px">
-			 <img src="css/tramba.png" class="optional" height="30px">
-			 <span class="game_date optional"> - <%=date%></span></div>
+			<img src="css/tramba.png" class="optional" height="30px" />
+			<img src="css/dragonball.png" class="optional" height="30px" />
+			 <span class="<%=t1Class%> teamLabel"><%=t1%></span> <span class="<%=t1Class%> teamScore"><%=t1Score%></span> : <span class="<%=t2Class%> teamScore"><%=t2Score%></span> <span class="<%=t2Class%> teamLabel"><%=t2%></span> 
+			 <img src="css/dragonball.png" class="optional" height="30px" />
+			 <img src="css/tramba.png" class="optional" height="30px" />
+			 <span class="game_date optional"> - <%=date%></span>
+			 <img src="css/slack.png" class="optional" height="30px" data-slackify=":foosball::dragonball:<%=t1%> <%=t1Score%> : <%=t2Score%> <%=t2%>:dragonball::foosball:"/>
+			</div>
 	</script>
 
 	<script type="text/html" id="cssBlock">
