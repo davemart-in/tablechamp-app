@@ -541,14 +541,14 @@
                             continue;
                         }
                         var t1p2 = localData.playersByKey[lastTwentyGamesData[i].t1p2].name || '';
-                        t1 += ' & ' + t1p2;
+                        t1 += '/' + t1p2;
                     }
                     if (lastTwentyGamesData[i].t2p2) {
                         if (!localData.playersByKey[lastTwentyGamesData[i].t2p2]) {
                             continue;
                         }
                         var t2p2 = localData.playersByKey[lastTwentyGamesData[i].t2p2].name || '';
-                        t2 += ' & ' + t2p2;
+                        t2 += '/' + t2p2;
                     }
                     // Piece it all together
                     lastTwentyGames += tmpl('statsPlayerGames', {
@@ -572,7 +572,7 @@
         });
     }
     function renderHistoricalGames() {                   
-        fbdb.ref('/history/').on('value',function(snapshot) {
+        fbdb.ref('/history/').limitToLast(20).once('value').then(function(snapshot) {
             // Games stats
             var lastTwentyGames = '';
             var lastTwentyGamesData = [];
@@ -621,21 +621,23 @@
     function getDateInNiceStringFormat(timestamp)
     {
         var d = new Date(timestamp);
-        var curr_date = d.getDate();
-        var curr_month = d.getMonth() + 1; //Months are zero based
+        var curr_date = ("0" + d.getDate()).slice(-2);
+        var curr_month = ("0" + (d.getMonth()+ 1 )).slice(-2); //Months are zero based
         var curr_year = d.getFullYear();
         return curr_year + "-" + curr_month + "-" + curr_date;
     }
-    function rankingMovementStyles(movement) {
+    function rankingMovementStyles(movement)
+    {
         if (movement > 0) {
             movement = '<span class="movement-positive">+ ' + movement + '</span>';
         }
         return movement;
     }
-    function teamClassBasedOnScore(ownTeamPoints,opponentTeamPoints){
-        var teamClass = 'winners';
+    function teamClassBasedOnScore(ownTeamPoints,opponentTeamPoints)
+    {
+        var teamClass = 'Won';
         if(opponentTeamPoints > ownTeamPoints){
-            teamClass = 'losers';
+            teamClass = 'Lost';
         }
         return teamClass;
     }
@@ -858,13 +860,35 @@
         scoringSave('t2p2', 'doubles', t2p2Key, t2p2PointsNew, t2p2LastMovement, t2p2GamesLost, t2p2GamesWon, newGameKey, t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t2Won);
         
         historyAddGame(t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s);
-    
+        
         // Confirmation --------------------
         // Close modal
         modalHide();
         // Add success message
         messageShow('success', i18n.app.messages.gameAdded + '! <a href="#" class="undo">' + i18n.app.messages.undo + '</a>', false);
         initUndo();
+        sendScoreToRelativitySlackFoosball(t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s);
+    }
+
+    function sendScoreToRelativitySlackFoosball(t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s)
+    {
+        var t1Label = localData.playersByKey[t1p1Key].name + '/' + localData.playersByKey[t1p2Key].name;
+        var t2Label = localData.playersByKey[t2p1Key].name + '/' + localData.playersByKey[t2p2Key].name;
+
+        var relativitySlackHookTemporaryUrl='https://hooks.slack.com/services/' + slackToken;
+        if (t1s > t2s){
+            var payload = ':dragonball::trophy:' + t1Label +' '+ t1s +' : '+ t2s +' '+ t2Label + ':dragonball:';
+        }else{
+            var payload = ':dragonball:' + t1Label +' '+ t1s +' : '+ t2s +' :trophy:'+ t2Label + ':dragonball:';
+        }
+        
+        $.ajax(
+        {
+            type: 'POST',
+            url: relativitySlackHookTemporaryUrl,
+            data: '{ "text":"'+payload+'"}',
+            dataType : 'json'
+        });
     }
     function scoringEvents() {
         $('.score-add').off('submit').on('submit', function() {

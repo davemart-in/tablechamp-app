@@ -732,17 +732,17 @@ body {
   line-height: 28px;
 }
 
-.history div span.losers, .history div span.winners{
+.history div span.Lost, .history div span.Won{
   padding: 5px;
   border: 1px solid black;
 }
 
-.history div span.losers
+.history div span.Lost
 {
   background: rgba(124, 124, 124, 0.25);
   border-color: rgba(124, 124, 124,0.5);
 }
-.history div span.winners
+.history div span.Won
 {
   background: rgba(0, 200, 0, 0.5);
   border-color: rgba(0,200,0,1);
@@ -1127,13 +1127,20 @@ body.ru .sidebar .sidebar-menu a {
   .stats-player-games strong {
     border-radius: 1px;
     margin-right: 6px;
-    padding: 2px 6px; }
-    .stats-player-games strong.Lost {
-      border: 1px solid #8F9EAB;
-      color: #67727B; }
-    .stats-player-games strong.Won {
-      background: #67727B;
-      color: #FFF; }
+    padding: 2px 6px;
+    border: 1px solid #8F9EAB;
+  }
+    
+    .stats-player-games strong.Lost
+    { 
+      background: rgba(124, 124, 124, 0.25);
+      border-color: rgba(124, 124, 124,0.5);
+    }
+    .stats-player-games strong.Won
+    {
+      background: rgba(0, 200, 0, 0.5);
+      border-color: rgba(0,200,0,1);
+    }
   .stats-player-games ul {
     margin: 0;
     padding: 0; }
