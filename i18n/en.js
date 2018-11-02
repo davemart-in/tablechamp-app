@@ -2,7 +2,7 @@ var i18n = {
 	"app" : {
 		"appHeader" : {
 			"addScore" : "Add Score",
-			"doubles" : "Doubles",
+			"doubles" : "Current Season",
 			"logOut" : "Log Out",
 			"settings" : "Settings",
 			"singles" : "Singles"

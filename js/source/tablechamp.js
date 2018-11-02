@@ -877,16 +877,16 @@
 
         var relativitySlackHookTemporaryUrl='https://hooks.slack.com/services/' + slackToken;
         if (t1s > t2s){
-            var payload = ':dragonball::trophy:' + t1Label +' '+ t1s +' : '+ t2s +' '+ t2Label + ':dragonball:';
+            var slackPayload = ':dragonball::trophy:' + t1Label +' '+ t1s +' : '+ t2s +' '+ t2Label + ':dragonball:';
         }else{
-            var payload = ':dragonball:' + t1Label +' '+ t1s +' : '+ t2s +' :trophy:'+ t2Label + ':dragonball:';
+            var slackPayload = ':dragonball:' + t1Label +' '+ t1s +' : '+ t2s +' :trophy:'+ t2Label + ':dragonball:';
         }
         
         $.ajax(
         {
             type: 'POST',
             url: relativitySlackHookTemporaryUrl,
-            data: '{ "text":"'+payload+'"}',
+            data: '{ "text":"'+slackPayload+'"}',
             dataType : 'json'
         });
     }

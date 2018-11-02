@@ -6,6 +6,7 @@
 	<link rel="stylesheet" type="text/css" charset="utf-8"  media="screen, projection" href="css/tablechamp.css?v=5" />
 	<link rel="icon" type="image/png" href="css/tramba.png">
 	<link href="https://fonts.googleapis.com/css?family=Libre+Franklin:400,600" rel="stylesheet">
+	<meta name="mobile-web-app-capable" content="yes">
 </head>
 <body>
 	<div class="message"></div>
@@ -40,16 +41,12 @@
 	<script type="text/javascript" src="js/slack_token.js"></script>
 	<!-- JS Templates -->
 	<script type="text/html" id="appHeader">
-		<a href="#" class="c-button c-button--md c-button--primary right add-score"><%=addScore%></a>
 		<div class="name">
 			<span class="org"></span>
 			<span class="game-type"></span>
 		</div>
-		<div class="header-block">
-			<a href="#" class="doubles-toggle ranking-toggle c-button c-button--md is-selected" data-view="doubles"><%=doubles%></a>
-			<a href="#" class="c-button c-button--link settings"><%=settings%></a>
-			<a href="#" class="c-button c-button--link logout"><%=logOut%></a>
-		</div>
+		<a href="#" class="c-button c-button--md c-button--primary right add-score"><%=addScore%></a>
+		<a href="#" class="doubles-toggle ranking-toggle c-button c-button--md is-selected" data-view="doubles"><%=doubles%></a>
 	</script>
 	<script type="text/html" id="loader">
 		<%=loading%>...
