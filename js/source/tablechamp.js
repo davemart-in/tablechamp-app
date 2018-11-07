@@ -71,6 +71,10 @@
             sidebarShow();
             return false;
         });
+
+        $('#showUnranked').on('click', function() {
+            $('.ranking.unranked').toggleClass('visible');           
+        });
     }
     function initLoader() {
         $('.loader').html(tmpl('loader', {
@@ -876,6 +880,7 @@
         var t2Label = localData.playersByKey[t2p1Key].name + '/' + localData.playersByKey[t2p2Key].name;
 
         var relativitySlackHookTemporaryUrl='https://hooks.slack.com/services/' + slackToken;
+        
         if (t1s > t2s){
             var slackPayload = ':dragonball::trophy:' + t1Label +' '+ t1s +' : '+ t2s +' '+ t2Label + ':dragonball:';
         }else{

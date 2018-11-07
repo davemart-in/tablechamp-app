@@ -404,6 +404,7 @@ input[type="search"] {
  * Button component pack for Seed
  * Licensed under MIT
  */
+
 .c-button {
   -webkit-appearance: none;
   appearance: none;
@@ -448,6 +449,10 @@ input[type="search"] {
   height: 56px;
   line-height: 52px;
   padding: 0 1.5em; }
+.showHideMargin
+{
+  margin:8px;
+}
 
 .c-button.is-disabled,
 .c-button[disabled] {
@@ -709,10 +714,16 @@ body {
 }
 .ranking.unranked{
   background: #bbb;
+  display: none;
+}
+.ranking.unranked.visible { 
+  display: block;
 }
 .ranking.wanted {
-  background-image: url(wanted_rotated.png);
-  background-position:  165px;
+  /* background-image: url(wanted_rotated.png); */
+  background-image: url(christian.jpg);
+  background-position:  200px;
+  background-size: contain;
   background-repeat: no-repeat;
 }
 
