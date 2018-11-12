@@ -879,7 +879,7 @@
         var t1Label = localData.playersByKey[t1p1Key].name + '/' + localData.playersByKey[t1p2Key].name;
         var t2Label = localData.playersByKey[t2p1Key].name + '/' + localData.playersByKey[t2p2Key].name;
 
-        if(t1Label.includes('Test') || t1Label.includes('Test'))
+        if(t1Label.includes('Test') || t2Label.includes('Test'))
         {
             return;
         }
