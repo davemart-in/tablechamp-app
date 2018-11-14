@@ -729,7 +729,7 @@ body {
 
 .history{
   margin: 20px auto;
-  width: 784px;
+  width: 800px;
   position:relative;
   background: #fff;
   box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
@@ -758,7 +758,7 @@ body {
   background: rgba(0, 200, 0, 0.5);
   border-color: rgba(0,200,0,1);
 }
-.history div span.teamLabel, .history div span.teamScore
+.history div span.teamLabel, .history div span.teamScore, .history div span.pointsMomement
 {
   display: inline-block;
   width: 180px;
@@ -768,6 +768,11 @@ body {
 .history div span.teamScore
 {
   width: 23px;
+}
+
+.history div span.pointsMomement
+{
+  width: 60px;
 }
 
 .players-select {
@@ -1262,7 +1267,7 @@ body.ru .sidebar .sidebar-menu a {
 @media only screen and (max-width: 768px) {
   .players-select a {
     width: 48.6%; } 
-  .history .optional {display:none;}
+  .history .optional {display:none !important;}
   .history div span.teamScore, .history div span.teamLabel
     {
       font-size: 14px;

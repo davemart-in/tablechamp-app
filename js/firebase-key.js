@@ -1,5 +1,5 @@
 var cs = { 
-  "apiKey": '', 
-  "authDomain": '', 
-  "databaseURL": '' 
+    "apiKey": '', 
+    "authDomain": '', 
+    "databaseURL": '' 
 };

@@ -592,7 +592,9 @@
                     "t2p1" : history[key].t2p1,
                     "t2p2" : history[key].t2p2,
                     "t1_points" : history[key].t1_points,
-                    "t2_points" : history[key].t2_points
+                    "t2_points" : history[key].t2_points,
+                    "t1p1_pointsMovement": (history[key].t1p1_pointsMovement) ? history[key].t1p1_pointsMovement.toFixed(2) : '',
+                    "t2p1_pointsMovement": (history[key].t2p1_pointsMovement) ? history[key].t2p1_pointsMovement.toFixed(2) : ''
                 });
             }
             // Iterate through array
@@ -610,9 +612,11 @@
                     "t1" : t1,
                     "t1Score" : lastTwentyGamesData[i].t1_points,
                     "t1Class": teamClassBasedOnScore(lastTwentyGamesData[i].t1_points, lastTwentyGamesData[i].t2_points),
+                    "t1PointMovement": lastTwentyGamesData[i].t1p1_pointsMovement,
                     "t2" : t2,
                     "t2Score" : lastTwentyGamesData[i].t2_points,
-                    "t2Class": teamClassBasedOnScore(lastTwentyGamesData[i].t2_points, lastTwentyGamesData[i].t1_points)
+                    "t2Class": teamClassBasedOnScore(lastTwentyGamesData[i].t2_points, lastTwentyGamesData[i].t1_points),
+                    "t2PointMovement": lastTwentyGamesData[i].t2p1_pointsMovement,
                 });
             }
             // Add it to the DOM
@@ -863,7 +867,7 @@
         scoringSave('t2p1', 'doubles', t2p1Key, t2p1PointsNew, t2p1LastMovement, t2p1GamesLost, t2p1GamesWon, newGameKey, t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t2Won);
         scoringSave('t2p2', 'doubles', t2p2Key, t2p2PointsNew, t2p2LastMovement, t2p2GamesLost, t2p2GamesWon, newGameKey, t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t2Won);
         
-        historyAddGame(t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s);
+        historyAddGame(t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t1p1LastMovement, t1p2LastMovement, t2p1LastMovement, t2p2LastMovement);
         
         // Confirmation --------------------
         // Close modal
@@ -1006,7 +1010,7 @@
         });
     }
 
-    function historyAddGame(t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s) {
+    function historyAddGame(t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t1p1LastMovement, t1p2LastMovement, t2p1LastMovement, t2p2LastMovement) {
         
         // Save "players_game" data
         var newGamesHistoryData = { 
@@ -1017,6 +1021,10 @@
             "t2p2": t2p2Key,
             "t1_points": t1s,
             "t2_points": t2s,
+            "t1p1_pointsMovement": t1p1LastMovement, 
+            "t1p2_pointsMovement": t1p2LastMovement, 
+            "t2p1_pointsMovement": t2p1LastMovement, 
+            "t2p2_pointsMovement": t2p2LastMovement
         };
 
         var newGamesHistoryKey = fbdb.ref().child('history').push().key;
