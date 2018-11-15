@@ -6,3 +6,6 @@ main.js
 .sass-cache
 *.map
 *.scss
+js/slack_token.js
+js/firebase-key.js
+.gitignore
