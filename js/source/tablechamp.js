@@ -519,6 +519,7 @@
                         "t1p2" : playersGames[key].t1p2 || '',
                         "t2p1" : playersGames[key].t2p1,
                         "t2p2" : playersGames[key].t2p2 || '',
+                        "rating_after_game" : playersGames[key].rating_after_game || '',
                         "t1_points" : playersGames[key].t1_points,
                         "t2_points" : playersGames[key].t2_points,
                         "won" : playersGames[key].won
@@ -558,6 +559,7 @@
                     lastTwentyGames += tmpl('statsPlayerGames', {
                         "date" : date,
                         "status" : gameStatus,
+                        "rating_after_game" : (lastTwentyGamesData[i].rating_after_game) ? lastTwentyGamesData[i].rating_after_game.toFixed(2) :'',
                         "t1" : t1,
                         "t1Score" : lastTwentyGamesData[i].t1_points,
                         "t2" : t2,
@@ -978,10 +980,11 @@
             console.log('Failed to update players data');
         });
         // Save "players_game" data
-        var playersGameData = { 
+        var playersGameData = {
             "dt": Date.now(),
             "game": gameKey,
             "player": key,
+            "rating_after_game": points,
             "t1p1": t1p1Key,
             "t2p1": t2p1Key,
             "t1_points": t1s,
@@ -1012,7 +1015,7 @@
 
     function historyAddGame(t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t1p1LastMovement, t1p2LastMovement, t2p1LastMovement, t2p2LastMovement) {
         
-        // Save "players_game" data
+        // Save games for history view.
         var newGamesHistoryData = { 
             "dt": Date.now(),
             "t1p1": t1p1Key,
