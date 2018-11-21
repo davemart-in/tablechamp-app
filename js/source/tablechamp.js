@@ -596,7 +596,7 @@
           title: 'Player score over time',
           hAxis: {title: 'Last games',  titleTextStyle: {color: '#333'}},
           vAxis: {minValue: 0},
-          chartArea: {'width':'80%', 'height':'75%'},
+          chartArea: {'width':'80%'},
           legend: {'position':'none'}
         };
 
