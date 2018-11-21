@@ -7,5 +7,5 @@ main.js
 *.map
 *.scss
 js/slack_token.js
-js/firebase-key.js
+*firebase-key.js
 .gitignore
