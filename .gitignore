@@ -8,4 +8,3 @@ main.js
 *.scss
 js/slack_token.js
 *firebase-key.js
-.gitignore
