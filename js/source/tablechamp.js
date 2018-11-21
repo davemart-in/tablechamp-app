@@ -506,7 +506,7 @@
             var lastTwentyGames = '';
             var lastTwentyGamesData = [];
             var graphScoreData = [];
-            graphScoreData[0] = ['Last games', 'Score'];
+            graphScoreData[0] = ['Last games', 'Score', 'Default', 'Crap'];
 
             var playersGames = {};
             fbdb.ref('/playersgame/' + thisKey).limitToLast(20).once('value').then(function(snapshot) {
@@ -569,7 +569,7 @@
 
                     //Since we already iterate through last games, store some of that data for the graph rendering purpose
                     if (lastTwentyGamesData[i].rating_after_game > 0)
-                        graphScoreData[i+1] = [-i, lastTwentyGamesData[i].rating_after_game];
+                        graphScoreData[i+1] = [-i, lastTwentyGamesData[i].rating_after_game, 100, 50];
                 }
                 if (!lastTwentyGames) {
                     lastTwentyGames = '<li>No games have been entered for this user.</li>';
@@ -597,7 +597,11 @@
           hAxis: {title: 'Last games',  titleTextStyle: {color: '#333'}},
           vAxis: {minValue: 0},
           chartArea: {'width':'80%'},
-          legend: {'position':'none'}
+          legend: {'position':'none'},
+          series: {
+            1: { areaOpacity: 0, color: "#555" },
+            2: { areaOpacity: 0, color: "#A55" }
+          }
         };
 
         var chart = new google.visualization.AreaChart(document.getElementById('stats-graph'));
