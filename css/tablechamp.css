@@ -1120,6 +1120,11 @@ body.ru .sidebar .sidebar-menu a {
   .stats-player .table-header th {
     text-align: center; }
 
+#stats-graph {
+  height: 300px;
+  overflow:hidden;}
+  
+    
 .stats-player-container {
   background: #FFF;
   border: 1px solid #E5E5E5;

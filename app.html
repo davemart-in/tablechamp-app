@@ -6,7 +6,8 @@
 	<link rel="stylesheet" type="text/css" charset="utf-8"  media="screen, projection" href="css/tablechamp.css?v=5" />
 	<link rel="icon" type="image/png" href="css/tramba.png">
 	<link href="https://fonts.googleapis.com/css?family=Libre+Franklin:400,600" rel="stylesheet">
-	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="mobile-web-app-capable" content="yes"> 
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 </head>
 <body>
 	<div class="message"></div>
@@ -39,7 +40,7 @@
 	<script src="js/firebase.3.6.5.js"></script>
 	<script type="text/javascript" src="js/iris.min.js"></script>
 	<script type="text/javascript" src="js/source/tablechamp.js?v=1"></script>
-	<script type="text/javascript" src="js/slack_token.js"></script>
+	<script type="text/javascript" src="js/slack_token.js"></script>	  
 	<!-- JS Templates -->
 	<script type="text/html" id="appHeader">
 		<div class="name">
@@ -248,6 +249,7 @@
 		</div>
 		<div class="modal-body">
 			<div class="stats-player-container"><table class="stats-player"></table></div>
+			<div id="stats-graph" class="stats-player-container"></div>
 			<div class="stats-player-games">
 				<ul></ul>
 			</div>

@@ -59,6 +59,7 @@
         initOfflineDetect();
         sidebarInit();        
         renderHistoricalGames();
+        initGooglePlotPackage();
     }
     function initHeader() {
         $('.app header').html(tmpl('appHeader', {
@@ -507,6 +508,9 @@
             // Player games stats
             var lastTwentyGames = '';
             var lastTwentyGamesData = [];
+            var graphScoreData = [];
+            graphScoreData[0] = ['Last games', 'Score'];
+
             var playersGames = {};
             fbdb.ref('/playersgame/' + thisKey).limitToLast(20).once('value').then(function(snapshot) {
                 playersGames = snapshot.val();
@@ -529,7 +533,7 @@
                 for (var i = 0; i < lastTwentyGamesData.length; i++) {
                     // Date 
                     var date = getDateInNiceStringFormat(lastTwentyGamesData[i].dt);
-
+                    
                     // Game status
                     var gameStatus = 'Lost';
                     if (lastTwentyGamesData[i].won) {
@@ -565,9 +569,17 @@
                         "t2" : t2,
                         "t2Score" : lastTwentyGamesData[i].t2_points
                     });
+
+                    //Since we already iterate through last games, store some of that data for the graph rendering purpose
+                    if (lastTwentyGamesData[i].rating_after_game > 0)
+                        graphScoreData[i+1] = [-i, lastTwentyGamesData[i].rating_after_game];
                 }
                 if (!lastTwentyGames) {
                     lastTwentyGames = '<li>No games have been entered for this user.</li>';
+                }
+                else
+                {
+                    drawChart(graphScoreData);
                 }
                 // Add it to the DOM
                 $('.stats-player-games ul').html(lastTwentyGames);
@@ -577,6 +589,24 @@
             });
         });
     }
+    function drawChart(statsData) {
+        if (!statsData)
+            return;
+
+        var data = google.visualization.arrayToDataTable(statsData);
+
+        var options = {
+          title: 'Player score over time',
+          hAxis: {title: 'Last games',  titleTextStyle: {color: '#333'}},
+          vAxis: {minValue: 0},
+          chartArea: {'width':'80%', 'height':'75%'},
+          legend: {'position':'none'}
+        };
+
+        var chart = new google.visualization.AreaChart(document.getElementById('stats-graph'));
+        chart.draw(data, options);
+      }
+
     function renderHistoricalGames() {                   
         fbdb.ref('/history/').limitToLast(20).once('value').then(function(snapshot) {
             // Games stats
@@ -628,6 +658,12 @@
             console.log(error)
         });        
     }
+    function initGooglePlotPackage()
+    {
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+    }
+
     function getDateInNiceStringFormat(timestamp)
     {
         var d = new Date(timestamp);
