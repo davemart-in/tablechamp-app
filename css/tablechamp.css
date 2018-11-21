@@ -688,12 +688,14 @@ body {
     outline: none; }
   .ranking .movement {
     border-radius: 1px;
-    font-style: italic; }
+    font-style: italic; 
+    background: rgba(255,255,255,0.6);}
   .ranking .name {
     font-weight: bold; 
     padding-left:23px;}
     .ranking .name .gamesInfo {
-      opacity: 0.5; }
+      opacity: 0.5;
+      background: rgba(255,255,255,0.9); }
   .ranking .points {
     font-weight: bold;
     min-width: 95px;

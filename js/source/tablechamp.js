@@ -221,9 +221,7 @@
     // ---------------------------------------------------
     function localDataUpdate(data) {
         // Reset everything
-        localData.playerWithMostGames = {};
-        localData.playerWithMostGames.key = "";
-        localData.playerWithMostGames.numberOfGames = 0;
+        localData.mostGamesByOnePlayer = -1;
         localData.playersArray = [];
         localData.playersByDoubles = [];
         localData.playersByKey = {};
@@ -247,9 +245,8 @@
                     "gamesCount": gamesCount
                 });
 
-                if (gamesCount > localData.playerWithMostGames.numberOfGames){
-                    localData.playerWithMostGames.key = key;
-                    localData.playerWithMostGames.numberOfGames = gamesCount;
+                if (gamesCount > localData.mostGamesByOnePlayer){
+                    localData.mostGamesByOnePlayer = gamesCount;
                 }
             }
         }
@@ -456,7 +453,7 @@
                     'medal' : medalSelector(i,doublesPoints),
                     'top' :  (i < 3)? "top":"standard",
                     'rankingStatus' : doublesArray[i].isRanked ? "" : "unranked",
-                    'wanted' : (doublesArray[i].key == localData.playerWithMostGames.key)? "wanted" : ""
+                    'wanted' : (doublesArray[i].gamesCount == localData.mostGamesByOnePlayer)? "wanted" : ""
                 });
             }
         }
