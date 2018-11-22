@@ -665,9 +665,20 @@ body {
   display: block;
 }
 .ranking.wanted {
-  /* background-image: url(wanted_rotated.png); */
   background-image: url(christian.jpg);
-  background-position:  200px;
+  background-position:  240px;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+.ranking.goldenBall {
+  background-image: url(dragonball.png);
+  background-position:  240px;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+.ranking.hole {
+  background-image: url(hole_wall.jpg);
+  background-position:  240px;
   background-size: contain;
   background-repeat: no-repeat;
 }
@@ -807,7 +818,7 @@ body {
       color: #1C2242;
       font-size: 90px;
       font-weight: 300;
-      line-height: 90px;
+      line-height: 226px;
       position: relative;
       text-align: center;
       -webkit-font-smoothing: antialiased;
@@ -819,7 +830,7 @@ body {
     padding: 20px 20px 30px; }
   .t1 strong, .t2 strong {
     color: #6E7286;
-    display: block;
+    display: inline-block;
     margin-bottom: 20px;
     text-align: center; }
 

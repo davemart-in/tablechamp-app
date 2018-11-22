@@ -63,10 +63,10 @@
 		</tr>
 	</script>
 	<script type="text/html" id="rankingsRow">
-		<div class="ranking <%=pointsClass%> <%=rankingStatus%> <%=wanted%>" data-id="<%=key%>" tabindex="0">
+		<div class="ranking <%=pointsClass%> <%=rankingStatus%> <%=wanted%> <%=goldenBall%> <%=hole%>" data-id="<%=key%>" tabindex="0">
 				<div class="medal <%=medal%>"></div>
 				<span class="rank"><%=rank%></span>
-				<span class="name"><%=name%><span class="gamesInfo"><%=gamesInfo%> <%=rankingStatus%></span></span>
+				<span class="name"><%=name%><span class="gamesInfo"><%=gamesInfo%> <%=goalsInfo%> <%=rankingStatus%></span></span>
 			<div class="right">
 				<span class="movement"><%=lastMovement%></span>
 				<span class="points"><%=points%></span>
@@ -90,6 +90,9 @@
 								<a href="#" data-team="1" data-amount="0">0</a>
 								<a href="#" data-team="1" data-amount="1">1</a>
 								<a href="#" data-team="1" data-amount="2">2</a>
+								<a href="#" data-team="1" data-amount="3">3</a>
+								<a href="#" data-team="1" data-amount="4">4</a>
+								<a href="#" data-team="1" data-amount="5">5</a>
 							</div>
 							<input type="text" class="t1-score" value="0"/>
 						</div>
@@ -105,6 +108,9 @@
 								<a href="#" data-team="2" data-amount="0">0</a>
 								<a href="#" data-team="2" data-amount="1">1</a>
 								<a href="#" data-team="2" data-amount="2">2</a>
+								<a href="#" data-team="2" data-amount="3">3</a>
+								<a href="#" data-team="2" data-amount="4">4</a>
+								<a href="#" data-team="2" data-amount="5">5</a>
 							</div>
 							<input type="text" class="t2-score" value="0"/>
 						</div>
@@ -271,6 +277,14 @@
 		<tr>
 			<th><%=gamesLost%></th>
 			<td><%=doubles_lost%></td>
+		</tr>
+		<tr>
+			<th><%=goalsFor%></th>
+			<td><%=doubles_goals_for%></td>
+		</tr>
+		<tr>
+			<th><%=goalsAgainst%></th>
+			<td><%=doubles_goals_against%></td>
 		</tr>
 		<tr>
 			<th><%=ranking%></th>

@@ -222,6 +222,8 @@
     function localDataUpdate(data) {
         // Reset everything
         localData.mostGamesByOnePlayer = -1;
+        localData.mostGoalsFor = -1;
+        localData.mostGoalsAgainst = -1;
         localData.playersArray = [];
         localData.playersByDoubles = [];
         localData.playersByKey = {};
@@ -237,6 +239,8 @@
                     "doubles_lost": localData.playersByKey[key].doubles_lost,
                     "doubles_points": localData.playersByKey[key].doubles_points,
                     "doubles_won": localData.playersByKey[key].doubles_won,
+                    "doubles_goals_for": localData.playersByKey[key].doubles_goals_for,
+                    "doubles_goals_against": localData.playersByKey[key].doubles_goals_against,
                     "dt": localData.playersByKey[key].dt,
                     "key": key,
                     "name": localData.playersByKey[key].name,
@@ -247,6 +251,12 @@
 
                 if (gamesCount > localData.mostGamesByOnePlayer){
                     localData.mostGamesByOnePlayer = gamesCount;
+                }
+                if (localData.playersByKey[key].doubles_goals_for > localData.mostGoalsFor){
+                    localData.mostGoalsFor = localData.playersByKey[key].doubles_goals_for;
+                }
+                if (localData.playersByKey[key].doubles_goals_against > localData.mostGoalsAgainst){
+                    localData.mostGoalsAgainst = localData.playersByKey[key].doubles_goals_against;
                 }
             }
         }
@@ -431,7 +441,7 @@
     // ---------------------------------------------------
     function doublesRankingsUpdate() {
         var doublesArray = localData.playersByDoubles;
-        var doublesRankings = '';        
+        var doublesRankings = '';
         for (var i = 0; i < doublesArray.length; i++) {
             if (doublesArray[i].status) {
                 var doublesLastMovement = (doublesArray[i].doubles_last_movement) ? doublesArray[i].doubles_last_movement.toFixed(2) : '';
@@ -446,14 +456,17 @@
                     'lastMovement': rankingMovementStyles(doublesLastMovement),
                     'name': doublesArray[i].name,
                     'points': doublesPoints,
-                    'gamesInfo' : "("+ doublesArray[i].doubles_won + "/" + doublesArray[i].doubles_lost + ")",
+                    'gamesInfo' : "["+ doublesArray[i].doubles_won + "/" + doublesArray[i].doubles_lost + "]",
+                    'goalsInfo' : (doublesArray[i].doubles_goals_for || 0) + ":" + (doublesArray[i].doubles_goals_against || 0),
                     'rank': doublesArray[i].doubles_rank,
                     'type': 'doubles',
                     'pointsClass' : pointsHighlightClass,
                     'medal' : medalSelector(i,doublesPoints),
                     'top' :  (i < 3)? "top":"standard",
                     'rankingStatus' : doublesArray[i].isRanked ? "" : "unranked",
-                    'wanted' : (doublesArray[i].gamesCount == localData.mostGamesByOnePlayer)? "wanted" : ""
+                    'wanted' : (doublesArray[i].gamesCount == localData.mostGamesByOnePlayer)? "wanted" : "",
+                    'goldenBall' : ((doublesArray[i].doubles_goals_for || 0) == localData.mostGoalsFor) ? "goldenBall" : "",
+                    'hole': ((doublesArray[i].doubles_goals_against || 0) == localData.mostGoalsAgainst) ? "hole" : ""
                 });
             }
         }
@@ -497,8 +510,12 @@
                 "doubles_played" : localData.playersByKey[thisKey].doubles_lost + localData.playersByKey[thisKey].doubles_won,
                 "doubles_rank" : localData.playersByKey[thisKey].doubles_rank,
                 "doubles_won" : localData.playersByKey[thisKey].doubles_won,
-                "gamesLost" : i18n.app.statsPlayer.gamesLost,
+                "doubles_goals_for": localData.playersByKey[thisKey].doubles_goals_for || 0,
+                "doubles_goals_against": localData.playersByKey[thisKey].doubles_goals_against || 0,
+                "gamesLost" : i18n.app.statsPlayer.gamesLost ,
                 "gamesPlayed" : i18n.app.statsPlayer.gamesPlayed,
+                "goalsFor" : i18n.app.statsPlayer.goalsFor,
+                "goalsAgainst" : i18n.app.statsPlayer.goalsAgainst,
                 "gamesWon" : i18n.app.statsPlayer.gamesWon,
                 "ranking" : i18n.app.statsPlayer.ranking
             }));
@@ -800,13 +817,24 @@
         var t2p2LastMovement = t2p2PointsNew - localData.playersByKey[t2p2Key].doubles_points;
         // Updates games won/lost
         var t1p1GamesLost = localData.playersByKey[t1p1Key].doubles_lost;
-        var t1p1GamesWon = localData.playersByKey[t1p1Key].doubles_won;
+        var t1p1GamesWon = localData.playersByKey[t1p1Key].doubles_won;        
         var t1p2GamesLost = localData.playersByKey[t1p2Key].doubles_lost;
-        var t1p2GamesWon = localData.playersByKey[t1p2Key].doubles_won;
+        var t1p2GamesWon = localData.playersByKey[t1p2Key].doubles_won;        
         var t2p1GamesLost = localData.playersByKey[t2p1Key].doubles_lost;
-        var t2p1GamesWon = localData.playersByKey[t2p1Key].doubles_won;
+        var t2p1GamesWon = localData.playersByKey[t2p1Key].doubles_won;        
         var t2p2GamesLost = localData.playersByKey[t2p2Key].doubles_lost;
         var t2p2GamesWon = localData.playersByKey[t2p2Key].doubles_won;
+        // Update GoalsFor/Against
+        var t1p1GoalsForNew = (localData.playersByKey[t1p1Key].doubles_goals_for || 0) + parseInt(t1s);
+        var t1p2GoalsForNew = (localData.playersByKey[t1p2Key].doubles_goals_for || 0) + parseInt(t1s);
+        var t2p1GoalsForNew = (localData.playersByKey[t2p1Key].doubles_goals_for || 0) + parseInt(t2s);
+        var t2p2GoalsForNew = (localData.playersByKey[t2p2Key].doubles_goals_for || 0) + parseInt(t2s);
+        var t1p1GoalsAgainstNew = (localData.playersByKey[t1p1Key].doubles_goals_against || 0) + parseInt(t2s);        
+        var t1p2GoalsAgainstNew = (localData.playersByKey[t1p2Key].doubles_goals_against || 0) + parseInt(t2s);
+        var t2p1GoalsAgainstNew = (localData.playersByKey[t2p1Key].doubles_goals_against || 0) + parseInt(t1s);
+        var t2p2GoalsAgainstNew = (localData.playersByKey[t2p2Key].doubles_goals_against || 0) + parseInt(t1s);
+        
+        
         var t1Won = false;
         var t2Won = false;
         if (parseInt(t1s) > parseInt(t2s)) {
@@ -900,11 +928,10 @@
             console.log(['t2p2', 'doubles', t2p2Key, t2p2PointsNew, t2p2LastMovement, t2p2GamesLost, t2p2GamesWon, newGameKey, t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t2Won]);
             console.log('----');
         }
-        // Save "players", and "players_game" data
-        scoringSave('t1p1', 'doubles', t1p1Key, t1p1PointsNew, t1p1LastMovement, t1p1GamesLost, t1p1GamesWon, newGameKey, t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t1Won);
-        scoringSave('t1p2', 'doubles', t1p2Key, t1p2PointsNew, t1p2LastMovement, t1p2GamesLost, t1p2GamesWon, newGameKey, t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t1Won);
-        scoringSave('t2p1', 'doubles', t2p1Key, t2p1PointsNew, t2p1LastMovement, t2p1GamesLost, t2p1GamesWon, newGameKey, t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t2Won);
-        scoringSave('t2p2', 'doubles', t2p2Key, t2p2PointsNew, t2p2LastMovement, t2p2GamesLost, t2p2GamesWon, newGameKey, t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t2Won);
+        scoringSave('t1p1', 'doubles', t1p1Key, t1p1PointsNew, t1p1LastMovement, t1p1GamesLost, t1p1GamesWon, t1p1GoalsForNew, t1p1GoalsAgainstNew, newGameKey, t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t1Won);
+        scoringSave('t1p2', 'doubles', t1p2Key, t1p2PointsNew, t1p2LastMovement, t1p2GamesLost, t1p2GamesWon, t1p2GoalsForNew, t1p2GoalsAgainstNew, newGameKey, t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t1Won);
+        scoringSave('t2p1', 'doubles', t2p1Key, t2p1PointsNew, t2p1LastMovement, t2p1GamesLost, t2p1GamesWon, t2p1GoalsForNew, t2p1GoalsAgainstNew, newGameKey, t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t2Won);
+        scoringSave('t2p2', 'doubles', t2p2Key, t2p2PointsNew, t2p2LastMovement, t2p2GamesLost, t2p2GamesWon, t2p2GoalsForNew, t2p2GoalsAgainstNew, newGameKey, t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t2Won);
         
         historyAddGame(t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t1p1LastMovement, t1p2LastMovement, t2p1LastMovement, t2p2LastMovement);
         
@@ -914,7 +941,7 @@
         // Add success message
         messageShow('success', i18n.app.messages.gameAdded + '! <a href="#" class="undo">' + i18n.app.messages.undo + '</a>', false);
         initUndo();
-        sendScoreToRelativitySlackFoosball(t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s);
+        //sendScoreToRelativitySlackFoosball(t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s);
     }
 
     function sendScoreToRelativitySlackFoosball(t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s)
@@ -1001,13 +1028,15 @@
             }
         }
     }
-    function scoringSave(player, type, key, points, movement, lost, won, gameKey, t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, wonGame) {
+    function scoringSave(player, type, key, points, movement, lost, won, goals_for, goals_against, gameKey, t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, wonGame) {
         // Save "players" data
         var playersData = {}
             playersData[type + '_points'] = points;
             playersData[type + '_last_movement'] = movement;
             playersData[type + '_lost'] = lost;
             playersData[type + '_won'] = won;
+            playersData[type + '_goals_for'] = goals_for;
+            playersData[type + '_goals_against'] = goals_against;
         if (logging) {
             console.log('Save "players" data');
             console.log(playersData);

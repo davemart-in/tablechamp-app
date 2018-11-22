@@ -89,6 +89,8 @@ var i18n = {
 			"gamesLost" : "Games lost",
 			"gamesPlayed" : "Games played",
 			"gamesWon" : "Games won",
+			"goalsFor" : "Goals For",
+			"goalsAgainst" : "Goals Against",
 			"ranking" : "Ranking",
 			"singles" : "Singles"
 		}
