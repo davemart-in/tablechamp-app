@@ -941,7 +941,7 @@
         // Add success message
         messageShow('success', i18n.app.messages.gameAdded + '! <a href="#" class="undo">' + i18n.app.messages.undo + '</a>', false);
         initUndo();
-        //sendScoreToRelativitySlackFoosball(t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s);
+        sendScoreToRelativitySlackFoosball(t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s);
     }
 
     function sendScoreToRelativitySlackFoosball(t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s)
