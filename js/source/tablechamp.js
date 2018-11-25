@@ -1,14 +1,6 @@
 (function ($) {
     'use strict'
     var auth,
-        defaultColors = {
-            'c0' : '#FFF',
-            'c1' : '#D8D8D8',
-            'c2' : '#60678B',
-            'c3' : '#283350',
-            'c4' : '#1C2242',
-            'c5' : '#57D3C3'
-        },
         fbdb,
         isOnline = true,
         lastGame = {},
@@ -21,14 +13,6 @@
     // localData Object
     var localData = {};
         localData.settings = {};
-        localData.settings.appColors = {
-            'c0' : defaultColors.c0,
-            'c1' : defaultColors.c1,
-            'c2' : defaultColors.c2,
-            'c3' : defaultColors.c3,
-            'c4' : defaultColors.c4,
-            'c5' : defaultColors.c5
-        };
     // ---------------------------------------------------
     // Ready
     // ---------------------------------------------------
@@ -74,7 +58,15 @@
         });
 
         $('#showUnranked').on('click', function() {
-            $('.ranking.unranked').toggleClass('visible');           
+            if ($('#showUnranked').hasClass('hidden'))
+            {
+                $('.ranking.unranked').slideDown('slow');
+            }
+            else
+            {
+                $('.ranking.unranked').slideUp('fast');
+            }
+            $('#showUnranked').toggleClass('hidden'); 
         });
     }
     function initLoader() {
@@ -168,15 +160,7 @@
         fbdb.ref('/settings/').on('value', function(snapshot) {
             // Update local data set
             localSettingsUpdate(snapshot.val());
-            // Update colors
-            $('.css-block').html(tmpl('cssBlock', {
-                'c0' : localData.settings.appColors.c0,
-                'c1' : localData.settings.appColors.c1,
-                'c2' : localData.settings.appColors.c2,
-                'c3' : localData.settings.appColors.c3,
-                'c4' : localData.settings.appColors.c4,
-                'c5' : localData.settings.appColors.c5
-            }));
+            
             // Update org name
             sidebarBasicSettingsUpdate();
             // Hide loader if it's still showing
@@ -293,23 +277,6 @@
         }
         localData.settings.orgName = (typeof data.orgName !== 'undefined') ? data.orgName : '';
         localData.settings.gameType = (typeof data.gameType !== 'undefined') ? data.gameType : '';
-        if (typeof data.appColors === 'undefined') {
-            data.appColors = {};
-        }
-        localData.settings.appColors.c0 = (typeof data.appColors.c0 !== 'undefined') ? data.appColors.c0 : defaultColors.c0;
-        localData.settings.appColors.c1 = (typeof data.appColors.c1 !== 'undefined') ? data.appColors.c1 : defaultColors.c1;
-        localData.settings.appColors.c2 = (typeof data.appColors.c2 !== 'undefined') ? data.appColors.c2 : defaultColors.c2;
-        localData.settings.appColors.c3 = (typeof data.appColors.c3 !== 'undefined') ? data.appColors.c3 : defaultColors.c3;
-        localData.settings.appColors.c4 = (typeof data.appColors.c4 !== 'undefined') ? data.appColors.c4 : defaultColors.c4;
-        localData.settings.appColors.c5 = (typeof data.appColors.c5 !== 'undefined') ? data.appColors.c5 : defaultColors.c5;
-        /* Dark 
-        'c0' : '#FFF',
-        'c1' : '#8F9EAB',
-        'c2' : '#67727B',
-        'c3' : '#29313B',
-        'c4' : '#020304',
-        'c5' : '#0DD1BF'
-        */
     }
     // ---------------------------------------------------
     // Messages
@@ -446,10 +413,7 @@
             if (doublesArray[i].status) {
                 var doublesLastMovement = (doublesArray[i].doubles_last_movement) ? doublesArray[i].doubles_last_movement.toFixed(2) : '';
                 var doublesPoints = (doublesArray[i].doubles_points) ? doublesArray[i].doubles_points.toFixed(2) : '';
-                var pointsHighlightClass = "regularPointsScore";
-  
-                if (doublesPoints > 120) pointsHighlightClass = "greatPointsScore";
-                else if (doublesPoints < 80) pointsHighlightClass = "badPointsScore";
+                var pointsBasedBadge = getPointsBadge(doublesPoints);  
 
                 doublesRankings += tmpl('rankingsRow', {
                     'key': doublesArray[i].key,
@@ -460,24 +424,31 @@
                     'goalsInfo' : (doublesArray[i].doubles_goals_for || 0) + ":" + (doublesArray[i].doubles_goals_against || 0),
                     'rank': doublesArray[i].doubles_rank,
                     'type': 'doubles',
-                    'pointsClass' : pointsHighlightClass,
-                    'medal' : medalSelector(i,doublesPoints),
+                    'pointsBadge' : pointsBasedBadge,
+                    'medal' : medalSelector(i),
                     'top' :  (i < 3)? "top":"standard",
                     'rankingStatus' : doublesArray[i].isRanked ? "" : "unranked",
-                    'wanted' : (doublesArray[i].gamesCount == localData.mostGamesByOnePlayer)? "wanted" : "",
-                    'goldenBall' : ((doublesArray[i].doubles_goals_for || 0) == localData.mostGoalsFor) ? "goldenBall" : "",
-                    'hole': ((doublesArray[i].doubles_goals_against || 0) == localData.mostGoalsAgainst) ? "hole" : ""
+                    'mostGames' : (doublesArray[i].gamesCount == localData.mostGamesByOnePlayer)? "granted" : "",
+                    'mostGoals' : ((doublesArray[i].doubles_goals_for || 0) == localData.mostGoalsFor) ? "granted" : "",
+                    'holeInTheGoal': ((doublesArray[i].doubles_goals_against || 0) == localData.mostGoalsAgainst) ? "granted" : ""
                 });
             }
         }
         
         $('.doubles .rankings').html(doublesRankings);
     }
-    function medalSelector(index, points)
+
+    function getPointsBadge(points)
     {
-        if (points < 50)
-            return "crap";
-            
+        if (points > 150)   return "plat";
+        if (points > 120)   return "gold";
+        if (points > 80)    return "silver";
+        if (points > 50)    return "bronze";
+        return "crap";
+    }
+
+    function medalSelector(index)
+    {
         switch(index){
             case 0: 
                 return "gold";
@@ -586,7 +557,7 @@
 
                     //Since we already iterate through last games, store some of that data for the graph rendering purpose
                     if (lastTwentyGamesData[i].rating_after_game > 0)
-                        graphScoreData[i+1] = [-i, lastTwentyGamesData[i].rating_after_game, 100, 50];
+                        graphScoreData[i+1] = [-i,100, 50, lastTwentyGamesData[i].rating_after_game];
                 }
                 if (!lastTwentyGames) {
                     lastTwentyGames = '<li>No games have been entered for this user.</li>';
@@ -611,14 +582,26 @@
 
         var options = {
           title: 'Player score over time',
-          hAxis: {title: 'Last games',  titleTextStyle: {color: '#333'}},
-          vAxis: {minValue: 0},
+          titleColor: '#eee',
+          hAxis: {
+              title: 'Last games',  
+              textStyle: {color: '#ccc'},
+              titleTextStyle: {color: '#ccc'},
+              gridlines: {color: '#222', count: -1}
+            },
+          vAxis: {
+              minValue: 0,
+              textStyle: {color: '#ccc'},
+              gridlines: {color: '#222', count: -1}
+            },
           chartArea: {'width':'80%'},
           legend: {'position':'none'},
           series: {
-            1: { areaOpacity: 0, color: "#555" },
-            2: { areaOpacity: 0, color: "#A55" }
-          }
+            0: { areaOpacity: 0, color: "#111", tooltip: false },
+            1: { areaOpacity: 0, color: "#A00", tooltip: false},
+            2: { areaOpacity: 0.3, color: 'orange', tooltip: true}
+          },
+          backgroundColor: '#404040'
         };
 
         var chart = new google.visualization.AreaChart(document.getElementById('stats-graph'));
@@ -626,7 +609,7 @@
       }
 
     function renderHistoricalGames() {                   
-        fbdb.ref('/history/').limitToLast(20).once('value').then(function(snapshot) {
+        fbdb.ref('/history/').limitToLast(10).once('value').then(function(snapshot) {
             // Games stats
             var lastTwentyGames = '';
             var lastTwentyGamesData = [];
@@ -1007,7 +990,8 @@
             if (playersArray[i].status) {
                 playerScoresUi += tmpl('scorePlayers', {
                     'key': playersArray[i].key,
-                    'playerName': playersArray[i].name
+                    'playerName': playersArray[i].name,
+                    'unranked': !playersArray[i].isRanked? "unranked":""
                 });
             }
         }
@@ -1204,9 +1188,7 @@
         }));
         $('.sidebar .sidebar-menu').html(tmpl('sidebarMenu', {
             "basics" : i18n.app.sidebarMenu.basics,
-            "colors" : i18n.app.sidebarMenu.colors,
-            "players" : i18n.app.sidebarMenu.players,
-            "users" : i18n.app.sidebarMenu.users
+            "players" : i18n.app.sidebarMenu.players
         }));
         sidebarInitEvents();
         // resize event
@@ -1220,21 +1202,11 @@
             sidebarResetHeight();
             return false;
         });
-        $('.sidebar-colors').off('click').on('click', function() {
-            sidebarInitColor();
-            sidebarResetHeight();
-            return false;
-        });
         $('.sidebar-players').off('click').on('click', function() {
             sidebarInitPlayer();
             sidebarResetHeight();
             return false;
-        });
-        $('.sidebar-users').off('click').on('click', function() {
-            sidebarInitUser();
-            sidebarResetHeight();
-            return false;
-        });
+        });        
         // Sidebar close
         $('.sidebar .sidebar-close').off('click').on('click', function() {
             $('body').removeClass('show-sidebar');
@@ -1250,7 +1222,6 @@
             "gameShuffleboard" : i18n.app.settingsBasics.gameShuffleboard,
             "gameTableTennis" : i18n.app.settingsBasics.gameTableTennis,
             "language" : i18n.app.settingsBasics.language,
-            "nextButton" : i18n.app.global.nextButton,
             "orgName" : i18n.app.settingsBasics.orgName,
             "whatGame" : i18n.app.settingsBasics.whatGame
         }));
@@ -1291,102 +1262,10 @@
             localStorage.setItem('lang', $(this).val());
             location.reload();
         });
-        // Next button
-        $('.basics .next').off('click').on('click', function() {
-            sidebarInitColor();
-            return false;
-        });
-    }
-    function sidebarInitColor() {
-        $('.sidebar-body').html(tmpl('settingsColors', {
-            'c0' : localData.settings.appColors.c0,
-            'c1' : localData.settings.appColors.c1,
-            'c2' : localData.settings.appColors.c2,
-            'c3' : localData.settings.appColors.c3,
-            'c4' : localData.settings.appColors.c4,
-            'c5' : localData.settings.appColors.c5,
-            'highlightColor' : i18n.app.settingsColors.highlightColor,
-            "nextButton" : i18n.app.global.nextButton,
-            'primaryBackground' : i18n.app.settingsColors.primaryBackground,
-            'primaryButton' : i18n.app.settingsColors.primaryButton,
-            'primaryText' : i18n.app.settingsColors.primaryText,
-            'resetColors' : i18n.app.settingsColors.resetColors,
-            'secondaryBackground' : i18n.app.settingsColors.secondaryBackground,
-            'secondaryText' : i18n.app.settingsColors.secondaryText
-        }));
-        sidebarInitColorEvents();
-        // Update menu bar
-        $('.sidebar-menu .c-button').removeClass('active');
-        $('.sidebar-colors').addClass('active');
-    }
-    function sidebarInitColorEvents() {
-        // Iris
-        $('.color-picker').each(function( index ) {
-            var $this = $(this);
-            $this.iris({
-                palettes: true,
-                change: function(event, ui) {
-                    var newColor = ui.color.toString();
-                    var id = event.target.id;
-
-                    if (!['c0','c1','c2','c3','c4','c5'].includes(id)) {
-                        return false;
-                    }
-
-                    var colorUpdate = { 'c0': newColor };
-                    if ('c1' === id) {
-                        colorUpdate = { 'c1': newColor };
-                    } else if ('c2' === id) {
-                        colorUpdate = { 'c2': newColor };
-                    } else if ('c3' === id) {
-                        colorUpdate = { 'c3': newColor };
-                    } else if ('c4' === id) {
-                        colorUpdate = { 'c4': newColor };
-                    } else if ('c5' === id) {
-                        colorUpdate = { 'c5': newColor };
-                    }
-
-                    if (newColor !== localData.settings.appColors[id]) {
-                        fbdb.ref('/settings/appColors/').update(colorUpdate, function() {
-                            $('.' + id + ' .swatch').css('background', newColor);
-                            messageShow('success', i18n.app.messages.colorUpdated, true);
-                        }).catch(function(error) {
-                            console.log('Failed to update color');
-                        });
-                    }
-                }
-            }).off('focus').on('focus', function() {
-                sidebarHideIris();
-                $this.iris('show');
-            }).off('click').on('click', function(e) {
-                e.stopPropagation();
-            });
-            $('.iris-picker').off('click').on('click', function(e) {
-                e.stopPropagation();
-            });
-            $('.sidebar').off('click').on('click', function() {
-                sidebarHideIris();
-            });
-        });
-        // Reset colors
-        $('.reset-colors').off('click').on('click', function() {
-            if (confirm(i18n.app.settingsColors.resetColors + '?')) {
-                fbdb.ref('/settings/appColors/').remove().then(function() {
-                    sidebarInitColor();
-                });
-            }
-            return false;
-        });
-        // Next button
-        $('.colors .next').off('click').on('click', function() {
-            sidebarInitPlayer();
-            return false;
-        });
     }
     function sidebarInitPlayer() {
         $('.sidebar-body').html(tmpl('settingsPlayers', {
             "addPlayers" : i18n.app.settingsPlayers.addPlayers,
-            "nextButton" : i18n.app.global.nextButton,
             "onePerLine" : i18n.app.settingsPlayers.onePerLine
         }));
         // Update player settings
@@ -1428,36 +1307,9 @@
             // Reset sidebar height
             sidebarResetHeight();
             return false;
-        });
-        // Next button
-        $('.players-view .next').off('click').on('click', function() {
-            sidebarInitUser();
-            return false;
-        });
+        });        
     }
-    function sidebarInitUser() {
-        $('.sidebar-body').html(tmpl('settingsUsers', {
-            "manageLogins" : i18n.app.settingsUsers.manageLogins,
-            "nextButton" : i18n.app.global.nextButton
-        }));
-        sidebarInitUserEvents();
-        // Update menu bar
-        $('.sidebar-menu .c-button').removeClass('active');
-        $('.sidebar-users').addClass('active');
-    }
-    function sidebarInitUserEvents() {
-        // Account edit link
-        $('.account-manage').off('click').on('click', function() {
-            var authDomainSplit = config.authDomain.split('.');
-            window.location = 'https://console.firebase.google.com/project/' + authDomainSplit[0] + '/authentication/users';
-            return false;
-        });
-        // Next button
-        $('.users .next').off('click').on('click', function() {
-            sidebarInitBasic();
-            return false;
-        });
-    }
+        
     function sidebarResetHeight() {
         $('.sidebar').css('height', '400px');
         var sidebarHeight = parseInt($('.sidebar-container').height());

@@ -25,7 +25,7 @@
 		<div class="doubles">
 			<div class="rankings"></div>
 		</div>
-		<div id="showUnranked" class="c-button showHideMargin">Show/Hide Unranked Players</div>
+		<div id="showUnranked" class="c-button showHideMargin hidden">Show/Hide Unranked Players</div>
 		<div class="history">
 		</div>
 	</div>
@@ -58,19 +58,25 @@
 			<td><input type="text" value="<%=playerName%>" /></td>
 			<td>
 				<a href="#" class="player-status"><%=playerStatus%></a>
-				<a href="#" class="player-delete"><%=deleteLink%></a>
+				<a href="#" class="player-delete c-button"><%=deleteLink%></a>
 			</td>
 		</tr>
 	</script>
 	<script type="text/html" id="rankingsRow">
-		<div class="ranking <%=pointsClass%> <%=rankingStatus%> <%=wanted%> <%=goldenBall%> <%=hole%>" data-id="<%=key%>" tabindex="0">
-				<div class="medal <%=medal%>"></div>
+		<div class="ranking <%=rankingStatus%>" data-id="<%=key%>" tabindex="0">
+			<div class="medal <%=medal%>"></div>
 				<span class="rank"><%=rank%></span>
 				<span class="name"><%=name%><span class="gamesInfo"><%=gamesInfo%> <%=goalsInfo%> <%=rankingStatus%></span></span>
+				<span class="badgesRow">
+					<span class="extraBadge mostGoals <%=mostGoals%>" title="Scored the most goals!"></span>
+					<span class="extraBadge holeInTheGoal <%=holeInTheGoal%>" title="Has a big hole in the goal!"></span>
+					<span class="extraBadge mostGames <%=mostGames%>" title="Played the most games!"></span>
+				</span>
 			<div class="right">
 				<span class="movement"><%=lastMovement%></span>
 				<span class="points"><%=points%></span>
-			</div>
+			</div>			
+			<span class="pointsBadge <%=pointsBadge%>"></span>
 		</div>
 	</script>
 	<script type="text/html" id="scoreAdd">
@@ -86,15 +92,17 @@
 						<div class="players-select t1-players"></div>
 						<strong><%=teamOneScore%>:</strong>
 						<div class="score">
-							<div class="increment">
-								<a href="#" data-team="1" data-amount="0">0</a>
-								<a href="#" data-team="1" data-amount="1">1</a>
-								<a href="#" data-team="1" data-amount="2">2</a>
-								<a href="#" data-team="1" data-amount="3">3</a>
-								<a href="#" data-team="1" data-amount="4">4</a>
-								<a href="#" data-team="1" data-amount="5">5</a>
+							<div class="panel">
+								<div class="increment">
+									<a href="#" data-team="1" data-amount="0">0</a>
+									<a href="#" data-team="1" data-amount="1">1</a>
+									<a href="#" data-team="1" data-amount="2">2</a>
+									<a href="#" data-team="1" data-amount="3">3</a>
+									<a href="#" data-team="1" data-amount="4">4</a>
+									<a href="#" data-team="1" data-amount="5">5</a>
+								</div>
+								<input type="text" class="t1-score" value="0"/>
 							</div>
-							<input type="text" class="t1-score" value="0"/>
 						</div>
 					</section>
 				</div>
@@ -103,16 +111,18 @@
 						<strong><%=teamTwoPlayers%>:</strong>
 						<div class="players-select t2-players"></div>
 						<strong><%=teamTwoScore%>:</strong>
-						<div class="score">							
-							<div class="increment">
-								<a href="#" data-team="2" data-amount="0">0</a>
-								<a href="#" data-team="2" data-amount="1">1</a>
-								<a href="#" data-team="2" data-amount="2">2</a>
-								<a href="#" data-team="2" data-amount="3">3</a>
-								<a href="#" data-team="2" data-amount="4">4</a>
-								<a href="#" data-team="2" data-amount="5">5</a>
+						<div class="score">		
+							<div class="panel">					
+								<div class="increment">
+									<a href="#" data-team="2" data-amount="0">0</a>
+									<a href="#" data-team="2" data-amount="1">1</a>
+									<a href="#" data-team="2" data-amount="2">2</a>
+									<a href="#" data-team="2" data-amount="3">3</a>
+									<a href="#" data-team="2" data-amount="4">4</a>
+									<a href="#" data-team="2" data-amount="5">5</a>
+								</div>
+								<input type="text" class="t2-score" value="0"/>
 							</div>
-							<input type="text" class="t2-score" value="0"/>
 						</div>
 					</section>
 				</div>
@@ -123,7 +133,7 @@
 		</form>
 	</script>
 	<script type="text/html" id="scorePlayers">
-		<a href="#" data-id="<%=key%>"><%=playerName%></a>
+		<a href="#" data-id="<%=key%>" class="<%=unranked%>"><%=playerName%></a>
 	</script>
 	<script type="text/html" id="settingsBasics">
 		<section class="basics">
@@ -158,50 +168,7 @@
 						<option value="sv">svenska</option>
 						<option value="zh">中文</option>
 					</select>
-				</div>
-				<div class="control">
-					<a href="#" class="next c-button c-button--md c-button--primary"><%=nextButton%></a>
-				</div>
-			</form>
-		</section>
-	</script>
-	<script type="text/html" id="settingsColors">
-		<section class="colors">
-			<form>
-				<div class="control c0">
-					<input type="text" class="color-picker" id="c0" value="<%=c0%>">
-					<span class="swatch" style="background: <%=c0%>;"></span>
-					<span><%=primaryText%></span>
-				</div>
-				<div class="control c1">
-					<input type="text" class="color-picker" id="c1" value="<%=c1%>">
-					<span class="swatch" style="background: <%=c1%>;"></span>
-					<span><%=highlightColor%></span>
-				</div>
-				<div class="control c2">
-					<input type="text" class="color-picker" id="c2" value="<%=c2%>">
-					<span class="swatch" style="background: <%=c2%>;"></span>
-					<span><%=secondaryText%></span>
-				</div>
-				<div class="control c3">
-					<input type="text" class="color-picker" id="c3" value="<%=c3%>">
-					<span class="swatch" style="background: <%=c3%>;"></span>
-					<span><%=secondaryBackground%></span>
-				</div>
-				<div class="control c4">
-					<input type="text" class="color-picker" id="c4" value="<%=c4%>">
-					<span class="swatch" style="background: <%=c4%>;"></span>
-					<span><%=primaryBackground%></span>
-				</div>
-				<div class="control c5">
-					<input type="text" class="color-picker" id="c5" value="<%=c5%>">
-					<span class="swatch" style="background: <%=c5%>;"></span>
-					<span><%=primaryButton%></span>
-				</div>
-				<div class="control">
-					<a href="#" class="next c-button c-button--md c-button--primary"><%=nextButton%></a>
-					<a href="#" class="reset-colors c-button c-button--link right"><%=resetColors%></a>
-				</div>
+				</div>				
 			</form>
 		</section>
 	</script>
@@ -218,20 +185,8 @@
 		<section class="players-view">
 			<form>
 				<div class="control">
-					<a href="#" class="players-add-link"><%=addPlayers%></a>
+					<a href="#" class="players-add-link c-button"><%=addPlayers%></a>
 					<table class="players-list"></table>
-				</div>
-				<div class="control">
-					<a href="#" class="next c-button c-button--md c-button--primary"><%=nextButton%></a>
-				</div>
-			</form>
-		</section>
-	</script>
-	<script type="text/html" id="settingsUsers">
-		<section class="users">
-			<form>
-				<div class="control">
-					<p><%=manageLogins%> <a href="" class="account-manage">FireBase</a></p>
 				</div>
 			</form>
 		</section>
@@ -243,9 +198,7 @@
 	<script type="text/html" id="sidebarMenu">
 		<div class="button-group">
 			<a href="#" class="sidebar-basics c-button active"><%=basics%></a>
-			<a href="#" class="sidebar-colors c-button"><%=colors%></a>
 			<a href="#" class="sidebar-players c-button"><%=players%></a>
-			<a href="#" class="sidebar-users c-button"><%=users%></a>
 		</div>
 	</script>
 	<script type="text/html" id="stats">
@@ -295,97 +248,12 @@
 		<li><strong class="<%=status%>"><%=status%></strong> <strong class="<%=status%>"><%=rating_after_game%></strong> <%=t1%> <%=t1Score%> : <%=t2Score%> <%=t2%><span class="game_date"> - <%=date%></span></li>
 	</script>
 	<script type="text/html" id="historicalGame">
-		<div>
-			<img src="css/tramba.png" class="optional" height="30px" />
-			<img src="css/dragonball.png" class="optional" height="30px" />
+		<div>			
 			<span class="<%=t1Class%> pointsMomement optional"><i><%=t1PointMovement%></i></span>
 			 <span class="<%=t1Class%> teamLabel"><%=t1%></span> <span class="<%=t1Class%> teamScore"><%=t1Score%></span> : <span class="<%=t2Class%> teamScore"><%=t2Score%></span> <span class="<%=t2Class%> teamLabel"><%=t2%></span> 
-			 <span class="<%=t2Class%> pointsMomement optional"><i><%=t2PointMovement%></i></span>
-			 <img src="css/dragonball.png" class="optional" height="30px" />
-			 <img src="css/tramba.png" class="optional" height="30px" />
+			 <span class="<%=t2Class%> pointsMomement optional"><i><%=t2PointMovement%></i></span>			 
 			 <span class="game_date optional"> - <%=date%></span>
 			</div>
-	</script>
-
-	<script type="text/html" id="cssBlock">
-		<style>
-			/* Color 0 */
-			.color-bg-0,
-			.modal { background: <%=c0%>; }
-			.color-tx-0,
-			.c-button:active,
-  			.c-button:focus,
-  			.c-button:hover,
-  			.c-button.is-selected,
-  			.ranking,
-  			header .name,
-  			.movement-positive { color: <%=c0%> }
-
-  			/* Color 1 */
-			.c-button,
-			.color-tx-1 { color: <%=c1%>; }
-  			.ranking:focus,
-			.ranking:hover { border-color: <%=c1%>; }
-
-			/* Color 2 */
-			.ranking:focus,
-			.ranking:hover { border-color: <%=c2%>; }
-			.ranking .movement,
-			.ranking .rank,
-			header .game-type { color: <%=c2%>; }
-			.title-bar { background: <%=c2%>; }
-
-			/* Color 3 */
-			.c-button,
-			.c-button:active,
-			.c-button:focus,
-			.c-button:hover,
-			.c-button.is-selected,
-			.c-button.is-selected:active,
-			.c-button.is-selected:focus,
-			.c-button.is-selected:hover,
-			.ranking { border-color: <%=c3%>; }
-			.c-button:active,
-			.c-button:focus,
-			.c-button:hover,
-			.c-button.is-selected,
-			.c-button.is-selected:active,
-			.c-button.is-selected:focus,
-			.c-button.is-selected:hover,
-			.ranking { background: <%=c3%>; }
-
-			/* Color 4 */
-			body { background: <%=c4%>; }
-
-			/* Links */
-			.c-button--link { 
-  				background: transparent;
-  				border: transparent;
-  				color: <%=c1%>;
-  			}
-  			.c-button--link:active,
-  			.c-button--link:focus,
-  			.c-button--link:hover { 
-  				background: transparent;
-  				border: transparent;
-  				color: <%=c0%>;
-  			}
-  			
-			/* Primary */
-  			.c-button--primary { 
-  				background: transparent;
-  				border-color: <%=c5%>;
-  				color: <%=c5%>;
-  			}
-  			.c-button--primary:active,
-  			.c-button--primary:focus,
-  			.c-button--primary:hover {
-  				background: <%=c5%>;
-  				border-color: <%=c5%>;
-  				color: <%=c0%>;
-  				text-decoration: none;
-  			}
-		</style>
-	</script>
+	</script>	
 </body>
 </html>
