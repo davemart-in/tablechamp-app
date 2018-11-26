@@ -614,7 +614,7 @@ body {
     font-weight: bold; 
     padding-left:23px;}
     .ranking .name .gamesInfo {
-      opacity: 0.5;}  
+      color: #ccc;}  
   .ranking .rank {
     font-weight: 700;
     padding: 0;
@@ -1239,6 +1239,7 @@ body.ru .sidebar .sidebar-menu a {
   .ranking .gamesInfo{
     float:right;
     padding:0px;
+    font-size:14px;
   }
   .ranking .badgesRow{
     position:absolute;
