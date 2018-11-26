@@ -679,7 +679,7 @@ body {
   display: none;
 }
 .ranking.unranked .pointsBadge{
-  display:none;
+  opacity: 0.25;
 }
 
 .ranking.wanted {
