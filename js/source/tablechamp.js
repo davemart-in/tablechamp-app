@@ -206,8 +206,8 @@
     function localDataUpdate(data) {
         // Reset everything
         localData.mostGamesByOnePlayer = -1;
-        localData.mostGoalsFor = -1;
-        localData.mostGoalsAgainst = -1;
+        localData.bestGoalsForAverage = -1;
+        localData.worstGoalsAgainstAverage = -1;
         localData.playersArray = [];
         localData.playersByDoubles = [];
         localData.playersByKey = {};
@@ -217,7 +217,9 @@
         for (var key in localData.playersByKey) {
             if (localData.playersByKey.hasOwnProperty(key)) {
                 var gamesCount =  localData.playersByKey[key].doubles_lost + localData.playersByKey[key].doubles_won;
-                
+                var goalsForAverage = (gamesCount > 0) ? localData.playersByKey[key].doubles_goals_for/gamesCount : 0;
+                var goalsAgainstAverage = (gamesCount > 0) ? localData.playersByKey[key].doubles_goals_against/gamesCount : 0;
+
                 localData.playersArray.push({
                     "doubles_last_movement": localData.playersByKey[key].doubles_last_movement,
                     "doubles_lost": localData.playersByKey[key].doubles_lost,
@@ -225,6 +227,8 @@
                     "doubles_won": localData.playersByKey[key].doubles_won,
                     "doubles_goals_for": localData.playersByKey[key].doubles_goals_for,
                     "doubles_goals_against": localData.playersByKey[key].doubles_goals_against,
+                    "doubles_goals_for_avg": goalsForAverage,
+                    "doubles_goals_against_avg": goalsAgainstAverage,
                     "dt": localData.playersByKey[key].dt,
                     "key": key,
                     "name": localData.playersByKey[key].name,
@@ -236,11 +240,11 @@
                 if (gamesCount > localData.mostGamesByOnePlayer){
                     localData.mostGamesByOnePlayer = gamesCount;
                 }
-                if (localData.playersByKey[key].doubles_goals_for > localData.mostGoalsFor){
-                    localData.mostGoalsFor = localData.playersByKey[key].doubles_goals_for;
+                if (goalsForAverage > localData.bestGoalsForAverage){
+                    localData.bestGoalsForAverage = goalsForAverage;
                 }
-                if (localData.playersByKey[key].doubles_goals_against > localData.mostGoalsAgainst){
-                    localData.mostGoalsAgainst = localData.playersByKey[key].doubles_goals_against;
+                if (goalsAgainstAverage > localData.worstGoalsAgainstAverage){
+                    localData.worstGoalsAgainstAverage = goalsAgainstAverage;
                 }
             }
         }
@@ -413,7 +417,7 @@
             if (doublesArray[i].status) {
                 var doublesLastMovement = (doublesArray[i].doubles_last_movement) ? doublesArray[i].doubles_last_movement.toFixed(2) : '';
                 var doublesPoints = (doublesArray[i].doubles_points) ? doublesArray[i].doubles_points.toFixed(2) : '';
-                var pointsBasedBadge = getPointsBadge(doublesPoints);  
+                var pointsBasedBadge = getPointsBadge(doublesPoints);
 
                 doublesRankings += tmpl('rankingsRow', {
                     'key': doublesArray[i].key,
@@ -421,7 +425,7 @@
                     'name': doublesArray[i].name,
                     'points': doublesPoints,
                     'gamesInfo' : "["+ doublesArray[i].doubles_won + "/" + doublesArray[i].doubles_lost + "]",
-                    'goalsInfo' : (doublesArray[i].doubles_goals_for || 0) + ":" + (doublesArray[i].doubles_goals_against || 0),
+                    'goalsInfo' : doublesArray[i].doubles_goals_for_avg.toFixed(2)  + ":" + doublesArray[i].doubles_goals_against_avg.toFixed(2),
                     'rank': doublesArray[i].doubles_rank,
                     'type': 'doubles',
                     'pointsBadge' : pointsBasedBadge,
@@ -429,8 +433,8 @@
                     'top' :  (i < 3)? "top":"standard",
                     'rankingStatus' : doublesArray[i].isRanked ? "" : "unranked",
                     'mostGames' : (doublesArray[i].gamesCount == localData.mostGamesByOnePlayer)? "granted" : "",
-                    'mostGoals' : ((doublesArray[i].doubles_goals_for || 0) == localData.mostGoalsFor) ? "granted" : "",
-                    'holeInTheGoal': ((doublesArray[i].doubles_goals_against || 0) == localData.mostGoalsAgainst) ? "granted" : ""
+                    'mostGoals' : (doublesArray[i].doubles_goals_for_avg == localData.bestGoalsForAverage) ? "granted" : "",
+                    'holeInTheGoal': (doublesArray[i].doubles_goals_against_avg  == localData.worstGoalsAgainstAverage) ? "granted" : ""
                 });
             }
         }
