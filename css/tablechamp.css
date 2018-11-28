@@ -634,13 +634,38 @@ body {
     height: 100%; 
     
     background: url("rank_badges.png?v=2") no-repeat;
-    background-size: 600% 100%;
+    background-size: 600% 600%;
     background-position: 0% 0%;
   }
   .ranking .pointsBadge.plat   {background-position-x: 100%;}
-  .ranking .pointsBadge.gold   {background-position-x: 76%;}
-  .ranking .pointsBadge.silver {background-position-x: 52%;}
-  .ranking .pointsBadge.bronze {background-position-x: 27%;}
+
+  .ranking .pointsBadge.gold0,
+  .ranking .pointsBadge.gold1,
+  .ranking .pointsBadge.gold2,
+  .ranking .pointsBadge.gold3,
+  .ranking .pointsBadge.gold4,
+  .ranking .pointsBadge.gold5 {background-position-x: 76%;}
+
+  .ranking .pointsBadge.silver0,
+  .ranking .pointsBadge.silver1,
+  .ranking .pointsBadge.silver2,
+  .ranking .pointsBadge.silver3,
+  .ranking .pointsBadge.silver4,
+  .ranking .pointsBadge.silver5 {background-position-x: 52%;}
+
+  .ranking .pointsBadge.bronze0,
+  .ranking .pointsBadge.bronze1,
+  .ranking .pointsBadge.bronze2,
+  .ranking .pointsBadge.bronze3,
+  .ranking .pointsBadge.bronze4,
+  .ranking .pointsBadge.bronze5 {background-position-x: 27%;}
+
+  .ranking .pointsBadge.gold1, .ranking .pointsBadge.silver1, .ranking .pointsBadge.bronze1  {background-position-y: 20%;}
+  .ranking .pointsBadge.gold2, .ranking .pointsBadge.silver2, .ranking .pointsBadge.bronze2  {background-position-y: 40%;}
+  .ranking .pointsBadge.gold3, .ranking .pointsBadge.silver3, .ranking .pointsBadge.bronze3  {background-position-y: 60%;}
+  .ranking .pointsBadge.gold4, .ranking .pointsBadge.silver4, .ranking .pointsBadge.bronze4  {background-position-y: 80%;}
+  .ranking .pointsBadge.gold5, .ranking .pointsBadge.silver5, .ranking .pointsBadge.bronze5  {background-position-y: 100%;}
+
   .ranking .pointsBadge.crap   {background-position-x: 0%;}
 
   .ranking .extraBadge{

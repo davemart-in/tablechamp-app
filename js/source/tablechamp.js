@@ -444,10 +444,10 @@
 
     function getPointsBadge(points)
     {
-        if (points > 150)   return "plat";
-        if (points > 120)   return "gold";
-        if (points > 80)    return "silver";
-        if (points > 50)    return "bronze";
+        if (points >= 150)   return "plat";
+        if (points >= 120)   return "gold"      + Math.floor((points - 120)/5);
+        if (points >= 80)    return "silver"    + Math.floor((points - 80)/7);
+        if (points >= 50)    return "bronze"    + Math.floor((points - 50)/5);
         return "crap";
     }
 
