@@ -233,7 +233,7 @@
                     "key": key,
                     "name": localData.playersByKey[key].name,
                     "status": localData.playersByKey[key].status,
-                    "isRanked": gamesCount > 10,
+                    "isRanked": gamesCount >= 5,
                     "gamesCount": gamesCount
                 });
 
