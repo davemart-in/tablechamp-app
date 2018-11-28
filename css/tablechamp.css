@@ -1277,8 +1277,9 @@ body.ru .sidebar .sidebar-menu a {
     bottom:0px;
   }
   .ranking .pointsBadge {
-    background-size: 600% 58%;
-    background-position-y: 50%;
+    right: -47px;
+    top: 20px;
+    height: 51px;    
   }
 
   
