@@ -485,8 +485,7 @@ body {
   z-index: 5; }
 
 .message {
-  background: #FAF9C6;
-  border: 1px solid #EFDA91;
+  background: #A00;
   border-radius: 1px;
   display: none;
   font-size: 13px;
@@ -548,7 +547,7 @@ body {
 .modal-body {
   background: #333;
   overflow: hidden;
-  padding: 20px;
+  padding: 10px;
   position: relative;
   box-sizing: border-box; }
 
@@ -773,8 +772,6 @@ body {
 }
 
 .players-select {
-  margin-bottom: 20px;
-  margin-top: -4px;
   overflow: hidden; }
   .players-select a {
     -webkit-appearance: none;
@@ -816,7 +813,7 @@ body {
     background: #555; } 
 
 .t1, .t2 {
-  float: left;
+  margin: auto;
   text-align: center;
   vertical-align: top;
   width: 50%; }
@@ -868,20 +865,13 @@ body {
       width: 140px; }
   .t1 section, .t2 section {
     background: #404040;
-    padding: 20px 20px 30px; }
+    padding: 10px; }
   .t1 strong, .t2 strong {
     color: rgb(207, 207, 207);
     display: inline-block;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     text-align: center; }
     
-
-.t1 section {
-  margin-right: 9px; }
-
-.t2 section {
-  margin-left: 9px; }
-
 .app {
   margin-left: 0;
   -webkit-transition: margin-left 50ms ease-out;
@@ -1187,9 +1177,6 @@ body.ru .sidebar .sidebar-menu a {
   .t1 section, .t2 section {
     margin: 0; }
 
-  .t1 section {
-    margin-bottom: 13px; } 
-
   .app header .add-score {
     margin-bottom: 10px; }
   .app header .c-button {
@@ -1233,11 +1220,6 @@ body.ru .sidebar .sidebar-menu a {
       .t1 section, .t2 section {
         margin: 0; }
   
-    .t1 section {
-      margin-bottom: 13px;
-    }
-
-
   .history .game_date {display:none !important;}
   .history div span.teamScore, .history div span.teamLabel
     {
@@ -1247,6 +1229,8 @@ body.ru .sidebar .sidebar-menu a {
     {
       width: 140px;
     }
+    
+  .modal {margin: 0px auto;}
 }
 @media only screen and (max-width: 650px) { 
   .rankings {
@@ -1280,9 +1264,7 @@ body.ru .sidebar .sidebar-menu a {
     right: -47px;
     top: 20px;
     height: 51px;    
-  }
-
-  
+  }  
 }
 
 @media only screen and (max-width: 500px)

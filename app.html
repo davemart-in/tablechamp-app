@@ -3,7 +3,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 	<title>TableChamp</title>
-	<link rel="stylesheet" type="text/css" charset="utf-8"  media="screen, projection" href="css/tablechamp.css?v=8" />
+	<link rel="stylesheet" type="text/css" charset="utf-8"  media="screen, projection" href="css/tablechamp.css?v=9" />
 	<link rel="icon" type="image/png" href="css/tramba.png">
 	<link href="https://fonts.googleapis.com/css?family=Libre+Franklin:400,600" rel="stylesheet">
 	<meta name="mobile-web-app-capable" content="yes"> 
@@ -39,7 +39,8 @@
 	<script type="text/javascript" src="js/jquery-ui.min.js"></script>
 	<script src="js/firebase.3.6.5.js"></script>
 	<script type="text/javascript" src="js/iris.min.js"></script>
-	<script type="text/javascript" src="js/source/tablechamp.js?v=1"></script>
+	<script type="text/javascript" src="js/source/tramba-pager.js?v=1"></script>
+	<script type="text/javascript" src="js/source/tablechamp.js?v=1"></script>	
 	<script type="text/javascript" src="js/slack_token.js"></script>	  
 	<!-- JS Templates -->
 	<script type="text/html" id="appHeader">
@@ -86,11 +87,16 @@
 		</div>
 		<form class="score-add">
 			<div class="modal-body">
-				<div class="t1">
-					<section>
-						<strong><%=teamOnePlayers%>:</strong>
-						<div class="players-select t1-players"></div>
-						<strong><%=teamOneScore%>:</strong>
+				<div id="pager">
+					<div class="t1">											
+						<section>
+							<strong><%=teamOnePlayers%>:</strong>
+							<div class="players-select t1-players"></div>							
+						</section>
+					</div>
+					
+					<div class="t1">
+					<strong><%=teamOneScore%>:</strong>
 						<div class="score">
 							<div class="panel">
 								<div class="increment">
@@ -104,32 +110,42 @@
 								<input type="text" class="t1-score" value="0"/>
 							</div>
 						</div>
-					</section>
-				</div>
-				<div class="t2">
-					<section>
-						<strong><%=teamTwoPlayers%>:</strong>
-						<div class="players-select t2-players"></div>
-						<strong><%=teamTwoScore%>:</strong>
-						<div class="score">		
-							<div class="panel">					
-								<div class="increment">
-									<a href="#" data-team="2" data-amount="0">0</a>
-									<a href="#" data-team="2" data-amount="1">1</a>
-									<a href="#" data-team="2" data-amount="2">2</a>
-									<a href="#" data-team="2" data-amount="3">3</a>
-									<a href="#" data-team="2" data-amount="4">4</a>
-									<a href="#" data-team="2" data-amount="5">5</a>
+					</div>
+
+					<div class="t2">
+						<section>						
+							<strong><%=teamTwoPlayers%>:</strong>		
+							<div class="players-select t2-players"></div>
+						</section>
+					</div>
+
+					<div class="t2">
+						<section>	
+							<strong><%=teamTwoScore%>:</strong>
+							<div class="score">		
+								<div class="panel">					
+									<div class="increment">
+										<a href="#" data-team="2" data-amount="0">0</a>
+										<a href="#" data-team="2" data-amount="1">1</a>
+										<a href="#" data-team="2" data-amount="2">2</a>
+										<a href="#" data-team="2" data-amount="3">3</a>
+										<a href="#" data-team="2" data-amount="4">4</a>
+										<a href="#" data-team="2" data-amount="5">5</a>
+									</div>
+									<input type="text" class="t2-score" value="0"/>
 								</div>
-								<input type="text" class="t2-score" value="0"/>
 							</div>
-						</div>
-					</section>
+						</section>		
+					</div>					
 				</div>
+				
 			</div>
+
 			<div class="modal-footer">
+				<a href="#" id="pager-button" class="c-button c-button--md c-button--primary" type="submit">Next</a>
 				<button class="c-button c-button--md c-button--primary" type="submit"><%=addScoreButton%></button>
-			</div>
+			</div>	
+			
 		</form>
 	</script>
 	<script type="text/html" id="scorePlayers">

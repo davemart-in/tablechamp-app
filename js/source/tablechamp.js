@@ -108,6 +108,8 @@
                 "teamTwoPlayers" : i18n.app.scoreAdd.teamTwoPlayers,
                 "teamTwoScore" : i18n.app.scoreAdd.teamTwoScore
             }));
+
+            Pager.setToObject("pager");
             // Update add score player selection
             scoringPopulatePlayerSelection();
             // Player select event
