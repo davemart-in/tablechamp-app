@@ -39,10 +39,10 @@ var i18n = {
 		"scoreAdd" : {
 			"addScoreButton" : "Add new score",
 			"addScoreTitle" : "Add Score",
-			"teamOnePlayers" : "Select team one players",
-			"teamOneScore" : "Team one score",
-			"teamTwoPlayers" : "Select team two players",
-			"teamTwoScore" : "Team two score"
+			"teamOnePlayers" : "Select winning team",
+			"teamOneScore" : "Winning team's score",
+			"teamTwoPlayers" : "Select loosing team",
+			"teamTwoScore" : "Loosing team's score"
 		},
 		"settingsBasics" : {
 			"companyOrClub" : "Company or club name",

@@ -150,12 +150,10 @@
     // ---------------------------------------------------
     function initPlayersListener() {
         fbdb.ref('/players/').on('value', function(snapshot) {
-            // Update local data set
             localDataUpdate(snapshot.val());
-            // Update doubles rankings
             doublesRankingsUpdate();
-            // Rankings events
-            rankingsEvents();
+            rankingsEvents();            
+            renderHistoricalGames();
         });
     }
     function initSettingsListener() {
@@ -256,10 +254,9 @@
             var y = b.name.toLowerCase();
             return x < y ? -1 : x > y ? 1 : 0;
         });
-        // Sort by doubles array
+        // Sort by games array
         localData.playersByDoubles = localData.playersArray.slice(0);
         localData.playersByDoubles.sort(function(a,b) {
-            //doublesArray[i].doubles_lost + doublesArray[i].doubles_won 
             if(a.isRanked && !b.isRanked){
                 return -1;
             }else if(!a.isRanked && b.isRanked){
@@ -267,12 +264,12 @@
             }
             return b.doubles_points - a.doubles_points;
         });
-        // Add doubles rank to array
-        var doublesCount = 0;
+        // Add games rank to array
+        var gamesCount = 0;
         for (var i = 0; i < localData.playersByDoubles.length; i++) {
-            doublesCount++;
-            localData.playersByDoubles[i]['doubles_rank'] = doublesCount;
-            localData.playersByKey[localData.playersByDoubles[i]['key']].doubles_rank = doublesCount;
+            gamesCount++;
+            localData.playersByDoubles[i]['doubles_rank'] = gamesCount;
+            localData.playersByKey[localData.playersByDoubles[i]['key']].doubles_rank = gamesCount;
         }        
     }
 
@@ -614,7 +611,7 @@
         chart.draw(data, options);
       }
 
-    function renderHistoricalGames() {                   
+    function renderHistoricalGames() {
         fbdb.ref('/history/').limitToLast(10).once('value').then(function(snapshot) {
             // Games stats
             var lastTwentyGames = '';
