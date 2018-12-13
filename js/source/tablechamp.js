@@ -428,6 +428,7 @@
                     'name': gamesArray[i].name,
                     'points': points,
                     'gamesInfo' : "["+ gamesArray[i].doubles_won + "/" + gamesArray[i].doubles_lost + "]",
+                    'gamesCount' : gamesArray[i].gamesCount,
                     'goalsInfo' : gamesArray[i].doubles_goals_for_avg.toFixed(2)  + ":" + gamesArray[i].doubles_goals_against_avg.toFixed(2),
                     'rank': gamesArray[i].doubles_rank,
                     'type': 'doubles',
