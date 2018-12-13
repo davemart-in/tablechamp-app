@@ -216,8 +216,8 @@
         // Assemble playerList array
         for (var key in localData.playersByKey) {
             if (localData.playersByKey.hasOwnProperty(key)) {
-                var isRanked = gamesCount >= 7; // as we usually play only 6 games at once
                 var gamesCount =  localData.playersByKey[key].doubles_lost + localData.playersByKey[key].doubles_won;
+                var isRanked = gamesCount >= 7; // as we usually play only 6 games at once
                 var goalsForAverage = (gamesCount > 0) ? localData.playersByKey[key].doubles_goals_for/gamesCount : 0;
                 var goalsAgainstAverage = (gamesCount > 0) ? localData.playersByKey[key].doubles_goals_against/gamesCount : 0;
 
