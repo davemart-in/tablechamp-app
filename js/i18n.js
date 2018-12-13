@@ -5,7 +5,7 @@
 	var script = document.createElement('script');
 	script.type = 'text/javascript';
 	script.async = false;
-	script.src = 'i18n/' + lang + '.js';
+	script.src = 'i18n/' + lang + '.js?v=1';
 	head.appendChild(script);
 	// Add to body
 	$('body').addClass(lang);
