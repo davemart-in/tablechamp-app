@@ -151,7 +151,7 @@
     function initPlayersListener() {
         fbdb.ref('/players/').on('value', function(snapshot) {
             localDataUpdate(snapshot.val());
-            doublesRankingsUpdate();
+            rankingsUpdate();
             rankingsEvents();            
             renderHistoricalGames();
         });
@@ -216,6 +216,7 @@
         // Assemble playerList array
         for (var key in localData.playersByKey) {
             if (localData.playersByKey.hasOwnProperty(key)) {
+                var isRanked = gamesCount >= 7; // as we usually play only 6 games at once
                 var gamesCount =  localData.playersByKey[key].doubles_lost + localData.playersByKey[key].doubles_won;
                 var goalsForAverage = (gamesCount > 0) ? localData.playersByKey[key].doubles_goals_for/gamesCount : 0;
                 var goalsAgainstAverage = (gamesCount > 0) ? localData.playersByKey[key].doubles_goals_against/gamesCount : 0;
@@ -233,18 +234,21 @@
                     "key": key,
                     "name": localData.playersByKey[key].name,
                     "status": localData.playersByKey[key].status,
-                    "isRanked": gamesCount >= 5,
+                    "isRanked": isRanked,
                     "gamesCount": gamesCount
                 });
 
-                if (gamesCount > localData.mostGamesByOnePlayer){
-                    localData.mostGamesByOnePlayer = gamesCount;
-                }
-                if (goalsForAverage > localData.bestGoalsForAverage){
-                    localData.bestGoalsForAverage = goalsForAverage;
-                }
-                if (goalsAgainstAverage > localData.worstGoalsAgainstAverage){
-                    localData.worstGoalsAgainstAverage = goalsAgainstAverage;
+                if (isRanked)
+                {
+                    if (gamesCount > localData.mostGamesByOnePlayer){
+                        localData.mostGamesByOnePlayer = gamesCount;
+                    }
+                    if (goalsForAverage > localData.bestGoalsForAverage){
+                        localData.bestGoalsForAverage = goalsForAverage;
+                    }
+                    if (goalsAgainstAverage > localData.worstGoalsAgainstAverage){
+                        localData.worstGoalsAgainstAverage = goalsAgainstAverage;
+                    }
                 }
             }
         }
@@ -409,31 +413,31 @@
     // ---------------------------------------------------
     // Rankings
     // ---------------------------------------------------
-    function doublesRankingsUpdate() {
-        var doublesArray = localData.playersByDoubles;
+    function rankingsUpdate() {
+        var gamesArray = localData.playersByDoubles;
         var doublesRankings = '';
-        for (var i = 0; i < doublesArray.length; i++) {
-            if (doublesArray[i].status) {
-                var doublesLastMovement = (doublesArray[i].doubles_last_movement) ? doublesArray[i].doubles_last_movement.toFixed(2) : '';
-                var doublesPoints = (doublesArray[i].doubles_points) ? doublesArray[i].doubles_points.toFixed(2) : '';
-                var pointsBasedBadge = getPointsBadge(doublesPoints);
+        for (var i = 0; i < gamesArray.length; i++) {
+            if (gamesArray[i].status) {
+                var scoreLastMovement = (gamesArray[i].doubles_last_movement) ? gamesArray[i].doubles_last_movement.toFixed(2) : '';
+                var points = (gamesArray[i].doubles_points) ? gamesArray[i].doubles_points.toFixed(2) : '';
+                var pointsBasedBadge = getPointsBadge(points);
 
                 doublesRankings += tmpl('rankingsRow', {
-                    'key': doublesArray[i].key,
-                    'lastMovement': rankingMovementStyles(doublesLastMovement),
-                    'name': doublesArray[i].name,
-                    'points': doublesPoints,
-                    'gamesInfo' : "["+ doublesArray[i].doubles_won + "/" + doublesArray[i].doubles_lost + "]",
-                    'goalsInfo' : doublesArray[i].doubles_goals_for_avg.toFixed(2)  + ":" + doublesArray[i].doubles_goals_against_avg.toFixed(2),
-                    'rank': doublesArray[i].doubles_rank,
+                    'key': gamesArray[i].key,
+                    'lastMovement': rankingMovementStyles(scoreLastMovement),
+                    'name': gamesArray[i].name,
+                    'points': points,
+                    'gamesInfo' : "["+ gamesArray[i].doubles_won + "/" + gamesArray[i].doubles_lost + "]",
+                    'goalsInfo' : gamesArray[i].doubles_goals_for_avg.toFixed(2)  + ":" + gamesArray[i].doubles_goals_against_avg.toFixed(2),
+                    'rank': gamesArray[i].doubles_rank,
                     'type': 'doubles',
                     'pointsBadge' : pointsBasedBadge,
                     'medal' : medalSelector(i),
                     'top' :  (i < 3)? "top":"standard",
-                    'rankingStatus' : doublesArray[i].isRanked ? "" : "unranked",
-                    'mostGames' : (doublesArray[i].gamesCount == localData.mostGamesByOnePlayer)? "granted" : "",
-                    'mostGoals' : (doublesArray[i].doubles_goals_for_avg == localData.bestGoalsForAverage) ? "granted" : "",
-                    'holeInTheGoal': (doublesArray[i].doubles_goals_against_avg  == localData.worstGoalsAgainstAverage) ? "granted" : ""
+                    'rankingStatus' : gamesArray[i].isRanked ? "" : "unranked",
+                    'mostGames' : (gamesArray[i].gamesCount == localData.mostGamesByOnePlayer)? "granted" : "",
+                    'mostGoals' : (gamesArray[i].doubles_goals_for_avg == localData.bestGoalsForAverage) ? "granted" : "",
+                    'holeInTheGoal': (gamesArray[i].doubles_goals_against_avg  == localData.worstGoalsAgainstAverage) ? "granted" : ""
                 });
             }
         }
