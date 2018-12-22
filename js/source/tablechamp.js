@@ -206,8 +206,7 @@
     function localDataUpdate(data) {
         // Reset everything
         localData.mostGamesByOnePlayer = -1;
-        localData.mostGamesWonByOnePlayer = -1;
-        localData.mostGamesLostByOnePlayer = -1;
+        localData.mostGamesWonOrLostByOnePlayer = -1;
         localData.bestGoalsForAverage = -1;
         localData.worstGoalsAgainstAverage = -1;
         localData.playersArray = [];
@@ -245,11 +244,11 @@
                     if (gamesCount > localData.mostGamesByOnePlayer){
                         localData.mostGamesByOnePlayer = gamesCount;
                     }
-                    if (localData.playersByKey[key].doubles_won > localData.mostGamesWonByOnePlayer){
-                        localData.mostGamesWonByOnePlayer = localData.playersByKey[key].doubles_won;
+                    if (localData.playersByKey[key].doubles_won > localData.mostGamesWonOrLostByOnePlayer){
+                        localData.mostGamesWonOrLostByOnePlayer = localData.playersByKey[key].doubles_won;
                     }
-                    if (localData.playersByKey[key].doubles_lost > localData.mostGamesLostByOnePlayer){
-                        localData.mostGamesLostByOnePlayer = localData.playersByKey[key].doubles_lost;
+                    if (localData.playersByKey[key].doubles_lost > localData.mostGamesWonOrLostByOnePlayer){
+                        localData.mostGamesWonOrLostByOnePlayer = localData.playersByKey[key].doubles_lost;
                     }
                     if (goalsForAverage > localData.bestGoalsForAverage){
                         localData.bestGoalsForAverage = goalsForAverage;
@@ -436,9 +435,9 @@
                     'name': gamesArray[i].name,
                     'points': points,
                     'gamesWon' : gamesArray[i].doubles_won,
-                    'gamesWonRelative' : (gamesArray[i].doubles_won / localData.mostGamesWonByOnePlayer) * 100,
+                    'gamesWonRelative' : (gamesArray[i].doubles_won / localData.mostGamesWonOrLostByOnePlayer) * 100,
                     'gamesLost' :  gamesArray[i].doubles_lost,
-                    'gamesLostRelative' :  (gamesArray[i].doubles_lost / localData.mostGamesLostByOnePlayer ) * 100,
+                    'gamesLostRelative' :  (gamesArray[i].doubles_lost / localData.mostGamesWonOrLostByOnePlayer ) * 100,
                     'gamesCount' : gamesArray[i].gamesCount,
                     'goalsInfo' : gamesArray[i].doubles_goals_for_avg.toFixed(2)  + ":" + gamesArray[i].doubles_goals_against_avg.toFixed(2),
                     'rank': gamesArray[i].doubles_rank,
