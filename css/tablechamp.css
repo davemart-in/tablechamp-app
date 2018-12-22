@@ -593,6 +593,7 @@ body {
 .rankings {
   margin: 0px auto;
   width: 800px;
+  overflow: hidden;
 }
 
 .ranking{
@@ -1240,8 +1241,8 @@ body.ru .sidebar .sidebar-menu a {
     margin-bottom: 13px; }
 
   .rankings .ranking {
-    margin: 30px 1% 0 1%;
-    width: 98%; }
+    margin: 0px 0px 30px 0;
+    width: 92%; }
 
   .show-sidebar .sidebar {
     right: 0;
@@ -1250,7 +1251,7 @@ body.ru .sidebar .sidebar-menu a {
 @media only screen and (max-width: 900px) {
   .rankings {
     margin: 1% 1% 0 1%;
-    width: 92%; } 
+    width: 98%; } 
   .history {
     width: 98%;
   }
@@ -1258,7 +1259,7 @@ body.ru .sidebar .sidebar-menu a {
 
 @media only screen and (max-width: 768px) {
   .rankings {
-    width: 91%; } 
+    width: 97%; } 
   
     .players-select a {
       width: 48%; }
@@ -1283,8 +1284,9 @@ body.ru .sidebar .sidebar-menu a {
 }
 @media only screen and (max-width: 650px) { 
   .rankings {
-    width: 85%; } 
-  .ranking{    
+    width: 99%; } 
+    .rankings .ranking{   
+    width: 87%; 
     height: 90px; 
     line-height: 45px;
     padding-top: 0px;
