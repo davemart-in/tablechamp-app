@@ -3,7 +3,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 	<title>TableChamp</title>
-	<link rel="stylesheet" type="text/css" charset="utf-8"  media="screen, projection" href="css/tablechamp.css?v=11" />
+	<link rel="stylesheet" type="text/css" charset="utf-8"  media="screen, projection" href="css/tablechamp.css?v=12" />
 	<link rel="icon" type="image/png" href="css/tramba.png">
 	<link href="https://fonts.googleapis.com/css?family=Libre+Franklin:400,600" rel="stylesheet">
 	<meta name="mobile-web-app-capable" content="yes"> 
@@ -39,8 +39,8 @@
 	<script type="text/javascript" src="js/jquery-ui.min.js"></script>
 	<script src="js/firebase.3.6.5.js"></script>
 	<script type="text/javascript" src="js/iris.min.js"></script>
-	<script type="text/javascript" src="js/source/tramba-pager.js?v=1"></script>
-	<script type="text/javascript" src="js/source/tablechamp.js?v=1"></script>	
+	<script type="text/javascript" src="js/source/tramba-pager.js?v=12"></script>
+	<script type="text/javascript" src="js/source/tablechamp.js?v=12"></script>	
 	<script type="text/javascript" src="js/slack_token.js"></script>	  
 	<!-- JS Templates -->
 	<script type="text/html" id="appHeader">
@@ -70,8 +70,8 @@
 				<span class="name"><%=name%>
 					<span class="gamesInfo">
 							<div class="gamesIndicator">
-								<div class="won" title="<%=gamesWon%>" ><div class="fill" style="height: <%=gamesWonRelative%>%;"></div></div>
-								<div class="lost" title="<%=gamesLost%>"><div class="fill" style="height: <%=gamesLostRelative%>%;"></div></div>
+								<div class="won" ><div class="fill" style="width: <%=gamesWonRelative%>%;"><%=gamesWon%></div></div>
+								<div class="lost" title="<%=gamesLost%>"><div class="fill" style="width: <%=gamesLostRelative%>%;"><%=gamesLost%></div></div>
 							</div> 
 							<%=gamesCount%> | <%=goalsInfo%></span>
 				</span>

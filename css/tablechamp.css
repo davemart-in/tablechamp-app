@@ -588,7 +588,6 @@ body {
 .doubles {
   position: relative;
   width: 100%;
-  overflow: auto;
 }
 
 .rankings {
@@ -600,10 +599,8 @@ body {
   position:relative;
   cursor: pointer;
   float: left;
-  margin: 1% 0 0 1%;
   padding: 16px 16px 16px 26px;
   text-align: left;
-  width: 32%; 
   height: 51px;
   box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
 }
@@ -1136,47 +1133,57 @@ body.ru .sidebar .sidebar-menu a {
 .gamesIndicator {
   position:absolute;
   left:0px;
-  top: 0px;
-  width: 10px;
-  height: 100%;
   background: #222;
-}    
+  display: block;
+  top:auto;  
+  bottom: -15px;
+  width: 100%;
+  height: 15px;
+  opacity: 0.5;
+  line-height: 13px;
+}
+
+  .gamesIndicator .fill
+  {
+    position:absolute;
+    text-align: center;
+    font-size: 10px;
+    height: 100%;  
+    width: 100%;
+  }
 
   .gamesIndicator .won
   {
     position:absolute;
     top: 0%;
-    height: 50%;  
-    width: 100%;
-    border: 1px solid rgba(0,255,0, 0.75);
+    border: 1px solid rgba(0,255,0);
+    height: 100%;
+    width: 50%;
   }
+
   .gamesIndicator .won .fill
   {
-    position:absolute;
-    bottom: 0%;
-    height: 100%;  
-    width: 100%;
-    background: green;
+    background: rgb(0, 255, 0);
+    right: 0%;
+    color:black;
   }
 
-.gamesIndicator .lost
-{
-  position:absolute;
-  top: 50%;
-  height: 50%;  
-  width: 100%;  
-  border: 1px solid rgba(255,0,0, 0.75);
-}
-
+  .gamesIndicator .lost
+  {
+    position:absolute;
+    border: 1px solid rgba(255,0,0);
+    top: 0%;
+    height: 100%;
+    width: 50%;
+    left: 50%;
+  }
 
 .gamesIndicator .lost .fill
 {
-  position:absolute;
-  top: 0%;
-  height: 100%;  
-  width: 100%;
-  background: red;
+  background: rgba(255,0,0);
+  color:white;
 }
+
 
 /* ---------------------------------------- */
 /* Mobile - extended to be active also on desktop as it looks way nicer
@@ -1204,10 +1211,7 @@ body.ru .sidebar .sidebar-menu a {
       float: none;
       width: 100%; }
   .show-sidebar .players-select a {
-    width: 48%; }    
-  .show-sidebar .rankings .ranking {
-    margin: 1% 1% 0 1%;
-    width: 98%; }
+    width: 48%; } 
 
   .modal {
     width: 95%; }
@@ -1236,7 +1240,7 @@ body.ru .sidebar .sidebar-menu a {
     margin-bottom: 13px; }
 
   .rankings .ranking {
-    margin: 1% 1% 0 1%;
+    margin: 30px 1% 0 1%;
     width: 98%; }
 
   .show-sidebar .sidebar {
