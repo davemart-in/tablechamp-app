@@ -960,8 +960,11 @@
 
     function sendScoreToRelativitySlackFoosball(t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s)
     {
-        var t1Label = localData.playersByKey[t1p1Key].name + '/' + localData.playersByKey[t1p2Key].name;
-        var t2Label = localData.playersByKey[t2p1Key].name + '/' + localData.playersByKey[t2p2Key].name;
+        var t1Label = localData.playersByKey[t1p1Key].name; 
+        t1Label += t1p2Key !== '' ? '/' + localData.playersByKey[t1p2Key].name : '';
+
+        var t2Label = localData.playersByKey[t2p1Key].name;
+        t2Label += t2p2Key !== '' ? '/' + localData.playersByKey[t2p2Key].name : '';
 
         if(t1Label.includes('Test') || t2Label.includes('Test'))
         {
