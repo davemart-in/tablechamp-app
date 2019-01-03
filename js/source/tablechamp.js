@@ -639,9 +639,9 @@
                 lastTwentyGamesData.unshift({
                     "dt" : history[key].dt,
                     "t1p1" : history[key].t1p1,
-                    "t1p2" : history[key].t1p2,
+                    "t1p2" : history[key].t1p2 || '',
                     "t2p1" : history[key].t2p1,
-                    "t2p2" : history[key].t2p2,
+                    "t2p2" : history[key].t2p2 || '',
                     "t1_points" : history[key].t1_points,
                     "t2_points" : history[key].t2_points,
                     "t1p1_pointsMovement": (history[key].t1p1_pointsMovement) ? history[key].t1p1_pointsMovement.toFixed(2) : '',
@@ -654,8 +654,11 @@
                 var date = getDateInNiceStringFormat(lastTwentyGamesData[i].dt);
                 
                 // Players
-                var t1 = localData.playersByKey[lastTwentyGamesData[i].t1p1].name + '/' + localData.playersByKey[lastTwentyGamesData[i].t1p2].name;
-                var t2 = localData.playersByKey[lastTwentyGamesData[i].t2p1].name + '/' + localData.playersByKey[lastTwentyGamesData[i].t2p2].name;
+                var t1 = localData.playersByKey[lastTwentyGamesData[i].t1p1].name; 
+                t1 += lastTwentyGamesData[i].t1p2 !== '' ? '/' + localData.playersByKey[lastTwentyGamesData[i].t1p2].name : '';
+
+                var t2 = localData.playersByKey[lastTwentyGamesData[i].t2p1].name;
+                t2 +=  lastTwentyGamesData[i].t2p2 !== '' ? '/' + localData.playersByKey[lastTwentyGamesData[i].t2p2].name : '';
                 
                 // Piece it all together
                 lastTwentyGames += tmpl('historicalGame', {
@@ -724,9 +727,9 @@
         }
         // Players keys
         var t1p1Key = $('.t1-players a.selected').first().data('id');
-        var t1p2Key = $('.t1-players a.selected').last().data('id');
+        var t1p2Key = $('.t1-players a.selected').last().data('id'); //if you select one player only, t1p2Key = t1p1Key
         var t2p1Key = $('.t2-players a.selected').first().data('id');
-        var t2p2Key = $('.t2-players a.selected').last().data('id');
+        var t2p2Key = $('.t2-players a.selected').last().data('id'); //if you select one player only, t2p2Key = t2p1Key
         if (logging) {
             console.log('keys');
             console.log(t1p1Key);
@@ -735,7 +738,7 @@
             console.log(t2p2Key);
             console.log('----');
         }
-                
+        
         // Team ranking points
         var t1rp = [localData.playersByKey[t1p1Key].doubles_points + localData.playersByKey[t1p2Key].doubles_points] / 2;
         var t2rp = [localData.playersByKey[t2p1Key].doubles_points + localData.playersByKey[t2p2Key].doubles_points] / 2;
@@ -764,9 +767,10 @@
         }
         
         var t1p1rp = t1p + [localData.playersByKey[t1p1Key].doubles_points - localData.playersByKey[t1p2Key].doubles_points] / 2;
-        var t1p2rp = 2 * t1p - t1p1rp;
+        var t1p2rp = 2 * t1p - t1p1rp; //if you select one player only, t1p2rp = t1p1rp
         var t2p1rp = t2p + [localData.playersByKey[t2p1Key].doubles_points - localData.playersByKey[t2p2Key].doubles_points] / 2;
-        var t2p2rp = 2 * t2p - t2p1rp;
+        var t2p2rp = 2 * t2p - t2p1rp; //if you select one player only, t2p2rp = t2p1rp
+
         var gameData = {
             "dt": Date.now(),
             "t1p1_points": t1p1rp,
@@ -929,11 +933,20 @@
             console.log(['t2p2', 'doubles', t2p2Key, t2p2PointsNew, t2p2LastMovement, t2p2GamesLost, t2p2GamesWon, newGameKey, t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t2Won]);
             console.log('----');
         }
-        scoringSave('t1p1', 'doubles', t1p1Key, t1p1PointsNew, t1p1LastMovement, t1p1GamesLost, t1p1GamesWon, t1p1GoalsForNew, t1p1GoalsAgainstNew, newGameKey, t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t1Won);
-        scoringSave('t1p2', 'doubles', t1p2Key, t1p2PointsNew, t1p2LastMovement, t1p2GamesLost, t1p2GamesWon, t1p2GoalsForNew, t1p2GoalsAgainstNew, newGameKey, t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t1Won);
-        scoringSave('t2p1', 'doubles', t2p1Key, t2p1PointsNew, t2p1LastMovement, t2p1GamesLost, t2p1GamesWon, t2p1GoalsForNew, t2p1GoalsAgainstNew, newGameKey, t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t2Won);
-        scoringSave('t2p2', 'doubles', t2p2Key, t2p2PointsNew, t2p2LastMovement, t2p2GamesLost, t2p2GamesWon, t2p2GoalsForNew, t2p2GoalsAgainstNew, newGameKey, t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t2Won);
-        
+        // Save score for Team #1
+        if (t1p1Key === t1p2Key){
+            t1p2Key = t2p2Key = '';
+
+            scoringSave('t1p1', 'doubles', t1p1Key, t1p1PointsNew, t1p1LastMovement, t1p1GamesLost, t1p1GamesWon, t1p1GoalsForNew, t1p1GoalsAgainstNew, newGameKey, t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t1Won);
+            scoringSave('t2p1', 'doubles', t2p1Key, t2p1PointsNew, t2p1LastMovement, t2p1GamesLost, t2p1GamesWon, t2p1GoalsForNew, t2p1GoalsAgainstNew, newGameKey, t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t2Won);
+        }
+        else {
+            scoringSave('t1p1', 'doubles', t1p1Key, t1p1PointsNew, t1p1LastMovement, t1p1GamesLost, t1p1GamesWon, t1p1GoalsForNew, t1p1GoalsAgainstNew, newGameKey, t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t1Won);
+            scoringSave('t1p2', 'doubles', t1p2Key, t1p2PointsNew, t1p2LastMovement, t1p2GamesLost, t1p2GamesWon, t1p2GoalsForNew, t1p2GoalsAgainstNew, newGameKey, t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t1Won);        
+            scoringSave('t2p1', 'doubles', t2p1Key, t2p1PointsNew, t2p1LastMovement, t2p1GamesLost, t2p1GamesWon, t2p1GoalsForNew, t2p1GoalsAgainstNew, newGameKey, t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t2Won);
+            scoringSave('t2p2', 'doubles', t2p2Key, t2p2PointsNew, t2p2LastMovement, t2p2GamesLost, t2p2GamesWon, t2p2GoalsForNew, t2p2GoalsAgainstNew, newGameKey, t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t2Won);
+        }
+
         historyAddGame(t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t1p1LastMovement, t1p2LastMovement, t2p1LastMovement, t2p2LastMovement);
         
         // Confirmation --------------------
@@ -1087,9 +1100,7 @@
         var newGamesHistoryData = { 
             "dt": Date.now(),
             "t1p1": t1p1Key,
-            "t1p2": t1p2Key,
             "t2p1": t2p1Key,
-            "t2p2": t2p2Key,
             "t1_points": t1s,
             "t2_points": t2s,
             "t1p1_pointsMovement": t1p1LastMovement, 
@@ -1097,6 +1108,11 @@
             "t2p1_pointsMovement": t2p1LastMovement, 
             "t2p2_pointsMovement": t2p2LastMovement
         };
+
+        if ('' !== t1p2Key && '' !== t2p2Key) {
+            newGamesHistoryData.t1p2 = t1p2Key;
+            newGamesHistoryData.t2p2 = t2p2Key;
+        }
 
         var newGamesHistoryKey = fbdb.ref().child('history').push().key;
         
