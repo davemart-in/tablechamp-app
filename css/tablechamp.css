@@ -820,6 +820,18 @@ body {
     margin: 0px;
     position: relative;
     z-index: 2; }
+
+  .increment.table-tennis .a4,
+  .increment.table-tennis .a5{
+    display: none;
+  }
+
+  .t1 .increment.table-tennis a,
+  .t2 .increment.table-tennis a {
+    height: 52px;
+    line-height: 52px;
+  }
+
   .t1 .score, .t2 .score {
     text-align: center; }
     .t1 .score .panel,  .t2 .score .panel { 

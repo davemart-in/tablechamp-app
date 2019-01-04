@@ -106,7 +106,9 @@
                 "teamOnePlayers" : i18n.app.scoreAdd.teamOnePlayers,
                 "teamOneScore" : i18n.app.scoreAdd.teamOneScore,
                 "teamTwoPlayers" : i18n.app.scoreAdd.teamTwoPlayers,
-                "teamTwoScore" : i18n.app.scoreAdd.teamTwoScore
+                "teamTwoScore" : i18n.app.scoreAdd.teamTwoScore,
+                "gametype" : localData.settings.gameType,
+                "defaultWinnerScore" : isTableTenisGameType() ? '3' : '5' 
             }));
 
             Pager.setToObject("pager");
@@ -121,6 +123,10 @@
             });
             return false;
         });
+    }
+
+    function isTableTenisGameType(){
+        return localData.settings.gameType == 'table-tennis';
     }
     // ---------------------------------------------------
     // Offline
@@ -973,10 +979,14 @@
 
         var relativitySlackHookTemporaryUrl='https://hooks.slack.com/services/' + slackToken;
         
+        var gameIcon = ':dragonball:';
+        if (isTableTenisGameType()) {
+            gameIcon = ':ping_pong:'
+        }
         if (t1s > t2s){
-            var slackPayload = ':dragonball::trophy:' + t1Label +' '+ t1s +' : '+ t2s +' '+ t2Label + ':dragonball:';
+            var slackPayload = gameIcon + ':trophy:' + t1Label +' '+ t1s +' : '+ t2s +' '+ t2Label + gameIcon;
         }else{
-            var slackPayload = ':dragonball:' + t1Label +' '+ t1s +' : '+ t2s +' :trophy:'+ t2Label + ':dragonball:';
+            var slackPayload = gameIcon + t1Label +' '+ t1s +' : '+ t2s +' :trophy:'+ t2Label + gameIcon;
         }
         
         $.ajax(
