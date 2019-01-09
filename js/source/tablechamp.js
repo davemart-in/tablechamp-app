@@ -1225,6 +1225,7 @@
         $('input[value="' + localData.settings.gameType + '"]').prop('checked', true);
         var lang = localStorage.getItem('lang') || 'en';
         $('.lang option[value="' + lang + '"]').attr("selected", true);
+        document.title = gameType + ' ' + localData.settings.orgName;
     }
     function sidebarHideIris() {
         $('.iris-picker').hide();
