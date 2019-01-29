@@ -434,6 +434,7 @@
                 var scoreLastMovement = (gamesArray[i].doubles_last_movement) ? gamesArray[i].doubles_last_movement.toFixed(2) : '';
                 var points = (gamesArray[i].doubles_points) ? gamesArray[i].doubles_points.toFixed(2) : '';
                 var pointsBasedBadge = getPointsBadge(points);
+                var wonPercentage = (gamesArray[i].doubles_won / gamesArray[i].gamesCount) * 100;
 
                 doublesRankings += tmpl('rankingsRow', {
                     'key': gamesArray[i].key,
@@ -445,6 +446,7 @@
                     'gamesLost' :  gamesArray[i].doubles_lost,
                     'gamesLostRelative' :  (gamesArray[i].doubles_lost / localData.mostGamesWonOrLostByOnePlayer ) * 100,
                     'gamesCount' : gamesArray[i].gamesCount,
+                    'wonPercentage': wonPercentage.toFixed(1),
                     'goalsInfo' : gamesArray[i].doubles_goals_for_avg.toFixed(2)  + ":" + gamesArray[i].doubles_goals_against_avg.toFixed(2),
                     'rank': gamesArray[i].doubles_rank,
                     'type': 'doubles',
@@ -497,30 +499,13 @@
                 "forText" : i18n.app.stats.forText,
                 "name" : localData.playersByKey[thisKey].name,
                 "playerStats" : i18n.app.stats.playerStats
-            }));
-            // Player stats
-            $('.stats-player').html(tmpl('statsPlayer', {
-                "doubles" : i18n.app.statsPlayer.doubles,
-                "doubles_lost" : localData.playersByKey[thisKey].doubles_lost,
-                "doubles_played" : localData.playersByKey[thisKey].doubles_lost + localData.playersByKey[thisKey].doubles_won,
-                "doubles_rank" : localData.playersByKey[thisKey].doubles_rank,
-                "doubles_won" : localData.playersByKey[thisKey].doubles_won,
-                "doubles_goals_for": localData.playersByKey[thisKey].doubles_goals_for || 0,
-                "doubles_goals_against": localData.playersByKey[thisKey].doubles_goals_against || 0,
-                "gamesLost" : i18n.app.statsPlayer.gamesLost ,
-                "gamesPlayed" : i18n.app.statsPlayer.gamesPlayed,
-                "goalsFor" : i18n.app.statsPlayer.goalsFor,
-                "goalsAgainst" : i18n.app.statsPlayer.goalsAgainst,
-                "gamesWon" : i18n.app.statsPlayer.gamesWon,
-                "ranking" : i18n.app.statsPlayer.ranking
-            }));
+            }));            
             // Player games stats
             var lastTwentyGames = '';
             var lastTwentyGamesData = [];
             var graphScoreData = [];
             graphScoreData[0] = ['Last games', 'Score', 'Default', 'Crap'];
-
-            var playersGames = {};
+            var playersGames = {};            
             fbdb.ref('/playersgame/' + thisKey).limitToLast(20).once('value').then(function(snapshot) {
                 playersGames = snapshot.val();
                 // To array
@@ -538,6 +523,8 @@
                         "won" : playersGames[key].won
                     });
                 }
+                var ratingChangeInLast7Games = lastTwentyGamesData[0].rating_after_game - lastTwentyGamesData[6].rating_after_game
+
                 // Iterate through array
                 for (var i = 0; i < lastTwentyGamesData.length; i++) {
                     // Date 
@@ -583,6 +570,22 @@
                     if (lastTwentyGamesData[i].rating_after_game > 0)
                         graphScoreData[i+1] = [-i,100, 50, lastTwentyGamesData[i].rating_after_game];
                 }
+                // Player stats
+                $('.stats-player').html(tmpl('statsPlayer', {
+                    "doubles" : i18n.app.statsPlayer.doubles,
+                    "doubles_lost" : localData.playersByKey[thisKey].doubles_lost,
+                    "doubles_played" : localData.playersByKey[thisKey].doubles_lost + localData.playersByKey[thisKey].doubles_won,
+                    "doubles_rank" : ratingChangeInLast7Games.toFixed(2),
+                    "doubles_won" : localData.playersByKey[thisKey].doubles_won,
+                    "doubles_goals_for": localData.playersByKey[thisKey].doubles_goals_for || 0,
+                    "doubles_goals_against": localData.playersByKey[thisKey].doubles_goals_against || 0,
+                    "gamesLost" : i18n.app.statsPlayer.gamesLost ,
+                    "gamesPlayed" : i18n.app.statsPlayer.gamesPlayed,
+                    "goalsFor" : i18n.app.statsPlayer.goalsFor,
+                    "goalsAgainst" : i18n.app.statsPlayer.goalsAgainst,
+                    "gamesWon" : i18n.app.statsPlayer.gamesWon,
+                    "ranking" : "Ranking change in 6 games"
+                }));
                 if (!lastTwentyGames) {
                     lastTwentyGames = '<li>No games have been entered for this user.</li>';
                 }
