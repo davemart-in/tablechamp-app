@@ -651,8 +651,8 @@
                     "t1p2" : history[key].t1p2 || '',
                     "t2p1" : history[key].t2p1,
                     "t2p2" : history[key].t2p2 || '',
-                    "t1_points" : history[key].t1_points,
-                    "t2_points" : history[key].t2_points,
+                    "t1_points" : parseInt(history[key].t1_points),
+                    "t2_points" : parseInt(history[key].t2_points),
                     "t1p1_pointsMovement": (history[key].t1p1_pointsMovement) ? history[key].t1p1_pointsMovement.toFixed(2) : '',
                     "t2p1_pointsMovement": (history[key].t2p1_pointsMovement) ? history[key].t2p1_pointsMovement.toFixed(2) : ''
                 });
@@ -726,8 +726,8 @@
     // ---------------------------------------------------
     function scoringAdd() {
         // Scores
-        var t1s = $('.t1-score').val();
-        var t2s = $('.t2-score').val();
+        var t1s = parseInt($('.t1-score').val());
+        var t2s = parseInt($('.t2-score').val());
         if (logging) {
             console.log('scores');
             console.log(t1s);
