@@ -43,6 +43,7 @@
         initOfflineDetect();
         sidebarInit();        
         renderHistoricalGames();
+        initUndo();
         initGooglePlotPackage();
     }
     function initHeader() {
@@ -178,14 +179,14 @@
         });
     }
     function initUndo() {
-        $('.undo').off('click').on('click', function () {
+        $('#undoPernament').on('click', function () {
             // Undo game/player scores
+            console.log(lastGame);
             for (var i = 0; i < lastGame.players.scores.length; i++) {
                 var data = lastGame.players.scores[i],
-                    player = data.player,
                     type = lastGame.players.type,
-                    key = data.key,
-                    points = data.pointsNew - data.lastMovement,
+                    player = data.player,
+                    playerKey = data.playerKey,
                     movement = '',
                     lost, won;
                 if (data.won) {
@@ -201,9 +202,16 @@
                         lost = 0;
                     }
                 }
-                scoringUndo(player, type, key, points, movement, lost, won);
+                scoringUndo(player, type, playerKey, data.points, movement, lost, won, data.goalsFor, data.goalsAgainst);
             }
-            messageShow('success', i18n.app.messages.gameUndone, true);
+            historyRemoveGame(lastGame.players.historyGameKey)
+            messageShow('success', i18n.app.messages.gameUndone + 'with id: ' + lastGame.players.historyGameKey, true);
+        });
+    }
+
+    function historyRemoveGame(gameHistoryKey){
+        fbdb.ref('/history/' + gameHistoryKey ).remove().catch(function(error) {
+            console.log('Failed to remove game' + gameHistoryKey + ' from history');
         });
     }
     // ---------------------------------------------------
@@ -641,12 +649,13 @@
             var lastTwentyGames = '';
             var lastTwentyGamesData = [];
             var history = {};
-            
+            var historyGameKey = '';
             history = snapshot.val();
             // To array
             for (var key in history) {
                 lastTwentyGamesData.unshift({
                     "dt" : history[key].dt,
+                    "historyGameKey" : key,
                     "t1p1" : history[key].t1p1,
                     "t1p2" : history[key].t1p2 || '',
                     "t2p1" : history[key].t2p1,
@@ -661,7 +670,7 @@
             for (var i = 0; i < lastTwentyGamesData.length; i++) {
                 // Date 
                 var date = getDateInNiceStringFormat(lastTwentyGamesData[i].dt);
-                
+                historyGameKey = lastTwentyGamesData[i].historyGameKey;
                 // Players
                 var t1 = localData.playersByKey[lastTwentyGamesData[i].t1p1].name; 
                 t1 += lastTwentyGamesData[i].t1p2 !== '' ? '/' + localData.playersByKey[lastTwentyGamesData[i].t1p2].name : '';
@@ -681,6 +690,65 @@
                     "t2Class": teamClassBasedOnScore(lastTwentyGamesData[i].t2_points, lastTwentyGamesData[i].t1_points),
                     "t2PointMovement": lastTwentyGamesData[i].t2p1_pointsMovement,
                 });
+                // Cache only latest game
+                if (i==0){
+                    var t1Won = false;
+                    var t1s = lastTwentyGamesData[i].t1_points;
+                    var t2Won = false;
+                    var t2s = lastTwentyGamesData[i].t2_points;
+                    if (parseInt(t1s) > parseInt(t2s)) {
+                        t1Won = true;
+                    } else {
+                        t2Won = true;
+                    }
+
+                    lastGame.players = {
+                        'type' : 'doubles',
+                        'historyGameKey' : historyGameKey,
+                        'scores' : [
+                            {
+                                'player' : 't1p1',
+                                'playerKey' : lastTwentyGamesData[i].t1p1,
+                                'points' : localData.playersByKey[lastTwentyGamesData[i].t1p1].doubles_points - lastTwentyGamesData[i].t1p1_pointsMovement,
+                                'gamesLost' : localData.playersByKey[lastTwentyGamesData[i].t1p1].doubles_lost,
+                                'gamesWon' : localData.playersByKey[lastTwentyGamesData[i].t1p1].doubles_won,                                
+                                'goalsFor' : localData.playersByKey[lastTwentyGamesData[i].t1p1].doubles_goals_for - t1s,
+                                'goalsAgainst' : localData.playersByKey[lastTwentyGamesData[i].t1p1].doubles_goals_against - t2s,
+                                'won' : t1Won
+                            },
+                            {
+                                'player' : 't1p2',
+                                'playerKey' : lastTwentyGamesData[i].t1p2,
+                                'points' : localData.playersByKey[lastTwentyGamesData[i].t1p2].doubles_points - lastTwentyGamesData[i].t1p1_pointsMovement,
+                                'gamesLost' : localData.playersByKey[lastTwentyGamesData[i].t1p2].doubles_lost,
+                                'gamesWon' : localData.playersByKey[lastTwentyGamesData[i].t1p2].doubles_won,
+                                'goalsFor' : localData.playersByKey[lastTwentyGamesData[i].t1p2].doubles_goals_for - t1s,
+                                'goalsAgainst' : localData.playersByKey[lastTwentyGamesData[i].t1p2].doubles_goals_against - t2s,
+                                'won' : t1Won
+                            },
+                            {
+                                'player' : 't2p1',
+                                'playerKey' : lastTwentyGamesData[i].t2p1,
+                                'points' : localData.playersByKey[lastTwentyGamesData[i].t2p1].doubles_points - lastTwentyGamesData[i].t2p1_pointsMovement,
+                                'gamesLost' : localData.playersByKey[lastTwentyGamesData[i].t2p1].doubles_lost,
+                                'gamesWon' : localData.playersByKey[lastTwentyGamesData[i].t2p1].doubles_won,
+                                'goalsFor' : localData.playersByKey[lastTwentyGamesData[i].t1p2].doubles_goals_for - t2s,
+                                'goalsAgainst' : localData.playersByKey[lastTwentyGamesData[i].t1p2].doubles_goals_against - t1s,
+                                'won' : t2Won
+                            },
+                            {
+                                'player' : 't2p2',
+                                'playerKey' : lastTwentyGamesData[i].t2p2,
+                                'points' : localData.playersByKey[lastTwentyGamesData[i].t2p2].doubles_points - lastTwentyGamesData[i].t2p1_pointsMovement,
+                                'gamesLost' : localData.playersByKey[lastTwentyGamesData[i].t2p2].doubles_lost,
+                                'gamesWon' : localData.playersByKey[lastTwentyGamesData[i].t2p2].doubles_won,
+                                'goalsFor' : localData.playersByKey[lastTwentyGamesData[i].t1p2].doubles_goals_for - t2s,
+                                'goalsAgainst' : localData.playersByKey[lastTwentyGamesData[i].t1p2].doubles_goals_against - t1s,
+                                'won' : t2Won
+                            }
+                        ]
+                    }
+                }
             }
             // Add it to the DOM
             $('.history').html(lastTwentyGames);
@@ -864,76 +932,6 @@
             t1p1GamesLost += 1;
             t1p2GamesLost += 1;
         }
-        // Cache last game
-        lastGame.players = {
-            'type' : 'doubles',
-            'scores' : [
-                {
-                    'player' : 't1p1',
-                    'key' : t1p1Key,
-                    'pointsNew' : t1p1PointsNew,
-                    'lastMovement' : t1p1LastMovement,
-                    'gamesLost' : t1p1GamesLost,
-                    'gamesWon' : t1p1GamesWon,
-                    'newGameKey' : newGameKey,
-                    't1p1Key' : t1p1Key,
-                    't1p2Key' : t1p2Key,
-                    't2p1Key' : t2p1Key,
-                    't2p2Key' : t2p2Key,
-                    't1s' : t1s,
-                    't2s' : t2s,
-                    'won' : t1Won
-                },
-                {
-                    'player' : 't1p2',
-                    'key' : t1p2Key,
-                    'pointsNew' : t1p2PointsNew,
-                    'lastMovement' : t1p2LastMovement,
-                    'gamesLost' : t1p2GamesLost,
-                    'gamesWon' : t1p2GamesWon,
-                    'newGameKey' : newGameKey,
-                    't1p1Key' : t1p1Key,
-                    't1p2Key' : t1p2Key,
-                    't2p1Key' : t2p1Key,
-                    't2p2Key' : t2p2Key,
-                    't1s' : t1s,
-                    't2s' : t2s,
-                    'won' : t1Won
-                },
-                {
-                    'player' : 't2p1',
-                    'key' : t2p1Key,
-                    'pointsNew' : t2p1PointsNew,
-                    'lastMovement' : t2p1LastMovement,
-                    'gamesLost' : t2p1GamesLost,
-                    'gamesWon' : t2p1GamesWon,
-                    'newGameKey' : newGameKey,
-                    't1p1Key' : t1p1Key,
-                    't1p2Key' : t1p2Key,
-                    't2p1Key' : t2p1Key,
-                    't2p2Key' : t2p2Key,
-                    't1s' : t1s,
-                    't2s' : t2s,
-                    'won' : t2Won
-                },
-                {
-                    'player' : 't2p2',
-                    'key' : t2p2Key,
-                    'pointsNew' : t2p2PointsNew,
-                    'lastMovement' : t2p2LastMovement,
-                    'gamesLost' : t2p2GamesLost,
-                    'gamesWon' : t2p2GamesWon,
-                    'newGameKey' : newGameKey,
-                    't1p1Key' : t1p1Key,
-                    't1p2Key' : t1p2Key,
-                    't2p1Key' : t2p1Key,
-                    't2p2Key' : t2p2Key,
-                    't1s' : t1s,
-                    't2s' : t2s,
-                    'won' : t2Won
-                }
-            ]
-        }
         if (logging) {
             console.log('Doubles save score');
             console.log(['t1p1', 'doubles', t1p1Key, t1p1PointsNew, t1p1LastMovement, t1p1GamesLost, t1p1GamesWon, newGameKey, t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t1Won]);
@@ -962,8 +960,7 @@
         // Close modal
         modalHide();
         // Add success message
-        messageShow('success', i18n.app.messages.gameAdded + '! <a href="#" class="undo">' + i18n.app.messages.undo + '</a>', false);
-        initUndo();
+        messageShow('success', i18n.app.messages.gameAdded, false);
         sendScoreToRelativitySlackFoosball(t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s);
     }
 
@@ -1138,18 +1135,20 @@
         });
     }
 
-    function scoringUndo(player, type, key, points, movement, lost, won) {
+    function scoringUndo(player, type, playerKey, points, movement, lost, won, goals_for, goals_against) {
         // Update player stats
         var playersData = {}
             playersData[type + '_points'] = points;
             playersData[type + '_last_movement'] = movement;
             playersData[type + '_lost'] = lost;
             playersData[type + '_won'] = won;
-        fbdb.ref('/players/' + key).update(playersData).catch(function(error) {
+            playersData[type + '_goals_for'] = goals_for;
+            playersData[type + '_goals_against'] = goals_against;
+        fbdb.ref('/players/' + playerKey).update(playersData).catch(function(error) {
             console.log('Failed to update players data');
         });
         // Remove Players Games
-        fbdb.ref('/playersgame/' + key + '/' + lastGame.game[player]).remove().catch(function(error) {
+        fbdb.ref('/playersgame/' + playerKey + '/' + lastGame.players.historyGameKey).remove().catch(function(error) {
             console.log('Failed to undo players game');
         });
     }
