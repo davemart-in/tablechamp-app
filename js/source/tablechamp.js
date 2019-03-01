@@ -180,38 +180,42 @@
     }
     function initUndo() {
         $('#undoPernament').on('click', function () {
-            // Undo game/player scores
-            console.log(lastGame);
+            // Undo player scores
             for (var i = 0; i < lastGame.players.scores.length; i++) {
-                var data = lastGame.players.scores[i],
-                    type = lastGame.players.type,
-                    player = data.player,
-                    playerKey = data.playerKey,
-                    movement = '',
-                    lost, won;
+                var type = lastGame.players.type,
+                data = lastGame.players.scores[i],
+                playerKey = data.playerKey,
+                movement = '',
+                gamesLost, gamesWon;
                 if (data.won) {
-                    lost = data.gamesLost,
-                    won = parseInt(data.gamesWon, 10) - 1;
-                    if (won < 0) {
-                        won = 0;
+                    gamesLost = data.gamesLost,
+                    gamesWon = parseInt(data.gamesWon) - 1;
+                    if (gamesWon < 0) {
+                        gamesWon = 0;
                     }
                 } else {
-                    lost = parseInt(data.gamesLost, 10) - 1,
-                    won = data.gamesWon;
-                    if (lost < 0) {
-                        lost = 0;
+                    gamesLost = parseInt(data.gamesLost) - 1,
+                    gamesWon = data.gamesWon;
+                    if (gamesLost < 0) {
+                        gamesLost = 0;
                     }
                 }
-                scoringUndo(player, type, playerKey, data.points, movement, lost, won, data.goalsFor, data.goalsAgainst);
+                scoringUndo(type, playerKey, data.points, movement, gamesLost, gamesWon, data.goalsFor, data.goalsAgainst);
             }
-            historyRemoveGame(lastGame.players.historyGameKey)
-            messageShow('success', i18n.app.messages.gameUndone + 'with id: ' + lastGame.players.historyGameKey, true);
+            historyRemoveGame(lastGame.historyGameKey)
+            removeGamefromGames(lastGame.gameKey)
+            messageShow('success', i18n.app.messages.gameUndone, true);
         });
     }
 
     function historyRemoveGame(gameHistoryKey){
         fbdb.ref('/history/' + gameHistoryKey ).remove().catch(function(error) {
             console.log('Failed to remove game' + gameHistoryKey + ' from history');
+        });
+    }
+    function removeGamefromGames(gameKey){
+        fbdb.ref('/games/' + gameKey).remove().catch(function(error) {
+            console.log('Failed to remove game' + gameKey + ' from games');
         });
     }
     // ---------------------------------------------------
@@ -531,7 +535,7 @@
                         "won" : playersGames[key].won
                     });
                 }
-                var ratingChangeInLast7Games = lastTwentyGamesData[0].rating_after_game - lastTwentyGamesData[6].rating_after_game
+                var ratingChangeInLast7Games = lastTwentyGamesData.length > 6 ? lastTwentyGamesData[0].rating_after_game - lastTwentyGamesData[6].rating_after_game : lastTwentyGamesData[0].rating_after_game - 100; //if there are less games then 6 then this is start point
 
                 // Iterate through array
                 for (var i = 0; i < lastTwentyGamesData.length; i++) {
@@ -649,13 +653,13 @@
             var lastTwentyGames = '';
             var lastTwentyGamesData = [];
             var history = {};
-            var historyGameKey = '';
             history = snapshot.val();
             // To array
             for (var key in history) {
                 lastTwentyGamesData.unshift({
                     "dt" : history[key].dt,
-                    "historyGameKey" : key,
+                    "game" : history[key].game,
+                    "historyGameKey": key,
                     "t1p1" : history[key].t1p1,
                     "t1p2" : history[key].t1p2 || '',
                     "t2p1" : history[key].t2p1,
@@ -670,7 +674,6 @@
             for (var i = 0; i < lastTwentyGamesData.length; i++) {
                 // Date 
                 var date = getDateInNiceStringFormat(lastTwentyGamesData[i].dt);
-                historyGameKey = lastTwentyGamesData[i].historyGameKey;
                 // Players
                 var t1 = localData.playersByKey[lastTwentyGamesData[i].t1p1].name; 
                 t1 += lastTwentyGamesData[i].t1p2 !== '' ? '/' + localData.playersByKey[lastTwentyGamesData[i].t1p2].name : '';
@@ -701,10 +704,11 @@
                     } else {
                         t2Won = true;
                     }
+                    lastGame.gameKey = lastTwentyGamesData[i].game;
+                    lastGame.historyGameKey = lastTwentyGamesData[i].historyGameKey;
 
                     lastGame.players = {
                         'type' : 'doubles',
-                        'historyGameKey' : historyGameKey,
                         'scores' : [
                             {
                                 'player' : 't1p1',
@@ -732,8 +736,8 @@
                                 'points' : localData.playersByKey[lastTwentyGamesData[i].t2p1].doubles_points - lastTwentyGamesData[i].t2p1_pointsMovement,
                                 'gamesLost' : localData.playersByKey[lastTwentyGamesData[i].t2p1].doubles_lost,
                                 'gamesWon' : localData.playersByKey[lastTwentyGamesData[i].t2p1].doubles_won,
-                                'goalsFor' : localData.playersByKey[lastTwentyGamesData[i].t1p2].doubles_goals_for - t2s,
-                                'goalsAgainst' : localData.playersByKey[lastTwentyGamesData[i].t1p2].doubles_goals_against - t1s,
+                                'goalsFor' : localData.playersByKey[lastTwentyGamesData[i].t2p1].doubles_goals_for - t2s,
+                                'goalsAgainst' : localData.playersByKey[lastTwentyGamesData[i].t2p1].doubles_goals_against - t1s,
                                 'won' : t2Won
                             },
                             {
@@ -742,8 +746,8 @@
                                 'points' : localData.playersByKey[lastTwentyGamesData[i].t2p2].doubles_points - lastTwentyGamesData[i].t2p1_pointsMovement,
                                 'gamesLost' : localData.playersByKey[lastTwentyGamesData[i].t2p2].doubles_lost,
                                 'gamesWon' : localData.playersByKey[lastTwentyGamesData[i].t2p2].doubles_won,
-                                'goalsFor' : localData.playersByKey[lastTwentyGamesData[i].t1p2].doubles_goals_for - t2s,
-                                'goalsAgainst' : localData.playersByKey[lastTwentyGamesData[i].t1p2].doubles_goals_against - t1s,
+                                'goalsFor' : localData.playersByKey[lastTwentyGamesData[i].t2p2].doubles_goals_for - t2s,
+                                'goalsAgainst' : localData.playersByKey[lastTwentyGamesData[i].t2p2].doubles_goals_against - t1s,
                                 'won' : t2Won
                             }
                         ]
@@ -954,7 +958,7 @@
             scoringSave('t2p2', 'doubles', t2p2Key, t2p2PointsNew, t2p2LastMovement, t2p2GamesLost, t2p2GamesWon, t2p2GoalsForNew, t2p2GoalsAgainstNew, newGameKey, t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t2Won);
         }
 
-        historyAddGame(t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t1p1LastMovement, t1p2LastMovement, t2p1LastMovement, t2p2LastMovement);
+        historyAddGame(t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t1p1LastMovement, t1p2LastMovement, t2p1LastMovement, t2p2LastMovement, newGameKey);
         
         // Confirmation --------------------
         // Close modal
@@ -1095,19 +1099,13 @@
             console.log('----');
         }
         var newPlayersGameKey = fbdb.ref().child('playersgame' + key).push().key;
-        lastGame.game[player] = newPlayersGameKey;
-        if (logging) {
-            console.log('last game cache');
-            console.log(lastGame);
-            console.log('----');
-        }
         var dbPlayersGame = fbdb.ref('/playersgame/' + key + '/' + newPlayersGameKey);
         dbPlayersGame.set(playersGameData).catch(function(error) {
             console.log('Failed to add new players game');
         });
     }
 
-    function historyAddGame(t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t1p1LastMovement, t1p2LastMovement, t2p1LastMovement, t2p2LastMovement) {
+    function historyAddGame(t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t1p1LastMovement, t1p2LastMovement, t2p1LastMovement, t2p2LastMovement, newGameKey) {
         
         // Save games for history view.
         var newGamesHistoryData = { 
@@ -1119,7 +1117,8 @@
             "t1p1_pointsMovement": t1p1LastMovement, 
             "t1p2_pointsMovement": t1p2LastMovement, 
             "t2p1_pointsMovement": t2p1LastMovement, 
-            "t2p2_pointsMovement": t2p2LastMovement
+            "t2p2_pointsMovement": t2p2LastMovement,
+            "game": newGameKey
         };
 
         if ('' !== t1p2Key && '' !== t2p2Key) {
@@ -1135,7 +1134,7 @@
         });
     }
 
-    function scoringUndo(player, type, playerKey, points, movement, lost, won, goals_for, goals_against) {
+    function scoringUndo(type, playerKey, points, movement, lost, won, goals_for, goals_against) {
         // Update player stats
         var playersData = {}
             playersData[type + '_points'] = points;
@@ -1147,11 +1146,19 @@
         fbdb.ref('/players/' + playerKey).update(playersData).catch(function(error) {
             console.log('Failed to update players data');
         });
-        // Remove Players Games
-        fbdb.ref('/playersgame/' + playerKey + '/' + lastGame.players.historyGameKey).remove().catch(function(error) {
-            console.log('Failed to undo players game');
+        removeGameFromPlayersGame(playerKey, lastGame.gameKey)
+    }
+
+    function removeGameFromPlayersGame(playerKey, gameKey){
+        var playerGames = fbdb.ref('/playersgame/' + playerKey);
+        playerGames.orderByChild('game').equalTo(gameKey)
+        .once('value').then(function(snapshot) {
+            snapshot.forEach(function(child) {
+                playerGames.child(child.key).remove();
+            });
         });
     }
+
     function scoringValidation() {
         var t1Count = $('.t1 a.selected').length;
         var t2Count = $('.t2 a.selected').length;
