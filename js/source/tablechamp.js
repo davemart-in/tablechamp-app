@@ -888,7 +888,7 @@
             console.log('----');
         }
         // Decay factor
-        var decay_factor = 10;
+        var decay_factor = 20;
         // New player ranking points
         
         // New doubles player points
