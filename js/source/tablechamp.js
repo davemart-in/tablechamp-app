@@ -590,6 +590,16 @@
                         graphScoreData[i+1] = [-i,100, 50, lastTwentyGamesData[i].rating_after_game];
                 }
                 // Player stats
+                var playersBestRankingPoints = 100;
+                var playersWorstRankingPoints = 100;
+                getPlayersBestRankingPoints(thisKey).then(function(rankingPoints){
+                    var playersBestRankingPoints = rankingPoints;
+                    console.log('Inside Best ranking points: ' + rankingPoints);
+                })
+                getPlayersWorstRankingPoints(thisKey).then(function(rankingPoints){
+                    console.log('Inside worst ranking points: ' + rankingPoints);
+                    var playersWorstRankingPoints = rankingPoints;
+                })
                 $('.stats-player').html(tmpl('statsPlayer', {
                     "doubles" : i18n.app.statsPlayer.doubles,
                     "doubles_lost" : localData.playersByKey[thisKey].doubles_lost,
@@ -620,6 +630,33 @@
             });
         });
     }
+    
+    function getPlayersBestRankingPoints(playerKey){
+        var playersBestRating = 100;
+        return fbdb.ref('/playersgame/' + playerKey).once('value')
+        .then(function(snap){
+            var data = snap.val();
+            for (var key in data) {
+                if (data[key].rating_after_game > playersBestRating){
+                    playersBestRating = data[key].rating_after_game;
+                }
+            }
+            return playersBestRating;
+        });
+    }
+    
+    function getPlayersWorstRankingPoints(playerKey){
+        var playersWorstRating = 100;
+        return fbdb.ref('/playersgame/' + playerKey).once('value')
+        .then(function(snap){
+            var data = snap.val();
+            for (var key in data) {
+                playersWorstRating = (data[key].rating_after_game < playersWorstRating) ? data[key].rating_after_game : playersWorstRating;
+            }
+            return playersWorstRating;
+        });        
+    }
+
     function drawChart(statsData) {
         if (!statsData)
             return;
