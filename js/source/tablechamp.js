@@ -237,8 +237,15 @@
             if (localData.playersByKey.hasOwnProperty(key)) {
                 var gamesCount =  localData.playersByKey[key].doubles_lost + localData.playersByKey[key].doubles_won;
                 var isRanked = gamesCount >= 7; // as we usually play only 6 games at once
-                var goalsForAverage = (gamesCount > 0) ? localData.playersByKey[key].doubles_goals_for/gamesCount : 0;
-                var goalsAgainstAverage = (gamesCount > 0) ? localData.playersByKey[key].doubles_goals_against/gamesCount : 0;
+                var goalsForAverage = 0;
+                var goalsAgainstAverage = 0; 
+                if (gamesCount > 0){
+                    goalsForAverage = localData.playersByKey[key].doubles_goals_for/gamesCount;
+                    goalsForAverage = (goalsForAverage > 5) ? goalsForAverage/2 : goalsForAverage;
+
+                    goalsAgainstAverage = localData.playersByKey[key].doubles_goals_against/gamesCount;
+                    goalsAgainstAverage = (goalsAgainstAverage > 5) ? goalsAgainstAverage/2 : goalsAgainstAverage;
+                }                
 
                 localData.playersArray.push({
                     "doubles_last_movement": localData.playersByKey[key].doubles_last_movement,
@@ -446,7 +453,7 @@
                 var scoreLastMovement = (gamesArray[i].doubles_last_movement) ? gamesArray[i].doubles_last_movement.toFixed(2) : '';
                 var points = (gamesArray[i].doubles_points) ? gamesArray[i].doubles_points.toFixed(2) : '';
                 var pointsBasedBadge = getPointsBadge(points);
-                var wonPercentage = (gamesArray[i].doubles_won / gamesArray[i].gamesCount) * 100;
+                var wonPercentage = (gamesArray[i].gamesCount > 0) ? (gamesArray[i].doubles_won / gamesArray[i].gamesCount) * 100 : 0;
 
                 doublesRankings += tmpl('rankingsRow', {
                     'key': gamesArray[i].key,
@@ -517,7 +524,7 @@
             var lastTwentyGamesData = [];
             var graphScoreData = [];
             graphScoreData[0] = ['Last games', 'Score', 'Default', 'Crap'];
-            var playersGames = {};            
+            var playersGames = {};
             fbdb.ref('/playersgame/' + thisKey).limitToLast(20).once('value').then(function(snapshot) {
                 playersGames = snapshot.val();
                 // To array
