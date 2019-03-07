@@ -2,7 +2,7 @@ var i18n = {
 	"app" : {
 		"appHeader" : {
 			"addScore" : "Add Score",
-			"doubles" : "Doubles",
+			"doubles" : "Current Season",
 			"logOut" : "Log Out",
 			"settings" : "Settings",
 			"singles" : "Singles"
@@ -39,10 +39,10 @@ var i18n = {
 		"scoreAdd" : {
 			"addScoreButton" : "Add new score",
 			"addScoreTitle" : "Add Score",
-			"teamOnePlayers" : "Select team one players",
-			"teamOneScore" : "Team one score",
-			"teamTwoPlayers" : "Select team two players",
-			"teamTwoScore" : "Team two score"
+			"teamOnePlayers" : "Select winning team",
+			"teamOneScore" : "Winning team's score",
+			"teamTwoPlayers" : "Select loosing team",
+			"teamTwoScore" : "Loosing team's score"
 		},
 		"settingsBasics" : {
 			"companyOrClub" : "Company or club name",
@@ -89,6 +89,8 @@ var i18n = {
 			"gamesLost" : "Games lost",
 			"gamesPlayed" : "Games played",
 			"gamesWon" : "Games won",
+			"goalsFor" : "Goals For",
+			"goalsAgainst" : "Goals Against",
 			"ranking" : "Ranking",
 			"singles" : "Singles"
 		}

@@ -1,14 +1,6 @@
 (function ($) {
     'use strict'
     var auth,
-        defaultColors = {
-            'c0' : '#FFF',
-            'c1' : '#D8D8D8',
-            'c2' : '#60678B',
-            'c3' : '#283350',
-            'c4' : '#1C2242',
-            'c5' : '#57D3C3'
-        },
         fbdb,
         isOnline = true,
         lastGame = {},
@@ -21,14 +13,6 @@
     // localData Object
     var localData = {};
         localData.settings = {};
-        localData.settings.appColors = {
-            'c0' : defaultColors.c0,
-            'c1' : defaultColors.c1,
-            'c2' : defaultColors.c2,
-            'c3' : defaultColors.c3,
-            'c4' : defaultColors.c4,
-            'c5' : defaultColors.c5
-        };
     // ---------------------------------------------------
     // Ready
     // ---------------------------------------------------
@@ -57,19 +41,33 @@
         initSettingsListener();
         initPlayersListener();
         initOfflineDetect();
-        sidebarInit();
+        sidebarInit();        
+        renderHistoricalGames();
+        initUndo();
+        initGooglePlotPackage();
     }
     function initHeader() {
         $('.app header').html(tmpl('appHeader', {
             "addScore" : i18n.app.appHeader.addScore,
             "doubles" : i18n.app.appHeader.doubles,
             "logOut" : i18n.app.appHeader.logOut,
-            "settings" : i18n.app.appHeader.settings,
-            "singles" : i18n.app.appHeader.singles
+            "settings" : i18n.app.appHeader.settings
         }));
         $('.app .name').on('click', function() {
             sidebarShow();
             return false;
+        });
+
+        $('#showUnranked').on('click', function() {
+            if ($('#showUnranked').hasClass('hidden'))
+            {
+                $('.ranking.unranked').slideDown('slow');
+            }
+            else
+            {
+                $('.ranking.unranked').slideUp('fast');
+            }
+            $('#showUnranked').toggleClass('hidden'); 
         });
     }
     function initLoader() {
@@ -90,12 +88,6 @@
             });
             return false;
         });
-        // Ranking toggle
-        $('.ranking-toggle').on('click', function() {
-            var thisView = $(this).data('view');
-            rankingToggle(thisView)
-            return false;
-        });
         // Settings Link
         $('.settings').on('click', function() {
             sidebarToggle();
@@ -103,6 +95,7 @@
         });
         // Add Score
         $('.add-score').on('click', function() {
+        
             // Hide sidebar if it's showing
             $('body').removeClass('show-sidebar');
             // Show stats modal
@@ -114,8 +107,12 @@
                 "teamOnePlayers" : i18n.app.scoreAdd.teamOnePlayers,
                 "teamOneScore" : i18n.app.scoreAdd.teamOneScore,
                 "teamTwoPlayers" : i18n.app.scoreAdd.teamTwoPlayers,
-                "teamTwoScore" : i18n.app.scoreAdd.teamTwoScore
+                "teamTwoScore" : i18n.app.scoreAdd.teamTwoScore,
+                "gametype" : localData.settings.gameType,
+                "defaultWinnerScore" : isTableTenisGameType() ? '3' : '5' 
             }));
+
+            Pager.setToObject("pager");
             // Update add score player selection
             scoringPopulatePlayerSelection();
             // Player select event
@@ -127,6 +124,10 @@
             });
             return false;
         });
+    }
+
+    function isTableTenisGameType(){
+        return localData.settings.gameType == 'table-tennis';
     }
     // ---------------------------------------------------
     // Offline
@@ -156,29 +157,17 @@
     // ---------------------------------------------------
     function initPlayersListener() {
         fbdb.ref('/players/').on('value', function(snapshot) {
-            // Update local data set
             localDataUpdate(snapshot.val());
-            // Update doubles rankings
-            doublesRankingsUpdate();
-            // Update singles rankings
-            singlesRankingsUpdate();
-            // Rankings events
-            rankingsEvents();
+            rankingsUpdate();
+            rankingsEvents();            
+            renderHistoricalGames();
         });
     }
     function initSettingsListener() {
         fbdb.ref('/settings/').on('value', function(snapshot) {
             // Update local data set
             localSettingsUpdate(snapshot.val());
-            // Update colors
-            $('.css-block').html(tmpl('cssBlock', {
-                'c0' : localData.settings.appColors.c0,
-                'c1' : localData.settings.appColors.c1,
-                'c2' : localData.settings.appColors.c2,
-                'c3' : localData.settings.appColors.c3,
-                'c4' : localData.settings.appColors.c4,
-                'c5' : localData.settings.appColors.c5
-            }));
+            
             // Update org name
             sidebarBasicSettingsUpdate();
             // Hide loader if it's still showing
@@ -190,32 +179,43 @@
         });
     }
     function initUndo() {
-        $('.undo').off('click').on('click', function () {
-            // Undo game/player scores
+        $('#undoPernament').on('click', function () {
+            // Undo player scores
             for (var i = 0; i < lastGame.players.scores.length; i++) {
-                var data = lastGame.players.scores[i],
-                    player = data.player,
-                    type = lastGame.players.type,
-                    key = data.key,
-                    points = data.pointsNew - data.lastMovement,
-                    movement = '',
-                    lost, won;
+                var type = lastGame.players.type,
+                data = lastGame.players.scores[i],
+                playerKey = data.playerKey,
+                movement = '',
+                gamesLost, gamesWon;
                 if (data.won) {
-                    lost = data.gamesLost,
-                    won = parseInt(data.gamesWon, 10) - 1;
-                    if (won < 0) {
-                        won = 0;
+                    gamesLost = data.gamesLost,
+                    gamesWon = parseInt(data.gamesWon) - 1;
+                    if (gamesWon < 0) {
+                        gamesWon = 0;
                     }
                 } else {
-                    lost = parseInt(data.gamesLost, 10) - 1,
-                    won = data.gamesWon;
-                    if (lost < 0) {
-                        lost = 0;
+                    gamesLost = parseInt(data.gamesLost) - 1,
+                    gamesWon = data.gamesWon;
+                    if (gamesLost < 0) {
+                        gamesLost = 0;
                     }
                 }
-                scoringUndo(player, type, key, points, movement, lost, won);
+                scoringUndo(type, playerKey, data.points, movement, gamesLost, gamesWon, data.goalsFor, data.goalsAgainst);
             }
+            historyRemoveGame(lastGame.historyGameKey)
+            removeGamefromGames(lastGame.gameKey)
             messageShow('success', i18n.app.messages.gameUndone, true);
+        });
+    }
+
+    function historyRemoveGame(gameHistoryKey){
+        fbdb.ref('/history/' + gameHistoryKey ).remove().catch(function(error) {
+            console.log('Failed to remove game' + gameHistoryKey + ' from history');
+        });
+    }
+    function removeGamefromGames(gameKey){
+        fbdb.ref('/games/' + gameKey).remove().catch(function(error) {
+            console.log('Failed to remove game' + gameKey + ' from games');
         });
     }
     // ---------------------------------------------------
@@ -223,29 +223,65 @@
     // ---------------------------------------------------
     function localDataUpdate(data) {
         // Reset everything
+        localData.mostGamesByOnePlayer = -1;
+        localData.mostGamesWonOrLostByOnePlayer = -1;
+        localData.bestGoalsForAverage = -1;
+        localData.worstGoalsAgainstAverage = -1;
         localData.playersArray = [];
         localData.playersByDoubles = [];
         localData.playersByKey = {};
-        localData.playersBySingles = [];
         // Update localData.playersByKey
         localData.playersByKey = data;
         // Assemble playerList array
-        for (var key in data) {
-            if (data.hasOwnProperty(key)) {
+        for (var key in localData.playersByKey) {
+            if (localData.playersByKey.hasOwnProperty(key)) {
+                var gamesCount =  localData.playersByKey[key].doubles_lost + localData.playersByKey[key].doubles_won;
+                var isRanked = gamesCount >= 7; // as we usually play only 6 games at once
+                var goalsForAverage = 0;
+                var goalsAgainstAverage = 0; 
+                if (gamesCount > 0){
+                    goalsForAverage = localData.playersByKey[key].doubles_goals_for/gamesCount;
+                    goalsForAverage = (goalsForAverage > 5) ? goalsForAverage/2 : goalsForAverage;
+
+                    goalsAgainstAverage = localData.playersByKey[key].doubles_goals_against/gamesCount;
+                    goalsAgainstAverage = (goalsAgainstAverage > 5) ? goalsAgainstAverage/2 : goalsAgainstAverage;
+                }                
+
                 localData.playersArray.push({
-                    "doubles_last_movement": data[key].doubles_last_movement,
-                    "doubles_lost": data[key].doubles_lost,
-                    "doubles_points": data[key].doubles_points,
-                    "doubles_won": data[key].doubles_won,
-                    "dt": data[key].dt,
+                    "doubles_last_movement": localData.playersByKey[key].doubles_last_movement,
+                    "doubles_lost": localData.playersByKey[key].doubles_lost,
+                    "doubles_points": localData.playersByKey[key].doubles_points,
+                    "doubles_won": localData.playersByKey[key].doubles_won,
+                    "doubles_goals_for": localData.playersByKey[key].doubles_goals_for,
+                    "doubles_goals_against": localData.playersByKey[key].doubles_goals_against,
+                    "doubles_goals_for_avg": goalsForAverage,
+                    "doubles_goals_against_avg": goalsAgainstAverage,
+                    "dt": localData.playersByKey[key].dt,
                     "key": key,
-                    "name": data[key].name,
-                    "singles_last_movement": data[key].singles_last_movement,
-                    "singles_lost": data[key].singles_lost,
-                    "singles_points": data[key].singles_points,
-                    "singles_won": data[key].singles_won,
-                    "status": data[key].status
+                    "name": localData.playersByKey[key].name,
+                    "status": localData.playersByKey[key].status,
+                    "isRanked": isRanked,
+                    "gamesCount": gamesCount
                 });
+
+                if (isRanked)
+                {
+                    if (gamesCount > localData.mostGamesByOnePlayer){
+                        localData.mostGamesByOnePlayer = gamesCount;
+                    }
+                    if (localData.playersByKey[key].doubles_won > localData.mostGamesWonOrLostByOnePlayer){
+                        localData.mostGamesWonOrLostByOnePlayer = localData.playersByKey[key].doubles_won;
+                    }
+                    if (localData.playersByKey[key].doubles_lost > localData.mostGamesWonOrLostByOnePlayer){
+                        localData.mostGamesWonOrLostByOnePlayer = localData.playersByKey[key].doubles_lost;
+                    }
+                    if (goalsForAverage > localData.bestGoalsForAverage){
+                        localData.bestGoalsForAverage = goalsForAverage;
+                    }
+                    if (goalsAgainstAverage > localData.worstGoalsAgainstAverage){
+                        localData.worstGoalsAgainstAverage = goalsAgainstAverage;
+                    }
+                }
             }
         }
         localData.playersArray = localData.playersArray.slice(0);
@@ -254,31 +290,25 @@
             var y = b.name.toLowerCase();
             return x < y ? -1 : x > y ? 1 : 0;
         });
-        // Sort by doubles array
+        // Sort by games array
         localData.playersByDoubles = localData.playersArray.slice(0);
         localData.playersByDoubles.sort(function(a,b) {
-            return a.doubles_points - b.doubles_points;
-        }).reverse();
-        // Add doubles rank to array
-        var doublesCount = 0;
+            if(a.isRanked && !b.isRanked){
+                return -1;
+            }else if(!a.isRanked && b.isRanked){
+                return 1;
+            }
+            return b.doubles_points - a.doubles_points;
+        });
+        // Add games rank to array
+        var gamesCount = 0;
         for (var i = 0; i < localData.playersByDoubles.length; i++) {
-            doublesCount++;
-            localData.playersByDoubles[i]['doubles_rank'] = doublesCount;
-            localData.playersByKey[localData.playersByDoubles[i]['key']].doubles_rank = doublesCount;
-        }
-        // Sort by singles array
-        localData.playersBySingles = localData.playersArray.slice(0);
-        localData.playersBySingles.sort(function(a,b) {
-            return a.singles_points - b.singles_points;
-        }).reverse();
-        // Add singles rank to array
-        var singlesCount = 0;
-        for (var i = 0; i < localData.playersBySingles.length; i++) {
-            singlesCount++;
-            localData.playersBySingles[i]['singles_rank'] = singlesCount;
-            localData.playersByKey[localData.playersBySingles[i]['key']].singles_rank = singlesCount;
-        }
+            gamesCount++;
+            localData.playersByDoubles[i]['doubles_rank'] = gamesCount;
+            localData.playersByKey[localData.playersByDoubles[i]['key']].doubles_rank = gamesCount;
+        }        
     }
+
     function localSettingsUpdate(data) {
         // Blank slate
         if (null === data) {
@@ -286,23 +316,6 @@
         }
         localData.settings.orgName = (typeof data.orgName !== 'undefined') ? data.orgName : '';
         localData.settings.gameType = (typeof data.gameType !== 'undefined') ? data.gameType : '';
-        if (typeof data.appColors === 'undefined') {
-            data.appColors = {};
-        }
-        localData.settings.appColors.c0 = (typeof data.appColors.c0 !== 'undefined') ? data.appColors.c0 : defaultColors.c0;
-        localData.settings.appColors.c1 = (typeof data.appColors.c1 !== 'undefined') ? data.appColors.c1 : defaultColors.c1;
-        localData.settings.appColors.c2 = (typeof data.appColors.c2 !== 'undefined') ? data.appColors.c2 : defaultColors.c2;
-        localData.settings.appColors.c3 = (typeof data.appColors.c3 !== 'undefined') ? data.appColors.c3 : defaultColors.c3;
-        localData.settings.appColors.c4 = (typeof data.appColors.c4 !== 'undefined') ? data.appColors.c4 : defaultColors.c4;
-        localData.settings.appColors.c5 = (typeof data.appColors.c5 !== 'undefined') ? data.appColors.c5 : defaultColors.c5;
-        /* Dark 
-        'c0' : '#FFF',
-        'c1' : '#8F9EAB',
-        'c2' : '#67727B',
-        'c3' : '#29313B',
-        'c4' : '#020304',
-        'c5' : '#0DD1BF'
-        */
     }
     // ---------------------------------------------------
     // Messages
@@ -432,37 +445,65 @@
     // ---------------------------------------------------
     // Rankings
     // ---------------------------------------------------
-    function doublesRankingsUpdate() {
-        var doublesArray = localData.playersByDoubles;
+    function rankingsUpdate() {
+        var gamesArray = localData.playersByDoubles;
         var doublesRankings = '';
-        var doublesTopRankings = '';
-        for (var i = 0; i < doublesArray.length; i++) {
-            if (doublesArray[i].status) {
-                var doublesLastMovement = (doublesArray[i].doubles_last_movement) ? doublesArray[i].doubles_last_movement.toFixed(2) : '';
-                var doublesPoints = (doublesArray[i].doubles_points) ? doublesArray[i].doubles_points.toFixed(2) : '';
-                if (i < 3) {
-                    doublesTopRankings += tmpl('rankingsRow', {
-                        'key': doublesArray[i].key,
-                        'lastMovement': rankingMovementStyles(doublesLastMovement),
-                        'name': doublesArray[i].name,
-                        'points': doublesPoints,
-                        'rank': doublesArray[i].doubles_rank,
-                        'type': 'doubles'
-                    });
-                } else {
-                    doublesRankings += tmpl('rankingsRow', {
-                        'key': doublesArray[i].key,
-                        'lastMovement': rankingMovementStyles(doublesLastMovement),
-                        'name': doublesArray[i].name,
-                        'points': doublesPoints,
-                        'rank': doublesArray[i].doubles_rank,
-                        'type': 'doubles'
-                    });
-                }
+        for (var i = 0; i < gamesArray.length; i++) {
+            if (gamesArray[i].status) {
+                var scoreLastMovement = (gamesArray[i].doubles_last_movement) ? gamesArray[i].doubles_last_movement.toFixed(2) : '';
+                var points = (gamesArray[i].doubles_points) ? gamesArray[i].doubles_points.toFixed(2) : '';
+                var pointsBasedBadge = getPointsBadge(points);
+                var wonPercentage = (gamesArray[i].gamesCount > 0) ? (gamesArray[i].doubles_won / gamesArray[i].gamesCount) * 100 : 0;
+
+                doublesRankings += tmpl('rankingsRow', {
+                    'key': gamesArray[i].key,
+                    'lastMovement': rankingMovementStyles(scoreLastMovement),
+                    'name': gamesArray[i].name,
+                    'points': points,
+                    'gamesWon' : gamesArray[i].doubles_won,
+                    'gamesWonRelative' : (gamesArray[i].doubles_won / localData.mostGamesWonOrLostByOnePlayer) * 100,
+                    'gamesLost' :  gamesArray[i].doubles_lost,
+                    'gamesLostRelative' :  (gamesArray[i].doubles_lost / localData.mostGamesWonOrLostByOnePlayer ) * 100,
+                    'gamesCount' : gamesArray[i].gamesCount,
+                    'wonPercentage': wonPercentage.toFixed(1),
+                    'goalsInfo' : gamesArray[i].doubles_goals_for_avg.toFixed(2)  + ":" + gamesArray[i].doubles_goals_against_avg.toFixed(2),
+                    'rank': gamesArray[i].doubles_rank,
+                    'type': 'doubles',
+                    'pointsBadge' : pointsBasedBadge,
+                    'medal' : medalSelector(i),
+                    'top' :  (i < 3)? "top":"standard",
+                    'rankingStatus' : gamesArray[i].isRanked ? "" : "unranked",
+                    'mostGames' : (gamesArray[i].gamesCount == localData.mostGamesByOnePlayer)? "granted" : "",
+                    'mostGoals' : (gamesArray[i].doubles_goals_for_avg == localData.bestGoalsForAverage) ? "granted" : "",
+                    'holeInTheGoal': (gamesArray[i].doubles_goals_against_avg  == localData.worstGoalsAgainstAverage) ? "granted" : ""
+                });
             }
         }
-        $('.doubles .top-rankings').html(doublesTopRankings);
+        
         $('.doubles .rankings').html(doublesRankings);
+    }
+
+    function getPointsBadge(points)
+    {
+        if (points >= 150)   return "plat";
+        if (points >= 120)   return "gold"      + Math.floor((points - 120)/5);
+        if (points >= 80)    return "silver"    + Math.floor((points - 80)/7);
+        if (points >= 50)    return "bronze"    + Math.floor((points - 50)/5);
+        return "crap";
+    }
+
+    function medalSelector(index)
+    {
+        switch(index){
+            case 0: 
+                return "gold";
+            case 1: 
+                return "silver";
+            case 2: 
+                return "bronze";
+        }
+
+        return "";
     }
     function rankingsEvents() {
         // Show stats
@@ -477,29 +518,12 @@
                 "forText" : i18n.app.stats.forText,
                 "name" : localData.playersByKey[thisKey].name,
                 "playerStats" : i18n.app.stats.playerStats
-            }));
-            // Player stats
-            var doublesPlayed = localData.playersByKey[thisKey].doubles_lost + localData.playersByKey[thisKey].doubles_won;
-            var singlesPlayed = localData.playersByKey[thisKey].singles_lost + localData.playersByKey[thisKey].singles_won;
-            $('.stats-player').html(tmpl('statsPlayer', {
-                "doubles" : i18n.app.statsPlayer.doubles,
-                "doubles_lost" : localData.playersByKey[thisKey].doubles_lost,
-                "doubles_played" : doublesPlayed,
-                "doubles_rank" : localData.playersByKey[thisKey].doubles_rank,
-                "doubles_won" : localData.playersByKey[thisKey].doubles_won,
-                "gamesLost" : i18n.app.statsPlayer.gamesLost,
-                "gamesPlayed" : i18n.app.statsPlayer.gamesPlayed,
-                "gamesWon" : i18n.app.statsPlayer.gamesWon,
-                "ranking" : i18n.app.statsPlayer.ranking,
-                "singles" : i18n.app.statsPlayer.singles,
-                "singles_lost" : localData.playersByKey[thisKey].singles_lost,
-                "singles_played" : singlesPlayed,
-                "singles_rank" : localData.playersByKey[thisKey].singles_rank,
-                "singles_won" : localData.playersByKey[thisKey].singles_won
-            }));
+            }));            
             // Player games stats
             var lastTwentyGames = '';
             var lastTwentyGamesData = [];
+            var graphScoreData = [];
+            graphScoreData[0] = ['Last games', 'Score', 'Default', 'Crap'];
             var playersGames = {};
             fbdb.ref('/playersgame/' + thisKey).limitToLast(20).once('value').then(function(snapshot) {
                 playersGames = snapshot.val();
@@ -512,13 +536,19 @@
                         "t1p2" : playersGames[key].t1p2 || '',
                         "t2p1" : playersGames[key].t2p1,
                         "t2p2" : playersGames[key].t2p2 || '',
+                        "rating_after_game" : playersGames[key].rating_after_game || '',
                         "t1_points" : playersGames[key].t1_points,
                         "t2_points" : playersGames[key].t2_points,
                         "won" : playersGames[key].won
                     });
                 }
+                var ratingChangeInLast7Games = lastTwentyGamesData.length > 6 ? lastTwentyGamesData[0].rating_after_game - lastTwentyGamesData[6].rating_after_game : lastTwentyGamesData[0].rating_after_game - 100; //if there are less games then 6 then this is start point
+
                 // Iterate through array
                 for (var i = 0; i < lastTwentyGamesData.length; i++) {
+                    // Date 
+                    var date = getDateInNiceStringFormat(lastTwentyGamesData[i].dt);
+                    
                     // Game status
                     var gameStatus = 'Lost';
                     if (lastTwentyGamesData[i].won) {
@@ -535,26 +565,62 @@
                             continue;
                         }
                         var t1p2 = localData.playersByKey[lastTwentyGamesData[i].t1p2].name || '';
-                        t1 += ' & ' + t1p2;
+                        t1 += '/' + t1p2;
                     }
                     if (lastTwentyGamesData[i].t2p2) {
                         if (!localData.playersByKey[lastTwentyGamesData[i].t2p2]) {
                             continue;
                         }
                         var t2p2 = localData.playersByKey[lastTwentyGamesData[i].t2p2].name || '';
-                        t2 += ' & ' + t2p2;
+                        t2 += '/' + t2p2;
                     }
                     // Piece it all together
                     lastTwentyGames += tmpl('statsPlayerGames', {
+                        "date" : date,
                         "status" : gameStatus,
+                        "rating_after_game" : (lastTwentyGamesData[i].rating_after_game) ? lastTwentyGamesData[i].rating_after_game.toFixed(2) :'',
                         "t1" : t1,
                         "t1Score" : lastTwentyGamesData[i].t1_points,
                         "t2" : t2,
                         "t2Score" : lastTwentyGamesData[i].t2_points
                     });
+
+                    //Since we already iterate through last games, store some of that data for the graph rendering purpose
+                    if (lastTwentyGamesData[i].rating_after_game > 0)
+                        graphScoreData[i+1] = [-i,100, 50, lastTwentyGamesData[i].rating_after_game];
                 }
+                // Player stats
+                var playersBestRankingPoints = 100;
+                var playersWorstRankingPoints = 100;
+                getPlayersBestRankingPoints(thisKey).then(function(rankingPoints){
+                    var playersBestRankingPoints = rankingPoints;
+                    console.log('Inside Best ranking points: ' + rankingPoints);
+                })
+                getPlayersWorstRankingPoints(thisKey).then(function(rankingPoints){
+                    console.log('Inside worst ranking points: ' + rankingPoints);
+                    var playersWorstRankingPoints = rankingPoints;
+                })
+                $('.stats-player').html(tmpl('statsPlayer', {
+                    "doubles" : i18n.app.statsPlayer.doubles,
+                    "doubles_lost" : localData.playersByKey[thisKey].doubles_lost,
+                    "doubles_played" : localData.playersByKey[thisKey].doubles_lost + localData.playersByKey[thisKey].doubles_won,
+                    "doubles_rank" : ratingChangeInLast7Games.toFixed(2),
+                    "doubles_won" : localData.playersByKey[thisKey].doubles_won,
+                    "doubles_goals_for": localData.playersByKey[thisKey].doubles_goals_for || 0,
+                    "doubles_goals_against": localData.playersByKey[thisKey].doubles_goals_against || 0,
+                    "gamesLost" : i18n.app.statsPlayer.gamesLost ,
+                    "gamesPlayed" : i18n.app.statsPlayer.gamesPlayed,
+                    "goalsFor" : i18n.app.statsPlayer.goalsFor,
+                    "goalsAgainst" : i18n.app.statsPlayer.goalsAgainst,
+                    "gamesWon" : i18n.app.statsPlayer.gamesWon,
+                    "ranking" : "Ranking change in 6 games"
+                }));
                 if (!lastTwentyGames) {
                     lastTwentyGames = '<li>No games have been entered for this user.</li>';
+                }
+                else
+                {
+                    drawChart(graphScoreData);
                 }
                 // Add it to the DOM
                 $('.stats-player-games ul').html(lastTwentyGames);
@@ -564,66 +630,220 @@
             });
         });
     }
-    function rankingMovementStyles(movement) {
+    
+    function getPlayersBestRankingPoints(playerKey){
+        var playersBestRating = 100;
+        return fbdb.ref('/playersgame/' + playerKey).once('value')
+        .then(function(snap){
+            var data = snap.val();
+            for (var key in data) {
+                if (data[key].rating_after_game > playersBestRating){
+                    playersBestRating = data[key].rating_after_game;
+                }
+            }
+            return playersBestRating;
+        });
+    }
+    
+    function getPlayersWorstRankingPoints(playerKey){
+        var playersWorstRating = 100;
+        return fbdb.ref('/playersgame/' + playerKey).once('value')
+        .then(function(snap){
+            var data = snap.val();
+            for (var key in data) {
+                playersWorstRating = (data[key].rating_after_game < playersWorstRating) ? data[key].rating_after_game : playersWorstRating;
+            }
+            return playersWorstRating;
+        });        
+    }
+
+    function drawChart(statsData) {
+        if (!statsData)
+            return;
+
+        var data = google.visualization.arrayToDataTable(statsData);
+
+        var options = {
+          title: 'Player score over time',
+          titleColor: '#eee',
+          hAxis: {
+              title: 'Last games',  
+              textStyle: {color: '#ccc'},
+              titleTextStyle: {color: '#ccc'},
+              gridlines: {color: '#222', count: -1}
+            },
+          vAxis: {
+              minValue: 0,
+              textStyle: {color: '#ccc'},
+              gridlines: {color: '#222', count: -1}
+            },
+          chartArea: {'width':'80%'},
+          legend: {'position':'none'},
+          series: {
+            0: { areaOpacity: 0, color: "#111", tooltip: false },
+            1: { areaOpacity: 0, color: "#A00", tooltip: false},
+            2: { areaOpacity: 0.3, color: 'orange', tooltip: true}
+          },
+          backgroundColor: '#404040'
+        };
+
+        var chart = new google.visualization.AreaChart(document.getElementById('stats-graph'));
+        chart.draw(data, options);
+      }
+
+    function renderHistoricalGames() {
+        fbdb.ref('/history/').limitToLast(10).once('value').then(function(snapshot) {
+            // Games stats
+            var lastTwentyGames = '';
+            var lastTwentyGamesData = [];
+            var history = {};
+            history = snapshot.val();
+            // To array
+            for (var key in history) {
+                lastTwentyGamesData.unshift({
+                    "dt" : history[key].dt,
+                    "game" : history[key].game,
+                    "historyGameKey": key,
+                    "t1p1" : history[key].t1p1,
+                    "t1p2" : history[key].t1p2 || '',
+                    "t2p1" : history[key].t2p1,
+                    "t2p2" : history[key].t2p2 || '',
+                    "t1_points" : parseInt(history[key].t1_points),
+                    "t2_points" : parseInt(history[key].t2_points),
+                    "t1p1_pointsMovement": (history[key].t1p1_pointsMovement) ? history[key].t1p1_pointsMovement.toFixed(2) : '',
+                    "t2p1_pointsMovement": (history[key].t2p1_pointsMovement) ? history[key].t2p1_pointsMovement.toFixed(2) : ''
+                });
+            }
+            // Iterate through array
+            for (var i = 0; i < lastTwentyGamesData.length; i++) {
+                // Date 
+                var date = getDateInNiceStringFormat(lastTwentyGamesData[i].dt);
+                // Players
+                var t1 = localData.playersByKey[lastTwentyGamesData[i].t1p1].name; 
+                t1 += lastTwentyGamesData[i].t1p2 !== '' ? '/' + localData.playersByKey[lastTwentyGamesData[i].t1p2].name : '';
+
+                var t2 = localData.playersByKey[lastTwentyGamesData[i].t2p1].name;
+                t2 +=  lastTwentyGamesData[i].t2p2 !== '' ? '/' + localData.playersByKey[lastTwentyGamesData[i].t2p2].name : '';
+                
+                // Piece it all together
+                lastTwentyGames += tmpl('historicalGame', {
+                    "date" : date,
+                    "t1" : t1,
+                    "t1Score" : lastTwentyGamesData[i].t1_points,
+                    "t1Class": teamClassBasedOnScore(lastTwentyGamesData[i].t1_points, lastTwentyGamesData[i].t2_points),
+                    "t1PointMovement": lastTwentyGamesData[i].t1p1_pointsMovement,
+                    "t2" : t2,
+                    "t2Score" : lastTwentyGamesData[i].t2_points,
+                    "t2Class": teamClassBasedOnScore(lastTwentyGamesData[i].t2_points, lastTwentyGamesData[i].t1_points),
+                    "t2PointMovement": lastTwentyGamesData[i].t2p1_pointsMovement,
+                });
+                // Cache only latest game
+                if (i==0){
+                    var t1Won = false;
+                    var t1s = lastTwentyGamesData[i].t1_points;
+                    var t2Won = false;
+                    var t2s = lastTwentyGamesData[i].t2_points;
+                    if (parseInt(t1s) > parseInt(t2s)) {
+                        t1Won = true;
+                    } else {
+                        t2Won = true;
+                    }
+                    lastGame.gameKey = lastTwentyGamesData[i].game;
+                    lastGame.historyGameKey = lastTwentyGamesData[i].historyGameKey;
+
+                    lastGame.players = {
+                        'type' : 'doubles',
+                        'scores' : [
+                            {
+                                'player' : 't1p1',
+                                'playerKey' : lastTwentyGamesData[i].t1p1,
+                                'points' : localData.playersByKey[lastTwentyGamesData[i].t1p1].doubles_points - lastTwentyGamesData[i].t1p1_pointsMovement,
+                                'gamesLost' : localData.playersByKey[lastTwentyGamesData[i].t1p1].doubles_lost,
+                                'gamesWon' : localData.playersByKey[lastTwentyGamesData[i].t1p1].doubles_won,                                
+                                'goalsFor' : localData.playersByKey[lastTwentyGamesData[i].t1p1].doubles_goals_for - t1s,
+                                'goalsAgainst' : localData.playersByKey[lastTwentyGamesData[i].t1p1].doubles_goals_against - t2s,
+                                'won' : t1Won
+                            },
+                            {
+                                'player' : 't1p2',
+                                'playerKey' : lastTwentyGamesData[i].t1p2,
+                                'points' : localData.playersByKey[lastTwentyGamesData[i].t1p2].doubles_points - lastTwentyGamesData[i].t1p1_pointsMovement,
+                                'gamesLost' : localData.playersByKey[lastTwentyGamesData[i].t1p2].doubles_lost,
+                                'gamesWon' : localData.playersByKey[lastTwentyGamesData[i].t1p2].doubles_won,
+                                'goalsFor' : localData.playersByKey[lastTwentyGamesData[i].t1p2].doubles_goals_for - t1s,
+                                'goalsAgainst' : localData.playersByKey[lastTwentyGamesData[i].t1p2].doubles_goals_against - t2s,
+                                'won' : t1Won
+                            },
+                            {
+                                'player' : 't2p1',
+                                'playerKey' : lastTwentyGamesData[i].t2p1,
+                                'points' : localData.playersByKey[lastTwentyGamesData[i].t2p1].doubles_points - lastTwentyGamesData[i].t2p1_pointsMovement,
+                                'gamesLost' : localData.playersByKey[lastTwentyGamesData[i].t2p1].doubles_lost,
+                                'gamesWon' : localData.playersByKey[lastTwentyGamesData[i].t2p1].doubles_won,
+                                'goalsFor' : localData.playersByKey[lastTwentyGamesData[i].t2p1].doubles_goals_for - t2s,
+                                'goalsAgainst' : localData.playersByKey[lastTwentyGamesData[i].t2p1].doubles_goals_against - t1s,
+                                'won' : t2Won
+                            },
+                            {
+                                'player' : 't2p2',
+                                'playerKey' : lastTwentyGamesData[i].t2p2,
+                                'points' : localData.playersByKey[lastTwentyGamesData[i].t2p2].doubles_points - lastTwentyGamesData[i].t2p1_pointsMovement,
+                                'gamesLost' : localData.playersByKey[lastTwentyGamesData[i].t2p2].doubles_lost,
+                                'gamesWon' : localData.playersByKey[lastTwentyGamesData[i].t2p2].doubles_won,
+                                'goalsFor' : localData.playersByKey[lastTwentyGamesData[i].t2p2].doubles_goals_for - t2s,
+                                'goalsAgainst' : localData.playersByKey[lastTwentyGamesData[i].t2p2].doubles_goals_against - t1s,
+                                'won' : t2Won
+                            }
+                        ]
+                    }
+                }
+            }
+            // Add it to the DOM
+            $('.history').html(lastTwentyGames);
+        }).catch(function(error) {
+            console.log('Unable to pull player game history');
+            console.log(error)
+        });        
+    }
+    function initGooglePlotPackage()
+    {
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+    }
+
+    function getDateInNiceStringFormat(timestamp)
+    {
+        var d = new Date(timestamp);
+        var curr_date = ("0" + d.getDate()).slice(-2);
+        var curr_month = ("0" + (d.getMonth()+ 1 )).slice(-2); //Months are zero based
+        var curr_year = d.getFullYear();
+        return curr_year + "-" + curr_month + "-" + curr_date;
+    }
+    function rankingMovementStyles(movement)
+    {
         if (movement > 0) {
             movement = '<span class="movement-positive">+ ' + movement + '</span>';
         }
         return movement;
     }
-    function rankingToggle(viewType) {
-        var doubles = $('.doubles');
-        var singles = $('.singles');
-        // Active link
-        $('.ranking-toggle').removeClass('is-selected');
-        $('.ranking-toggle[data-view="' + viewType + '"]').addClass('is-selected');
-        // Hide/show singles/doubles
-        if ('singles' === viewType) {
-            doubles.hide();
-            singles.fadeIn();
-        } else {
-            singles.hide();
-            doubles.fadeIn();
+    function teamClassBasedOnScore(ownTeamPoints,opponentTeamPoints)
+    {
+        var teamClass = 'Won';
+        if(opponentTeamPoints > ownTeamPoints){
+            teamClass = 'Lost';
         }
+        return teamClass;
     }
-    function singlesRankingsUpdate() {
-        var singlesArray = localData.playersBySingles;
-        var singlesRankings = '';
-        var singlesTopRankings = '';
-        for (var i = 0; i < singlesArray.length; i++) {
-            if (singlesArray[i].status) {
-                var singlesLastMovement = (singlesArray[i].singles_last_movement) ? singlesArray[i].singles_last_movement.toFixed(2) : '';
-                var singlesPoints = (singlesArray[i].singles_points) ? singlesArray[i].singles_points.toFixed(2) : '';
-                if (i < 3) {
-                    singlesTopRankings += tmpl('rankingsRow', {
-                        'key': singlesArray[i].key,
-                        'lastMovement': rankingMovementStyles(singlesLastMovement),
-                        'name': singlesArray[i].name,
-                        'points': singlesPoints,
-                        'rank': singlesArray[i].singles_rank,
-                        'type': 'singles'
-                    });
-                } else {
-                    singlesRankings += tmpl('rankingsRow', {
-                        'key': singlesArray[i].key,
-                        'lastMovement': rankingMovementStyles(singlesLastMovement),
-                        'name': singlesArray[i].name,
-                        'points': singlesPoints,
-                        'rank': singlesArray[i].singles_rank,
-                        'type': 'singles'
-                    });
-                }
-            }
-        }
-        $('.singles .top-rankings').html(singlesTopRankings);
-        $('.singles .rankings').html(singlesRankings);
-    }
+
+    
+    
     // ---------------------------------------------------
     // Scoring
     // ---------------------------------------------------
     function scoringAdd() {
         // Scores
-        var t1s = $('.t1-score').val();
-        var t2s = $('.t2-score').val();
+        var t1s = parseInt($('.t1-score').val());
+        var t2s = parseInt($('.t2-score').val());
         if (logging) {
             console.log('scores');
             console.log(t1s);
@@ -632,9 +852,9 @@
         }
         // Players keys
         var t1p1Key = $('.t1-players a.selected').first().data('id');
-        var t1p2Key = $('.t1-players a.selected').last().data('id');
+        var t1p2Key = $('.t1-players a.selected').last().data('id'); //if you select one player only, t1p2Key = t1p1Key
         var t2p1Key = $('.t2-players a.selected').first().data('id');
-        var t2p2Key = $('.t2-players a.selected').last().data('id');
+        var t2p2Key = $('.t2-players a.selected').last().data('id'); //if you select one player only, t2p2Key = t2p1Key
         if (logging) {
             console.log('keys');
             console.log(t1p1Key);
@@ -643,31 +863,15 @@
             console.log(t2p2Key);
             console.log('----');
         }
-        // Check if this is a doubles match
-        var isDoubles = false;
-        if (t1p1Key !== t1p2Key) {
-            isDoubles = true;
-        }
-        if (logging) {
-            console.log('isDoubles');
-            console.log(isDoubles);
-            console.log('----');
-        }
+        
         // Team ranking points
-        var t1rp = localData.playersByKey[t1p1Key].singles_points;
-        var t2rp = localData.playersByKey[t2p1Key].singles_points;
-        if (isDoubles) {
-            t1rp = [localData.playersByKey[t1p1Key].doubles_points + localData.playersByKey[t1p2Key].doubles_points] / 2;
-            t2rp = [localData.playersByKey[t2p1Key].doubles_points + localData.playersByKey[t2p2Key].doubles_points] / 2;
-        }
+        var t1rp = [localData.playersByKey[t1p1Key].doubles_points + localData.playersByKey[t1p2Key].doubles_points] / 2;
+        var t2rp = [localData.playersByKey[t2p1Key].doubles_points + localData.playersByKey[t2p2Key].doubles_points] / 2;
+        
         if (logging) {
             console.log('Team ranking points');
             console.log(t1rp);
             console.log(t2rp);
-            if (isDoubles) {
-            console.log(t1rp);
-            console.log(t2rp);
-            }
             console.log('----');
         }
         // Game ranking points
@@ -686,39 +890,29 @@
             console.log(t2p);
             console.log('----');
         }
-        // Player ranking points
+        
+        var t1p1rp = t1p + [localData.playersByKey[t1p1Key].doubles_points - localData.playersByKey[t1p2Key].doubles_points] / 2;
+        var t1p2rp = 2 * t1p - t1p1rp; //if you select one player only, t1p2rp = t1p1rp
+        var t2p1rp = t2p + [localData.playersByKey[t2p1Key].doubles_points - localData.playersByKey[t2p2Key].doubles_points] / 2;
+        var t2p2rp = 2 * t2p - t2p1rp; //if you select one player only, t2p2rp = t2p1rp
+
         var gameData = {
             "dt": Date.now(),
-            "t1p1_points": t1p,
-            "t2p1_points": t2p
+            "t1p1_points": t1p1rp,
+            "t1p2_points": t1p2rp,
+            "t2p1_points": t2p1rp,
+            "t2p2_points": t2p2rp
         }
         if (logging) {
-            console.log('Singles Player ranking points');
+            console.log('Doubles Player ranking points');
+            console.log(t1p1rp);
+            console.log(t1p2rp);
+            console.log(t2p1rp);
+            console.log(t2p2rp);
             console.log(gameData);
             console.log('----');
         }
-        if (isDoubles) {
-            var t1p1rp = t1p + [localData.playersByKey[t1p1Key].doubles_points - localData.playersByKey[t1p2Key].doubles_points] / 2;
-            var t1p2rp = 2 * t1p - t1p1rp;
-            var t2p1rp = t2p + [localData.playersByKey[t2p1Key].doubles_points - localData.playersByKey[t2p2Key].doubles_points] / 2;
-            var t2p2rp = 2 * t2p - t2p1rp;
-            gameData = {
-                "dt": Date.now(),
-                "t1p1_points": t1p1rp,
-                "t1p2_points": t1p2rp,
-                "t2p1_points": t2p1rp,
-                "t2p2_points": t2p2rp
-            }
-            if (logging) {
-                console.log('Doubles Player ranking points');
-                console.log(t1p1rp);
-                console.log(t1p2rp);
-                console.log(t2p1rp);
-                console.log(t2p2rp);
-                console.log(gameData);
-                console.log('----');
-            }
-        }
+        
         // Save "games" data
         var newGameKey = fbdb.ref().child('games').push().key;
         var dbGames = fbdb.ref('/games/' + newGameKey);
@@ -731,211 +925,125 @@
             console.log('----');
         }
         // Reset last movements
-        if (isDoubles) {
-            scoringResetLastMovements('doubles_last_movement', {'doubles_last_movement' : ''});
-        } else {
-            scoringResetLastMovements('singles_last_movement', {'singles_last_movement' : ''});
-        }
+        scoringResetLastMovements('doubles_last_movement', {'doubles_last_movement' : ''});
+        
         if (logging) {
             console.log('Reset last movements');
             console.log('----');
         }
         // Decay factor
-        var decay_factor = 10;
+        var decay_factor = 20;
         // New player ranking points
-        if (isDoubles) {
-            // New doubles player points
-            var t1p1PointsNew = localData.playersByKey[t1p1Key].doubles_points / decay_factor * [decay_factor - 1] + t1p1rp / decay_factor;
-            var t1p2PointsNew = localData.playersByKey[t1p2Key].doubles_points / decay_factor * [decay_factor - 1] + t1p2rp / decay_factor;
-            var t2p1PointsNew = localData.playersByKey[t2p1Key].doubles_points / decay_factor * [decay_factor - 1] + t2p1rp / decay_factor;
-            var t2p2PointsNew = localData.playersByKey[t2p2Key].doubles_points / decay_factor * [decay_factor - 1] + t2p2rp / decay_factor;
-            // Update last movements
-            var t1p1LastMovement = t1p1PointsNew - localData.playersByKey[t1p1Key].doubles_points;
-            var t1p2LastMovement = t1p2PointsNew - localData.playersByKey[t1p2Key].doubles_points;
-            var t2p1LastMovement = t2p1PointsNew - localData.playersByKey[t2p1Key].doubles_points;
-            var t2p2LastMovement = t2p2PointsNew - localData.playersByKey[t2p2Key].doubles_points;
-            // Updates games won/lost
-            var t1p1GamesLost = localData.playersByKey[t1p1Key].singles_lost;
-            var t1p1GamesWon = localData.playersByKey[t1p1Key].singles_won;
-            var t1p2GamesLost = localData.playersByKey[t1p2Key].singles_lost;
-            var t1p2GamesWon = localData.playersByKey[t1p2Key].singles_won;
-            var t2p1GamesLost = localData.playersByKey[t2p1Key].singles_lost;
-            var t2p1GamesWon = localData.playersByKey[t2p1Key].singles_won;
-            var t2p2GamesLost = localData.playersByKey[t2p2Key].singles_lost;
-            var t2p2GamesWon = localData.playersByKey[t2p2Key].singles_won;
-            var t1Won = false;
-            var t2Won = false;
-            if (parseInt(t1s) > parseInt(t2s)) {
-                t1Won = true;
-                t1p1GamesWon += 1;
-                t1p2GamesWon += 1;
-                t2p1GamesLost += 1;
-                t2p2GamesLost += 1;
-            } else {
-                t2Won = true;
-                t2p1GamesWon += 1;
-                t2p2GamesWon += 1;
-                t1p1GamesLost += 1;
-                t1p2GamesLost += 1;
-            }
-            // Cache last game
-            lastGame.players = {
-                'type' : 'doubles',
-                'scores' : [
-                    {
-                        'player' : 't1p1',
-                        'key' : t1p1Key,
-                        'pointsNew' : t1p1PointsNew,
-                        'lastMovement' : t1p1LastMovement,
-                        'gamesLost' : t1p1GamesLost,
-                        'gamesWon' : t1p1GamesWon,
-                        'newGameKey' : newGameKey,
-                        't1p1Key' : t1p1Key,
-                        't1p2Key' : t1p2Key,
-                        't2p1Key' : t2p1Key,
-                        't2p2Key' : t2p2Key,
-                        't1s' : t1s,
-                        't2s' : t2s,
-                        'won' : t1Won
-                    },
-                    {
-                        'player' : 't1p2',
-                        'key' : t1p2Key,
-                        'pointsNew' : t1p2PointsNew,
-                        'lastMovement' : t1p2LastMovement,
-                        'gamesLost' : t1p2GamesLost,
-                        'gamesWon' : t1p2GamesWon,
-                        'newGameKey' : newGameKey,
-                        't1p1Key' : t1p1Key,
-                        't1p2Key' : t1p2Key,
-                        't2p1Key' : t2p1Key,
-                        't2p2Key' : t2p2Key,
-                        't1s' : t1s,
-                        't2s' : t2s,
-                        'won' : t1Won
-                    },
-                    {
-                        'player' : 't2p1',
-                        'key' : t2p1Key,
-                        'pointsNew' : t2p1PointsNew,
-                        'lastMovement' : t2p1LastMovement,
-                        'gamesLost' : t2p1GamesLost,
-                        'gamesWon' : t2p1GamesWon,
-                        'newGameKey' : newGameKey,
-                        't1p1Key' : t1p1Key,
-                        't1p2Key' : t1p2Key,
-                        't2p1Key' : t2p1Key,
-                        't2p2Key' : t2p2Key,
-                        't1s' : t1s,
-                        't2s' : t2s,
-                        'won' : t2Won
-                    },
-                    {
-                        'player' : 't2p2',
-                        'key' : t2p2Key,
-                        'pointsNew' : t2p2PointsNew,
-                        'lastMovement' : t2p2LastMovement,
-                        'gamesLost' : t2p2GamesLost,
-                        'gamesWon' : t2p2GamesWon,
-                        'newGameKey' : newGameKey,
-                        't1p1Key' : t1p1Key,
-                        't1p2Key' : t1p2Key,
-                        't2p1Key' : t2p1Key,
-                        't2p2Key' : t2p2Key,
-                        't1s' : t1s,
-                        't2s' : t2s,
-                        'won' : t2Won
-                    }
-                ]
-            }
-            if (logging) {
-                console.log('Doubles save score');
-                console.log(['t1p1', 'doubles', t1p1Key, t1p1PointsNew, t1p1LastMovement, t1p1GamesLost, t1p1GamesWon, newGameKey, t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t1Won]);
-                console.log(['t1p2', 'doubles', t1p2Key, t1p2PointsNew, t1p2LastMovement, t1p2GamesLost, t1p2GamesWon, newGameKey, t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t1Won]);
-                console.log(['t2p1', 'doubles', t2p1Key, t2p1PointsNew, t2p1LastMovement, t2p1GamesLost, t2p1GamesWon, newGameKey, t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t2Won]);
-                console.log(['t2p2', 'doubles', t2p2Key, t2p2PointsNew, t2p2LastMovement, t2p2GamesLost, t2p2GamesWon, newGameKey, t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t2Won]);
-                console.log('----');
-            }
-            // Save "players", and "players_game" data
-            scoringSave('t1p1', 'doubles', t1p1Key, t1p1PointsNew, t1p1LastMovement, t1p1GamesLost, t1p1GamesWon, newGameKey, t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t1Won);
-            scoringSave('t1p2', 'doubles', t1p2Key, t1p2PointsNew, t1p2LastMovement, t1p2GamesLost, t1p2GamesWon, newGameKey, t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t1Won);
-            scoringSave('t2p1', 'doubles', t2p1Key, t2p1PointsNew, t2p1LastMovement, t2p1GamesLost, t2p1GamesWon, newGameKey, t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t2Won);
-            scoringSave('t2p2', 'doubles', t2p2Key, t2p2PointsNew, t2p2LastMovement, t2p2GamesLost, t2p2GamesWon, newGameKey, t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t2Won);
-            // Show doubles rankings
-            rankingToggle('doubles');
-        } else { // Singles
-            // New singles player points
-            var t1p1PointsNew = t1rp / decay_factor * [decay_factor - 1] + t1p / decay_factor;
-            var t2p1PointsNew = t2rp / decay_factor * [decay_factor - 1] + t2p / decay_factor;
-            // Update last movements
-            var t1p1LastMovement = t1p1PointsNew - t1rp;
-            var t2p1LastMovement = t2p1PointsNew - t2rp;
-            // Updates games won/lost
-            var t1p1GamesLost = localData.playersByKey[t1p1Key].singles_lost;
-            var t1p1GamesWon = localData.playersByKey[t1p1Key].singles_won;
-            var t2p1GamesLost = localData.playersByKey[t2p1Key].singles_lost;
-            var t2p1GamesWon = localData.playersByKey[t2p1Key].singles_won;
-            var t1Won = false;
-            var t2Won = false;
-            if (parseInt(t1s) > parseInt(t2s)) {
-                t1Won = true;
-                t1p1GamesWon += 1;
-                t2p1GamesLost += 1;
-            } else {
-                t2Won = true;
-                t1p1GamesLost += 1;
-                t2p1GamesWon += 1;
-            }
-            // Cache last game
-            lastGame.players = {
-                'type' : 'singles',
-                'scores' : [
-                    {
-                        'player' : 't1p1',
-                        'key' : t1p1Key,
-                        'pointsNew' : t1p1PointsNew,
-                        'lastMovement' : t1p1LastMovement,
-                        'gamesLost' : t1p1GamesLost,
-                        'gamesWon' : t1p1GamesWon,
-                        'newGameKey' : newGameKey,
-                        't1p1Key' : t1p1Key,
-                        't1p2Key' : '',
-                        't2p1Key' : t2p1Key,
-                        't2p2Key' : '',
-                        't1s' : t1s,
-                        't2s' : t2s,
-                        'won' : t1Won
-                    },
-                    {
-                        'player' : 't2p1',
-                        'key' : t2p1Key,
-                        'pointsNew' : t2p1PointsNew,
-                        'lastMovement' : t2p1LastMovement,
-                        'gamesLost' : t2p1GamesLost,
-                        'gamesWon' : t2p1GamesWon,
-                        'newGameKey' : newGameKey,
-                        't1p1Key' : t1p1Key,
-                        't1p2Key' : '',
-                        't2p1Key' : t2p1Key,
-                        't2p2Key' : '',
-                        't1s' : t1s,
-                        't2s' : t2s,
-                        'won' : t2Won
-                    }
-                ]
-            }
-            // Save "players", and "players_game" data
-            scoringSave('t1p1', 'singles', t1p1Key, t1p1PointsNew, t1p1LastMovement, t1p1GamesLost, t1p1GamesWon, newGameKey, t1p1Key, '', t2p1Key, '', t1s, t2s, t1Won);
-            scoringSave('t2p1', 'singles', t2p1Key, t2p1PointsNew, t2p1LastMovement, t2p1GamesLost, t2p1GamesWon, newGameKey, t1p1Key, '', t2p1Key, '', t1s, t2s, t2Won);
-            // Show singles rankings
-            rankingToggle('singles');
+        
+        // New doubles player points
+        var t1p1PointsNew = localData.playersByKey[t1p1Key].doubles_points / decay_factor * [decay_factor - 1] + t1p1rp / decay_factor;
+        var t1p2PointsNew = localData.playersByKey[t1p2Key].doubles_points / decay_factor * [decay_factor - 1] + t1p2rp / decay_factor;
+        var t2p1PointsNew = localData.playersByKey[t2p1Key].doubles_points / decay_factor * [decay_factor - 1] + t2p1rp / decay_factor;
+        var t2p2PointsNew = localData.playersByKey[t2p2Key].doubles_points / decay_factor * [decay_factor - 1] + t2p2rp / decay_factor;
+        // Update last movements
+        var t1p1LastMovement = t1p1PointsNew - localData.playersByKey[t1p1Key].doubles_points;
+        var t1p2LastMovement = t1p2PointsNew - localData.playersByKey[t1p2Key].doubles_points;
+        var t2p1LastMovement = t2p1PointsNew - localData.playersByKey[t2p1Key].doubles_points;
+        var t2p2LastMovement = t2p2PointsNew - localData.playersByKey[t2p2Key].doubles_points;
+        // Updates games won/lost
+        var t1p1GamesLost = localData.playersByKey[t1p1Key].doubles_lost;
+        var t1p1GamesWon = localData.playersByKey[t1p1Key].doubles_won;        
+        var t1p2GamesLost = localData.playersByKey[t1p2Key].doubles_lost;
+        var t1p2GamesWon = localData.playersByKey[t1p2Key].doubles_won;        
+        var t2p1GamesLost = localData.playersByKey[t2p1Key].doubles_lost;
+        var t2p1GamesWon = localData.playersByKey[t2p1Key].doubles_won;        
+        var t2p2GamesLost = localData.playersByKey[t2p2Key].doubles_lost;
+        var t2p2GamesWon = localData.playersByKey[t2p2Key].doubles_won;
+        // Update GoalsFor/Against
+        var t1p1GoalsForNew = (localData.playersByKey[t1p1Key].doubles_goals_for || 0) + parseInt(t1s);
+        var t1p2GoalsForNew = (localData.playersByKey[t1p2Key].doubles_goals_for || 0) + parseInt(t1s);
+        var t2p1GoalsForNew = (localData.playersByKey[t2p1Key].doubles_goals_for || 0) + parseInt(t2s);
+        var t2p2GoalsForNew = (localData.playersByKey[t2p2Key].doubles_goals_for || 0) + parseInt(t2s);
+        var t1p1GoalsAgainstNew = (localData.playersByKey[t1p1Key].doubles_goals_against || 0) + parseInt(t2s);        
+        var t1p2GoalsAgainstNew = (localData.playersByKey[t1p2Key].doubles_goals_against || 0) + parseInt(t2s);
+        var t2p1GoalsAgainstNew = (localData.playersByKey[t2p1Key].doubles_goals_against || 0) + parseInt(t1s);
+        var t2p2GoalsAgainstNew = (localData.playersByKey[t2p2Key].doubles_goals_against || 0) + parseInt(t1s);
+        
+        
+        var t1Won = false;
+        var t2Won = false;
+        if (parseInt(t1s) > parseInt(t2s)) {
+            t1Won = true;
+            t1p1GamesWon += 1;
+            t1p2GamesWon += 1;
+            t2p1GamesLost += 1;
+            t2p2GamesLost += 1;
+        } else {
+            t2Won = true;
+            t2p1GamesWon += 1;
+            t2p2GamesWon += 1;
+            t1p1GamesLost += 1;
+            t1p2GamesLost += 1;
         }
+        if (logging) {
+            console.log('Doubles save score');
+            console.log(['t1p1', 'doubles', t1p1Key, t1p1PointsNew, t1p1LastMovement, t1p1GamesLost, t1p1GamesWon, newGameKey, t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t1Won]);
+            console.log(['t1p2', 'doubles', t1p2Key, t1p2PointsNew, t1p2LastMovement, t1p2GamesLost, t1p2GamesWon, newGameKey, t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t1Won]);
+            console.log(['t2p1', 'doubles', t2p1Key, t2p1PointsNew, t2p1LastMovement, t2p1GamesLost, t2p1GamesWon, newGameKey, t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t2Won]);
+            console.log(['t2p2', 'doubles', t2p2Key, t2p2PointsNew, t2p2LastMovement, t2p2GamesLost, t2p2GamesWon, newGameKey, t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t2Won]);
+            console.log('----');
+        }
+        // Save score for Team #1
+        if (t1p1Key === t1p2Key){
+            t1p2Key = t2p2Key = '';
+
+            scoringSave('t1p1', 'doubles', t1p1Key, t1p1PointsNew, t1p1LastMovement, t1p1GamesLost, t1p1GamesWon, t1p1GoalsForNew, t1p1GoalsAgainstNew, newGameKey, t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t1Won);
+            scoringSave('t2p1', 'doubles', t2p1Key, t2p1PointsNew, t2p1LastMovement, t2p1GamesLost, t2p1GamesWon, t2p1GoalsForNew, t2p1GoalsAgainstNew, newGameKey, t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t2Won);
+        }
+        else {
+            scoringSave('t1p1', 'doubles', t1p1Key, t1p1PointsNew, t1p1LastMovement, t1p1GamesLost, t1p1GamesWon, t1p1GoalsForNew, t1p1GoalsAgainstNew, newGameKey, t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t1Won);
+            scoringSave('t1p2', 'doubles', t1p2Key, t1p2PointsNew, t1p2LastMovement, t1p2GamesLost, t1p2GamesWon, t1p2GoalsForNew, t1p2GoalsAgainstNew, newGameKey, t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t1Won);        
+            scoringSave('t2p1', 'doubles', t2p1Key, t2p1PointsNew, t2p1LastMovement, t2p1GamesLost, t2p1GamesWon, t2p1GoalsForNew, t2p1GoalsAgainstNew, newGameKey, t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t2Won);
+            scoringSave('t2p2', 'doubles', t2p2Key, t2p2PointsNew, t2p2LastMovement, t2p2GamesLost, t2p2GamesWon, t2p2GoalsForNew, t2p2GoalsAgainstNew, newGameKey, t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t2Won);
+        }
+
+        historyAddGame(t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t1p1LastMovement, t1p2LastMovement, t2p1LastMovement, t2p2LastMovement, newGameKey);
+        
         // Confirmation --------------------
         // Close modal
         modalHide();
         // Add success message
-        messageShow('success', i18n.app.messages.gameAdded + '! <a href="#" class="undo">' + i18n.app.messages.undo + '</a>', false);
-        initUndo();
+        messageShow('success', i18n.app.messages.gameAdded, false);
+        sendScoreToRelativitySlackFoosball(t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s);
+    }
+
+    function sendScoreToRelativitySlackFoosball(t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s)
+    {
+        var t1Label = localData.playersByKey[t1p1Key].name; 
+        t1Label += t1p2Key !== '' ? '/' + localData.playersByKey[t1p2Key].name : '';
+
+        var t2Label = localData.playersByKey[t2p1Key].name;
+        t2Label += t2p2Key !== '' ? '/' + localData.playersByKey[t2p2Key].name : '';
+
+        if(t1Label.includes('Test') || t2Label.includes('Test'))
+        {
+            return;
+        }
+
+        var relativitySlackHookTemporaryUrl='https://hooks.slack.com/services/' + slackToken;
+        
+        var gameIcon = ':dragonball:';
+        if (isTableTenisGameType()) {
+            gameIcon = ':ping_pong:'
+        }
+        if (t1s > t2s){
+            var slackPayload = gameIcon + ':trophy:' + t1Label +' '+ t1s +' : '+ t2s +' '+ t2Label + gameIcon;
+        }else{
+            var slackPayload = gameIcon + t1Label +' '+ t1s +' : '+ t2s +' :trophy:'+ t2Label + gameIcon;
+        }
+        
+        $.ajax(
+        {
+            type: 'POST',
+            url: relativitySlackHookTemporaryUrl,
+            data: '{ "text":"'+slackPayload+'"}',
+            dataType : 'json'
+        });
     }
     function scoringEvents() {
         $('.score-add').off('submit').on('submit', function() {
@@ -955,20 +1063,14 @@
             var isChecked = $(this).hasClass('selected');
             $('.t1-players a[data-id="' + thisKey + '"]').toggleClass('is-disabled', isChecked);
         });
-        // Decrements, Increment
-        $('.decrement a, .increment a').off('click').on('click', function() {
+        //Increment
+        $('.increment a').off('click').on('click', function() {
             var $this = $(this);
             var amount = $this.data('amount');
             var team = $this.data('team');
             var teamScore = $('.t' + team + '-score');
-            var teamScoreValue = parseInt(teamScore.val());
-            var teamScoreValueNew = ($this.data('type') === '+') ? teamScoreValue + parseInt(amount) : teamScoreValue - parseInt(amount);
-            if (teamScoreValueNew < 0) {
-                teamScoreValueNew = 0;
-            }
-            if (teamScoreValueNew > 40) {
-                teamScoreValueNew = 40;
-            }
+            var teamScoreValueNew = parseInt(amount);
+            
             teamScore.val(teamScoreValueNew);
             return false;
         });
@@ -980,7 +1082,8 @@
             if (playersArray[i].status) {
                 playerScoresUi += tmpl('scorePlayers', {
                     'key': playersArray[i].key,
-                    'playerName': playersArray[i].name
+                    'playerName': playersArray[i].name,
+                    'unranked': !playersArray[i].isRanked? "unranked":""
                 });
             }
         }
@@ -1001,13 +1104,15 @@
             }
         }
     }
-    function scoringSave(player, type, key, points, movement, lost, won, gameKey, t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, wonGame) {
+    function scoringSave(player, type, key, points, movement, lost, won, goals_for, goals_against, gameKey, t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, wonGame) {
         // Save "players" data
         var playersData = {}
             playersData[type + '_points'] = points;
             playersData[type + '_last_movement'] = movement;
             playersData[type + '_lost'] = lost;
             playersData[type + '_won'] = won;
+            playersData[type + '_goals_for'] = goals_for;
+            playersData[type + '_goals_against'] = goals_against;
         if (logging) {
             console.log('Save "players" data');
             console.log(playersData);
@@ -1017,10 +1122,11 @@
             console.log('Failed to update players data');
         });
         // Save "players_game" data
-        var playersGameData = { 
+        var playersGameData = {
             "dt": Date.now(),
             "game": gameKey,
             "player": key,
+            "rating_after_game": points,
             "t1p1": t1p1Key,
             "t2p1": t2p1Key,
             "t1_points": t1s,
@@ -1037,32 +1143,66 @@
             console.log('----');
         }
         var newPlayersGameKey = fbdb.ref().child('playersgame' + key).push().key;
-        lastGame.game[player] = newPlayersGameKey;
-        if (logging) {
-            console.log('last game cache');
-            console.log(lastGame);
-            console.log('----');
-        }
         var dbPlayersGame = fbdb.ref('/playersgame/' + key + '/' + newPlayersGameKey);
         dbPlayersGame.set(playersGameData).catch(function(error) {
             console.log('Failed to add new players game');
         });
     }
-    function scoringUndo(player, type, key, points, movement, lost, won) {
+
+    function historyAddGame(t1p1Key, t1p2Key, t2p1Key, t2p2Key, t1s, t2s, t1p1LastMovement, t1p2LastMovement, t2p1LastMovement, t2p2LastMovement, newGameKey) {
+        
+        // Save games for history view.
+        var newGamesHistoryData = { 
+            "dt": Date.now(),
+            "t1p1": t1p1Key,
+            "t2p1": t2p1Key,
+            "t1_points": t1s,
+            "t2_points": t2s,
+            "t1p1_pointsMovement": t1p1LastMovement, 
+            "t1p2_pointsMovement": t1p2LastMovement, 
+            "t2p1_pointsMovement": t2p1LastMovement, 
+            "t2p2_pointsMovement": t2p2LastMovement,
+            "game": newGameKey
+        };
+
+        if ('' !== t1p2Key && '' !== t2p2Key) {
+            newGamesHistoryData.t1p2 = t1p2Key;
+            newGamesHistoryData.t2p2 = t2p2Key;
+        }
+
+        var newGamesHistoryKey = fbdb.ref().child('history').push().key;
+        
+        var dbGamesHistory = fbdb.ref('/history/' + newGamesHistoryKey);
+        dbGamesHistory.set(newGamesHistoryData).catch(function(error) {
+            console.log('Failed to add game to the history');
+        });
+    }
+
+    function scoringUndo(type, playerKey, points, movement, lost, won, goals_for, goals_against) {
         // Update player stats
         var playersData = {}
             playersData[type + '_points'] = points;
             playersData[type + '_last_movement'] = movement;
             playersData[type + '_lost'] = lost;
             playersData[type + '_won'] = won;
-        fbdb.ref('/players/' + key).update(playersData).catch(function(error) {
+            playersData[type + '_goals_for'] = goals_for;
+            playersData[type + '_goals_against'] = goals_against;
+        fbdb.ref('/players/' + playerKey).update(playersData).catch(function(error) {
             console.log('Failed to update players data');
         });
-        // Remove Players Games
-        fbdb.ref('/playersgame/' + key + '/' + lastGame.game[player]).remove().catch(function(error) {
-            console.log('Failed to undo players game');
+        removeGameFromPlayersGame(playerKey, lastGame.gameKey)
+    }
+
+    function removeGameFromPlayersGame(playerKey, gameKey){
+        var playerGames = fbdb.ref('/playersgame/' + playerKey);
+        playerGames.orderByChild('game').equalTo(gameKey)
+        .once('value').then(function(snapshot) {
+            snapshot.forEach(function(child) {
+                playerGames.child(child.key).remove();
+            });
         });
     }
+
     function scoringValidation() {
         var t1Count = $('.t1 a.selected').length;
         var t2Count = $('.t2 a.selected').length;
@@ -1138,6 +1278,7 @@
         $('input[value="' + localData.settings.gameType + '"]').prop('checked', true);
         var lang = localStorage.getItem('lang') || 'en';
         $('.lang option[value="' + lang + '"]').attr("selected", true);
+        document.title = gameType + ' ' + localData.settings.orgName;
     }
     function sidebarHideIris() {
         $('.iris-picker').hide();
@@ -1148,9 +1289,7 @@
         }));
         $('.sidebar .sidebar-menu').html(tmpl('sidebarMenu', {
             "basics" : i18n.app.sidebarMenu.basics,
-            "colors" : i18n.app.sidebarMenu.colors,
-            "players" : i18n.app.sidebarMenu.players,
-            "users" : i18n.app.sidebarMenu.users
+            "players" : i18n.app.sidebarMenu.players
         }));
         sidebarInitEvents();
         // resize event
@@ -1164,21 +1303,11 @@
             sidebarResetHeight();
             return false;
         });
-        $('.sidebar-colors').off('click').on('click', function() {
-            sidebarInitColor();
-            sidebarResetHeight();
-            return false;
-        });
         $('.sidebar-players').off('click').on('click', function() {
             sidebarInitPlayer();
             sidebarResetHeight();
             return false;
-        });
-        $('.sidebar-users').off('click').on('click', function() {
-            sidebarInitUser();
-            sidebarResetHeight();
-            return false;
-        });
+        });        
         // Sidebar close
         $('.sidebar .sidebar-close').off('click').on('click', function() {
             $('body').removeClass('show-sidebar');
@@ -1194,7 +1323,6 @@
             "gameShuffleboard" : i18n.app.settingsBasics.gameShuffleboard,
             "gameTableTennis" : i18n.app.settingsBasics.gameTableTennis,
             "language" : i18n.app.settingsBasics.language,
-            "nextButton" : i18n.app.global.nextButton,
             "orgName" : i18n.app.settingsBasics.orgName,
             "whatGame" : i18n.app.settingsBasics.whatGame
         }));
@@ -1235,102 +1363,10 @@
             localStorage.setItem('lang', $(this).val());
             location.reload();
         });
-        // Next button
-        $('.basics .next').off('click').on('click', function() {
-            sidebarInitColor();
-            return false;
-        });
-    }
-    function sidebarInitColor() {
-        $('.sidebar-body').html(tmpl('settingsColors', {
-            'c0' : localData.settings.appColors.c0,
-            'c1' : localData.settings.appColors.c1,
-            'c2' : localData.settings.appColors.c2,
-            'c3' : localData.settings.appColors.c3,
-            'c4' : localData.settings.appColors.c4,
-            'c5' : localData.settings.appColors.c5,
-            'highlightColor' : i18n.app.settingsColors.highlightColor,
-            "nextButton" : i18n.app.global.nextButton,
-            'primaryBackground' : i18n.app.settingsColors.primaryBackground,
-            'primaryButton' : i18n.app.settingsColors.primaryButton,
-            'primaryText' : i18n.app.settingsColors.primaryText,
-            'resetColors' : i18n.app.settingsColors.resetColors,
-            'secondaryBackground' : i18n.app.settingsColors.secondaryBackground,
-            'secondaryText' : i18n.app.settingsColors.secondaryText
-        }));
-        sidebarInitColorEvents();
-        // Update menu bar
-        $('.sidebar-menu .c-button').removeClass('active');
-        $('.sidebar-colors').addClass('active');
-    }
-    function sidebarInitColorEvents() {
-        // Iris
-        $('.color-picker').each(function( index ) {
-            var $this = $(this);
-            $this.iris({
-                palettes: true,
-                change: function(event, ui) {
-                    var newColor = ui.color.toString();
-                    var id = event.target.id;
-
-                    if (!['c0','c1','c2','c3','c4','c5'].includes(id)) {
-                        return false;
-                    }
-
-                    var colorUpdate = { 'c0': newColor };
-                    if ('c1' === id) {
-                        colorUpdate = { 'c1': newColor };
-                    } else if ('c2' === id) {
-                        colorUpdate = { 'c2': newColor };
-                    } else if ('c3' === id) {
-                        colorUpdate = { 'c3': newColor };
-                    } else if ('c4' === id) {
-                        colorUpdate = { 'c4': newColor };
-                    } else if ('c5' === id) {
-                        colorUpdate = { 'c5': newColor };
-                    }
-
-                    if (newColor !== localData.settings.appColors[id]) {
-                        fbdb.ref('/settings/appColors/').update(colorUpdate, function() {
-                            $('.' + id + ' .swatch').css('background', newColor);
-                            messageShow('success', i18n.app.messages.colorUpdated, true);
-                        }).catch(function(error) {
-                            console.log('Failed to update color');
-                        });
-                    }
-                }
-            }).off('focus').on('focus', function() {
-                sidebarHideIris();
-                $this.iris('show');
-            }).off('click').on('click', function(e) {
-                e.stopPropagation();
-            });
-            $('.iris-picker').off('click').on('click', function(e) {
-                e.stopPropagation();
-            });
-            $('.sidebar').off('click').on('click', function() {
-                sidebarHideIris();
-            });
-        });
-        // Reset colors
-        $('.reset-colors').off('click').on('click', function() {
-            if (confirm(i18n.app.settingsColors.resetColors + '?')) {
-                fbdb.ref('/settings/appColors/').remove().then(function() {
-                    sidebarInitColor();
-                });
-            }
-            return false;
-        });
-        // Next button
-        $('.colors .next').off('click').on('click', function() {
-            sidebarInitPlayer();
-            return false;
-        });
     }
     function sidebarInitPlayer() {
         $('.sidebar-body').html(tmpl('settingsPlayers', {
             "addPlayers" : i18n.app.settingsPlayers.addPlayers,
-            "nextButton" : i18n.app.global.nextButton,
             "onePerLine" : i18n.app.settingsPlayers.onePerLine
         }));
         // Update player settings
@@ -1359,10 +1395,6 @@
                     "doubles_won": 0,
                     "dt": Date.now(),
                     "name": player,
-                    "singles_last_movement": '',
-                    "singles_lost": 0,
-                    "singles_points": 100,
-                    "singles_won": 0,
                     "status": true 
                 }).then(function() {
                     playerSettingsUpdate();
@@ -1376,36 +1408,9 @@
             // Reset sidebar height
             sidebarResetHeight();
             return false;
-        });
-        // Next button
-        $('.players-view .next').off('click').on('click', function() {
-            sidebarInitUser();
-            return false;
-        });
+        });        
     }
-    function sidebarInitUser() {
-        $('.sidebar-body').html(tmpl('settingsUsers', {
-            "manageLogins" : i18n.app.settingsUsers.manageLogins,
-            "nextButton" : i18n.app.global.nextButton
-        }));
-        sidebarInitUserEvents();
-        // Update menu bar
-        $('.sidebar-menu .c-button').removeClass('active');
-        $('.sidebar-users').addClass('active');
-    }
-    function sidebarInitUserEvents() {
-        // Account edit link
-        $('.account-manage').off('click').on('click', function() {
-            var authDomainSplit = config.authDomain.split('.');
-            window.location = 'https://console.firebase.google.com/project/' + authDomainSplit[0] + '/authentication/users';
-            return false;
-        });
-        // Next button
-        $('.users .next').off('click').on('click', function() {
-            sidebarInitBasic();
-            return false;
-        });
-    }
+        
     function sidebarResetHeight() {
         $('.sidebar').css('height', '400px');
         var sidebarHeight = parseInt($('.sidebar-container').height());
@@ -1426,4 +1431,5 @@
             sidebarShow();
         }
     }
+    
 })(jQuery);
