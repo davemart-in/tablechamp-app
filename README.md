@@ -7,19 +7,19 @@ Track each ping pong, pool, foosball, air hockey, or shuffleboard game that's pl
 
 With TableChamp, you can add players, track every game that is played, and always know who's #1.
 
-![image](https://user-images.githubusercontent.com/5634774/209989063-d69c98e7-5a02-4aea-a29c-7939eaccdb67.png)
+![1](https://user-images.githubusercontent.com/5634774/209989745-877b4a3b-50f1-47d4-a507-b1f7fa300660.gif)
 
 You can view stats on each player, including their 20 most recent games:
 
-![image](https://user-images.githubusercontent.com/5634774/209989109-d596a65c-e4b5-4b7c-85bd-af77c69ba28a.png)
+![2](https://user-images.githubusercontent.com/5634774/209989780-52acd163-eaa8-407f-a559-b7e3310961ca.gif)
 
 You can manage all of the settings of the app in one convenient sidebar:
 
-![image](https://user-images.githubusercontent.com/5634774/209989132-9bcb39b5-f886-418d-9d2b-4b98f52be443.png)
+![3](https://user-images.githubusercontent.com/5634774/209989811-8932abbd-2a15-44aa-90fb-1d6f2f05d78e.gif)
 
 You can even select from one of 14 languages:
 
-![image](https://user-images.githubusercontent.com/5634774/209989151-7bc52703-c2b2-40d4-9d93-25caad73651e.png)
+![4](https://user-images.githubusercontent.com/5634774/209989854-4d68f5c2-617f-41cf-8af7-d1f8c9c971f0.gif)
 
 ## How does it work?
 
@@ -77,7 +77,7 @@ FireBase handles storing all of your data, as well as authentication. We'll need
 
 *NOTE: Users are separate from players. Users are set up in the FireBase admin, and have an email & password attached to them so that you can log in. Players are managed from the settings section once you've logged into your app.*
 
-![image](https://user-images.githubusercontent.com/5634774/209989411-eb9e5ebb-9bb2-43d0-b07a-1b7acd4d611a.png)
+![5](https://user-images.githubusercontent.com/5634774/209989925-35709c53-cbd2-4123-a5d6-86a5f97d4dd8.gif)
 
 All you need to enter to set up a user is an email, and a password.
 
