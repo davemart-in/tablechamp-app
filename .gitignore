@@ -6,3 +6,5 @@ main.js
 .sass-cache
 *.map
 *.scss
+js/slack_token.js
+*firebase-key.js

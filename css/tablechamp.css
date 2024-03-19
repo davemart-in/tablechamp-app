@@ -13,7 +13,8 @@ html {
   -webkit-text-size-adjust: 100%; }
 
 body {
-  margin: 0; }
+  margin: 0; 
+}
 
 article,
 aside,
@@ -193,65 +194,7 @@ textarea {
 [type="search"]::-webkit-search-cancel-button,
 [type="search"]::-webkit-search-decoration {
   -webkit-appearance: none; }
-
-@media print {
-  *,
-  *::before,
-  *::after,
-  *::first-letter,
-  *::first-line {
-    text-shadow: none !important;
-    box-shadow: none !important; }
-
-  a,
-  a:visited {
-    text-decoration: underline; }
-
-  abbr[title]::after {
-    content: " (" attr(title) ")"; }
-
-  pre,
-  blockquote {
-    border: 1px solid #999;
-    page-break-inside: avoid; }
-
-  thead {
-    display: table-header-group; }
-
-  tr,
-  img {
-    page-break-inside: avoid; }
-
-  p,
-  h2,
-  h3 {
-    orphans: 3;
-    widows: 3; }
-
-  h2,
-  h3 {
-    page-break-after: avoid; }
-
-  .navbar {
-    display: none; }
-
-  .btn > .caret,
-  .dropup > .btn > .caret {
-    border-top-color: #000 !important; }
-
-  .tag {
-    border: 1px solid #000; }
-
-  .table {
-    border-collapse: collapse !important; }
-
-  .table td,
-  .table th {
-    background-color: #FFF !important; }
-
-  .table-bordered th,
-  .table-bordered td {
-    border: 1px solid #DDD !important; } }
+  
 html {
   box-sizing: border-box; }
 
@@ -404,6 +347,7 @@ input[type="search"] {
  * Button component pack for Seed
  * Licensed under MIT
  */
+
 .c-button {
   -webkit-appearance: none;
   appearance: none;
@@ -448,6 +392,10 @@ input[type="search"] {
   height: 56px;
   line-height: 52px;
   padding: 0 1.5em; }
+.showHideMargin
+{
+  margin: 25px auto 0px auto;
+}
 
 .c-button.is-disabled,
 .c-button[disabled] {
@@ -470,7 +418,7 @@ input[type="search"] {
 .c-button--primary:active,
 .c-button--primary:focus,
 .c-button--primary:hover {
-  text-decoration: underline; }
+  text-decoration: none; }
 
 .c-button--link {
   padding-bottom: 2px;
@@ -480,7 +428,7 @@ input[type="search"] {
 .c-button--link:active,
 .c-button--link:focus,
 .c-button--link:hover {
-  text-decoration: underline; }
+  text-decoration: none; }
 
 .c-button.is-selected {
   cursor: default; }
@@ -537,8 +485,7 @@ body {
   z-index: 5; }
 
 .message {
-  background: #FAF9C6;
-  border: 1px solid #EFDA91;
+  background: #A00;
   border-radius: 1px;
   display: none;
   font-size: 13px;
@@ -564,7 +511,7 @@ body {
   cursor: auto;
   left: auto !important;
   margin: 30px auto;
-  max-width: 1024px;
+  max-width: 1500px;
   min-width: 320px;
   opacity: 0;
   outline: 0;
@@ -577,7 +524,7 @@ body {
   z-index: 11; }
 
 .modal-backdrop {
-  background-color: rgba(28, 34, 66, 0.8);
+  background-color: rgba(0, 0, 0, 0.5);
   bottom: 0;
   cursor: pointer;
   display: none;
@@ -598,15 +545,13 @@ body {
       opacity: 1; }
 
 .modal-body {
-  background: #F9F9F9;
+  background: #333;
   overflow: hidden;
-  padding: 20px;
+  padding: 10px;
   position: relative;
   box-sizing: border-box; }
 
 .modal-close.c-button {
-  border-color: #FFF;
-  color: #FFF;
   float: right;
   font-size: 16px;
   font-weight: 300;
@@ -614,34 +559,18 @@ body {
   line-height: 21px;
   margin-top: -1px;
   padding: 0 6px 1px; }
-  .modal-close.c-button:active, .modal-close.c-button:focus, .modal-close.c-button:hover {
-    background: #FFF;
-    border-color: #FFF;
-    color: #67727B;
-    opacity: 1; }
 
 .modal-footer {
-  background: #F9F9F9;
-  border-radius: 0 0 1px 1px;
+  background: #333;
   font-size: 16px;
   line-height: 26px;
   margin: 0;
   overflow: hidden;
   padding: 0 20px 20px;
-  text-align: center; }
-  .modal-footer .c-button {
-    border-color: #2D95C7;
-    color: #2D95C7; }
-    .modal-footer .c-button:hover {
-      background: #2D95C7;
-      border-color: #2D95C7;
-      color: #FFF;
-      text-decoration: none; }
+  text-align: center; } 
 
 .modal-header {
-  background: #47516B;
-  border-bottom: 1px solid #DDD;
-  border-radius: 1px 1px 0 0;
+  background: #555;
   color: #FFF;
   font-size: 20px;
   font-weight: 300;
@@ -656,78 +585,200 @@ body {
     margin-top: -2px;
     opacity: 0.6; }
 
-.ranking {
-  border: 2px solid;
-  border-radius: 1px;
+.doubles {
+  position: relative;
+  width: 100%;
+}
+
+.rankings {
+  margin: 0px auto;
+  width: 800px;
+  overflow: hidden;
+}
+
+.ranking{
+  position:relative;
   cursor: pointer;
   float: left;
-  margin: 1% 0 0 1%;
-  padding: 16px;
+  padding: 16px 16px 16px 26px;
   text-align: left;
-  width: 32%; }
+  height: 51px;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+}
   .ranking:focus, .ranking:hover {
-    outline: none; }
-  .ranking .movement {
-    border-radius: 1px;
-    font-style: italic; }
+    outline: none; }  
   .ranking .name {
-    font-weight: 500; }
-  .ranking .points {
-    font-weight: 500;
-    min-width: 95px;
-    padding: 0; }
+    font-weight: bold; 
+    padding-left:13px;}
+    .ranking .name .gamesInfo {
+      color: #ccc;}  
   .ranking .rank {
     font-weight: 700;
     padding: 0;
     text-align: center; }
+  .ranking .movement {
+    font-style: italic; }
+  .ranking .points {
+    font-weight: bold;
+    min-width: 95px;
+    padding: 0; }
+  .ranking .pointsBadge{
+    position:absolute;
+    right:-50px;
+    top:0px;
+    display:block;
+    width: 46px; 
+    height: 100%; 
+    
+    background: url("rank_badges.png?v=4") no-repeat;
+    background-size: 600% 600%;
+    background-position: 0% 0%;
+  }
+  .ranking .pointsBadge.plat   {background-position-x: 100%;}
+
+  .ranking .pointsBadge.gold0,
+  .ranking .pointsBadge.gold1,
+  .ranking .pointsBadge.gold2,
+  .ranking .pointsBadge.gold3,
+  .ranking .pointsBadge.gold4,
+  .ranking .pointsBadge.gold5 {background-position-x: 76%;}
+
+  .ranking .pointsBadge.silver0,
+  .ranking .pointsBadge.silver1,
+  .ranking .pointsBadge.silver2,
+  .ranking .pointsBadge.silver3,
+  .ranking .pointsBadge.silver4,
+  .ranking .pointsBadge.silver5 {background-position-x: 52%;}
+
+  .ranking .pointsBadge.bronze0,
+  .ranking .pointsBadge.bronze1,
+  .ranking .pointsBadge.bronze2,
+  .ranking .pointsBadge.bronze3,
+  .ranking .pointsBadge.bronze4,
+  .ranking .pointsBadge.bronze5 {background-position-x: 27%;}
+
+  .ranking .pointsBadge.gold1, .ranking .pointsBadge.silver1, .ranking .pointsBadge.bronze1  {background-position-y: 20%;}
+  .ranking .pointsBadge.gold2, .ranking .pointsBadge.silver2, .ranking .pointsBadge.bronze2  {background-position-y: 40%;}
+  .ranking .pointsBadge.gold3, .ranking .pointsBadge.silver3, .ranking .pointsBadge.bronze3  {background-position-y: 60%;}
+  .ranking .pointsBadge.gold4, .ranking .pointsBadge.silver4, .ranking .pointsBadge.bronze4  {background-position-y: 80%;}
+  .ranking .pointsBadge.gold5, .ranking .pointsBadge.silver5, .ranking .pointsBadge.bronze5  {background-position-y: 100%;}
+
+  .ranking .pointsBadge.crap   {background-position-x: 0%;}
+
+  .ranking .extraBadge{
+    display:none;
+  }
+.ranking .extraBadge.granted{
+    display:inline;
+    padding:15px 26px;
+  }
+
+  .ranking .extraBadge.mostGoals{
+    background-image: url("goal_badges.png?v=2");
+    background-size: 200% 100%; 
+    background-position: 0% 0%;
+  }
+
+  .ranking .extraBadge.holeInTheGoal{
+    background-image: url("goal_badges.png?v=2");
+    background-size: 200% 100%; 
+    background-position: 100% 0%;
+
+  }
+  .ranking .extraBadge.mostGames{
+    background: url("laser.png?v=1") no-repeat;    
+    background-position: 50% 0%;
+    background-size: 83% 96%; 
+  }
+
   .ranking span {
     padding: 0 8px; }
     .ranking span.movement-positive {
       padding: 0; }
 
-.top-rankings {
-  width: 98%;
-  margin: 0 1%; }
-  .top-rankings .ranking {
-    float: none;
-    font-size: 24px;
-    line-height: 24px;
-    margin: 1% 0 0;
-    white-space: nowrap;
-    width: 100%; }
-    .top-rankings .ranking .movement {
-      font-size: 18px;
-      padding-right: 0;
-      position: relative;
-      top: -2px; }
-    .top-rankings .ranking .name {
-      padding-left: 0; }
-    .top-rankings .ranking .points {
-      padding-right: 0; }
-    .top-rankings .ranking .rank {
-      padding-left: 0; }
-    .top-rankings .ranking span {
-      padding: 8px 16px;
-      display: inline-block; }
-      .top-rankings .ranking span.movement-positive {
-        padding: 0; }
+.ranking.unranked{
+  background: #333;
+  display: none;
+}
+.ranking.unranked .pointsBadge{
+  opacity: 0.25;
+}
+
+.ranking.wanted {
+  background-image: url(christian.jpg);
+  background-position:  240px;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+.ranking.goldenBall {
+  background-image: url(dragonball.png);
+  background-position:  240px;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+.ranking.hole {
+  background-image: url(hole_wall.jpg);
+  background-position:  240px;
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+.history{
+  margin: 20px auto;
+  width: 800px;
+  position:relative;
+}
+
+.history div {
+  width: 100%;
+  position:relative;
+  padding: 3px;
+  text-align: center; 
+  line-height: 28px;
+}
+
+.history div span.Lost, .history div span.Won{
+  padding: 5px;
+  border: 1px solid black;
+}
+
+.history div span.Lost
+{
+  background: rgba(124, 124, 124, 0.25);
+  border-color: rgba(124, 124, 124,0.5);
+}
+.history div span.Won
+{
+  background: rgba(0, 200, 0, 0.5);
+  border-color: rgba(0,200,0,1);
+}
+.history div span.teamLabel, .history div span.teamScore, .history div span.pointsMomement
+{
+  display: inline-block;
+  width: 180px;
+  padding: 0px;
+}
+
+.history div span.teamScore
+{
+  width: 23px;
+}
+
+.history div span.pointsMomement
+{
+  width: 60px;
+}
 
 .players-select {
-  margin-bottom: 20px;
-  margin-top: -4px;
   overflow: hidden; }
   .players-select a {
     -webkit-appearance: none;
     appearance: none;
-    background-color: #FFF;
-    border: 1px solid #CCC;
-    border-radius: 1px;
-    box-shadow: none;
+    background-color: #888;
     box-sizing: border-box;
-    color: #29313B;
+    color: #fff;
     cursor: pointer;
     display: inline-block;
-    float: left;
     font-size: 16px;
     font-weight: normal;
     height: 40px;
@@ -747,40 +798,52 @@ body {
       text-decoration: none; }
     .players-select a.is-disabled {
       cursor: not-allowed;
-      opacity: 0.65; }
+      opacity: 0.1; }
       .players-select a.is-disabled:hover, .players-select a.is-disabled:active, .players-select a.is-disabled:focus {
         cursor: not-allowed;
-        opacity: 0.65; }
-    .players-select a.selected {
-      background-color: #515983;
-      border: 1px solid #515983;
+        opacity: 0.1; }
+    .players-select a.selected,.players-select a.selected.unranked {
+      background-color: orange;
+      border: 1px solid orange;
       color: #fff; }
 
+  .players-select a.unranked {
+    background: #555; } 
+
 .t1, .t2 {
-  float: left;
+  margin: auto;
   text-align: center;
   vertical-align: top;
   width: 50%; }
-  .t1 .decrement, .t2 .decrement {
-    float: right;
-    margin: 0 70px 0 0;
-    position: relative;
-    z-index: 2; }
   .t1 .increment, .t2 .increment {
     float: left;
-    margin: 0 0 0 70px;
+    margin: 0px;
     position: relative;
     z-index: 2; }
+
+  .increment.table-tennis .a4,
+  .increment.table-tennis .a5{
+    display: none;
+  }
+
+  .t1 .increment.table-tennis a,
+  .t2 .increment.table-tennis a {
+    height: 52px;
+    line-height: 52px;
+  }
+
   .t1 .score, .t2 .score {
     text-align: center; }
+    .t1 .score .panel,  .t2 .score .panel { 
+      width: 220px; 
+      margin: auto;}
     .t1 .score a, .t2 .score a {
       -webkit-appearance: none;
       appearance: none;
-      background-color: #F9F9F9;
-      border: 1px solid #CCC;
+      background-color: #666;
       border-radius: 1px;
       box-shadow: none;
-      color: #29313B;
+      color: #eee;
       cursor: pointer;
       display: block;
       font-size: 16px;
@@ -793,39 +856,32 @@ body {
       transition: all 0.1s ease;
       text-align: center;
       text-decoration: none;
-      vertical-align: middle;
       width: 60px;
       -webkit-user-select: none;
       user-select: none; }
       .t1 .score a:active, .t1 .score a:focus, .t1 .score a:hover, .t2 .score a:active, .t2 .score a:focus, .t2 .score a:hover {
-        border-color: #67727B;
+        border-color: #666;
         text-decoration: none; }
     .t1 .score input, .t2 .score input {
-      color: #1C2242;
+      color: #fff;
+      background: #555;
+      border:0px;
       font-size: 90px;
       font-weight: 300;
-      line-height: 90px;
+      line-height: 232px;
       position: relative;
       text-align: center;
       -webkit-font-smoothing: antialiased;
       width: 140px; }
   .t1 section, .t2 section {
-    background: #FFF;
-    border: 1px solid #E5E5E5;
-    border-radius: 1px;
-    padding: 20px 20px 30px; }
+    background: #404040;
+    padding: 10px; }
   .t1 strong, .t2 strong {
-    color: #6E7286;
-    display: block;
-    margin-bottom: 20px;
+    color: rgb(207, 207, 207);
+    display: inline-block;
+    margin-bottom: 10px;
     text-align: center; }
-
-.t1 section {
-  margin-right: 9px; }
-
-.t2 section {
-  margin-left: 9px; }
-
+    
 .app {
   margin-left: 0;
   -webkit-transition: margin-left 50ms ease-out;
@@ -847,8 +903,6 @@ body {
   -o-transition: left 50ms ease-out;
   transition: left 50ms ease-out;
   z-index: 10; }
-  .sidebar a {
-    color: #2D95C7; }
   .sidebar .colors .control {
     margin-bottom: 6px; }
     .sidebar .colors .control:last-child {
@@ -856,7 +910,7 @@ body {
   .sidebar .colors span {
     margin-left: 10px; }
   .sidebar form {
-    color: #47516B;
+    color: rgb(103, 103, 104);
     margin: 0 0 23px; }
     .sidebar form .color-picker {
       width: 100px; }
@@ -884,19 +938,7 @@ body {
       white-space: nowrap; }
       .sidebar form label span {
         position: relative;
-        top: 1px; }
-    .sidebar form .c-button:not(.c-button--link) {
-      border-color: #2D95C7;
-      color: #2D95C7; }
-      .sidebar form .c-button:not(.c-button--link):focus, .sidebar form .c-button:not(.c-button--link):hover {
-        background: #2D95C7;
-        border-color: #2D95C7;
-        color: #FFF;
-        text-decoration: none; }
-    .sidebar form .reset-colors {
-      padding-left: 0; }
-      .sidebar form .reset-colors:focus, .sidebar form .reset-colors:hover {
-        color: #2D95C7; }
+        top: 1px; }    
     .sidebar form select option {
       padding: 6px 8px; }
     .sidebar form strong {
@@ -914,7 +956,7 @@ body {
   .sidebar header {
     background: #F3F3F3;
     border-bottom: 1px solid #DDD;
-    color: #47516B;
+    color: rgb(105, 105, 105);
     margin: 0;
     padding: 16px 24px;
     width: 100%;
@@ -927,18 +969,14 @@ body {
       max-width: 100%;
       min-width: 0; }
     .sidebar header .c-button {
-      border-color: #BBB;
-      color: #BBB;
+      color: rgb(255, 255, 255);
       height: auto;
       line-height: 21px;
       margin-top: -1px;
       padding: 0 6px 1px; }
-      .sidebar header .c-button:active, .sidebar header .c-button:focus, .sidebar header .c-button:hover {
-        background: #BBB;
-        border-color: #BBB;
-        color: #FFF; }
+      
     .sidebar header h3 {
-      color: #47516B;
+      color: rgb(107, 107, 107);
       font-size: 18px;
       font-weight: 300;
       position: relative;
@@ -955,15 +993,13 @@ body {
       border-bottom: none; }
     .sidebar section a {
       text-decoration: none; }
-      .sidebar section a:hover {
-        text-decoration: underline; }
     .sidebar section form {
       margin-bottom: 0; }
     .sidebar section input {
       padding: 3px;
       width: 100%; }
     .sidebar section p {
-      color: #67727B;
+      color: rgb(122, 122, 122);
       margin-bottom: 13px; }
     .sidebar section .player-actions {
       width: 20%; }
@@ -980,7 +1016,7 @@ body {
     .sidebar section .players-list {
       width: 100%; }
       .sidebar section .players-list th {
-        color: #67727B;
+        color: rgb(124, 124, 124);
         padding-bottom: 12px; }
       .sidebar section .players-list tr th:last-child {
         text-align: right; }
@@ -1001,8 +1037,6 @@ body {
     text-align: center;
     width: 100%; }
     .sidebar .sidebar-menu a {
-      border: 1px solid #DDD;
-      color: #BBB;
       float: left;
       margin: 13px 0 13px -1px;
       padding: 2px 1em 0;
@@ -1015,7 +1049,7 @@ body {
       .sidebar .sidebar-menu a:focus, .sidebar .sidebar-menu a:hover, .sidebar .sidebar-menu a.active {
         background: #FFF;
         border-color: #C8C8C8;
-        color: #283350;
+        color: #494949;
         z-index: 4; }
     .sidebar .sidebar-menu .button-group {
       padding: 16px 24px 0; }
@@ -1056,23 +1090,26 @@ body.ru .sidebar .sidebar-menu a {
     padding: 5px;
     text-align: center; }
   .stats-player th {
-    color: #666;
+    color: #eee;
     font-weight: bold;
     padding: 5px; }
   .stats-player .table-header th {
     text-align: center; }
 
+#stats-graph {
+  height: 300px;
+  overflow:hidden;}
+  
+    
 .stats-player-container {
-  background: #FFF;
-  border: 1px solid #E5E5E5;
+  background: #404040;
   border-radius: 1px;
   float: left;
   padding: 16px;
   width: 38%; }
 
 .stats-player-games {
-  background: #FFF;
-  border: 1px solid #E5E5E5;
+  background: #404040;
   float: right;
   padding: 16px 20px;
   width: 60%; }
@@ -1085,21 +1122,86 @@ body.ru .sidebar .sidebar-menu a {
   .stats-player-games strong {
     border-radius: 1px;
     margin-right: 6px;
-    padding: 2px 6px; }
-    .stats-player-games strong.Lost {
-      border: 1px solid #8F9EAB;
-      color: #67727B; }
-    .stats-player-games strong.Won {
-      background: #67727B;
-      color: #FFF; }
+    padding: 2px 6px;
+  }
+    
+    .stats-player-games strong.Lost
+    { 
+      background: rgba(124, 124, 124, 0.25);
+      border-color: rgba(124, 124, 124,0.5);
+    }
+    .stats-player-games strong.Won
+    {
+      background: rgba(0, 200, 0, 0.5);
+      border-color: rgba(0,200,0,1);
+    }
   .stats-player-games ul {
     margin: 0;
     padding: 0; }
+    .game_date {
+      font-style: italic;
+      color: #666666;
+    }
+  
+.gamesIndicator {
+  position:absolute;
+  left:0px;
+  background: #222;
+  display: block;
+  top:auto;  
+  bottom: -15px;
+  width: 100%;
+  height: 15px;
+  opacity: 0.5;
+  line-height: 13px;
+}
+
+  .gamesIndicator .fill
+  {
+    position:absolute;
+    text-align: center;
+    font-size: 10px;
+    height: 100%;  
+    width: 100%;
+  }
+
+  .gamesIndicator .won
+  {
+    position:absolute;
+    top: 0%;
+    border: 1px solid rgba(0,255,0);
+    height: 100%;
+    width: 50%;
+  }
+
+  .gamesIndicator .won .fill
+  {
+    background: rgb(0, 255, 0);
+    right: 0%;
+    color:black;
+  }
+
+  .gamesIndicator .lost
+  {
+    position:absolute;
+    border: 1px solid rgba(255,0,0);
+    top: 0%;
+    height: 100%;
+    width: 50%;
+    left: 50%;
+  }
+
+.gamesIndicator .lost .fill
+{
+  background: rgba(255,0,0);
+  color:white;
+}
+
 
 /* ---------------------------------------- */
-/* Mobile
+/* Mobile - extended to be active also on desktop as it looks way nicer
 /* ---------------------------------------- */
-@media only screen and (max-width: 1224px) {
+@media only screen {
   .show-sidebar .app header .add-score {
     margin-bottom: 10px; }
   .show-sidebar .app header .c-button {
@@ -1122,21 +1224,21 @@ body.ru .sidebar .sidebar-menu a {
       float: none;
       width: 100%; }
   .show-sidebar .players-select a {
-    width: 48%; }
-  .show-sidebar .rankings .ranking {
-    margin: 1% 1% 0 1%;
-    width: 98%; }
+    width: 48%; } 
 
-  .t1 .decrement,
-  .t1 .increment, .t2 .decrement,
-  .t2 .increment {
-    display: none; }
+  .modal {
+    width: 95%; }
+    .modal .stats-player-container {
+      float: none;
+      margin-bottom: 13px;
+      width: 100%; }
+    .modal .stats-player-games {
+      float: none;
+      width: 100%; }
+
   .t1 section, .t2 section {
     margin: 0; }
 
-  .t1 section {
-    margin-bottom: 13px; } }
-@media only screen and (max-width: 900px) {
   .app header .add-score {
     margin-bottom: 10px; }
   .app header .c-button {
@@ -1150,41 +1252,105 @@ body.ru .sidebar .sidebar-menu a {
   .app header .name {
     margin-bottom: 13px; }
 
-  .modal {
-    width: 95%; }
-    .modal .stats-player-container {
-      float: none;
-      margin-bottom: 13px;
-      width: 100%; }
-    .modal .stats-player-games {
-      float: none;
-      width: 100%; }
-
   .rankings .ranking {
-    margin: 1% 1% 0 1%;
-    width: 98%; }
+    margin: 0px 0px 30px 0;
+    width: 92%; }
 
   .show-sidebar .sidebar {
     right: 0;
     width: auto; } }
+
+@media only screen and (max-width: 900px) {
+  .rankings {
+    margin: 1% 1% 0 1%;
+    width: 98%; } 
+  .history {
+    width: 98%;
+  }
+}
+
 @media only screen and (max-width: 768px) {
-  .players-select a {
-    width: 48.6%; } }
-@media only screen and (max-width: 540px) {
-  .players-select a {
-    width: 48%; }
+  .rankings {
+    width: 97%; } 
+  
+    .players-select a {
+      width: 48%; }
+    
+    .t1, .t2 {
+      float: none;
+      width: 100%; }
+      .t1 section, .t2 section {
+        margin: 0; }
+  
+  .history .game_date {display:none !important;}
+  .history div span.teamScore, .history div span.teamLabel
+    {
+      font-size: 14px;
+    }
+    .history div span.teamLabel
+    {
+      width: 140px;
+    }
+    
+  .modal {margin: 0px auto;}
+}
+@media only screen and (max-width: 650px) { 
+  .rankings {
+    width: 99%; } 
+    .rankings .ranking{   
+    width: 87%; 
+    height: 90px; 
+    line-height: 45px;
+    padding-top: 0px;
+  }
+  .ranking .rank{
+    position:absolute;
+    left: 20px;
+    top: 25px;
+  }
+  .ranking .gamesInfo{
+    float:right;
+    padding:0px;
+    font-size:14px;
+  }
+  .ranking .badgesRow{
+    position:absolute;
+    left:28px;
+    bottom:7px;
+  }
+  .ranking div.right {
+    position: absolute;
+    right:16px;
+    bottom:0px;
+  }
+  .ranking .pointsBadge {
+    right: -47px;
+    top: 20px;
+    height: 51px;    
+  }  
+}
 
-  .t1, .t2 {
-    float: none;
-    width: 100%; }
-    .t1 .decrement,
-    .t1 .increment, .t2 .decrement,
-    .t2 .increment {
-      margin: 0; }
-    .t1 section, .t2 section {
-      margin: 0; }
+@media only screen and (max-width: 500px)
+{
+  .history .optional {display:none !important;}
+}
+  /*# sourceMappingURL=tablechamp.css.map */
 
-  .t1 section {
-    margin-bottom: 13px; } }
+/* DarkTheme */
+body {
+  background: #222;
+  color: #FFF;
+}
 
-/*# sourceMappingURL=tablechamp.css.map */
+.ranking{
+  background: #444;
+}
+
+a, .c-button {
+  background: rgb(221, 144, 0);
+  color: white;
+}
+
+.c-button:hover {
+  background: orange;
+}
